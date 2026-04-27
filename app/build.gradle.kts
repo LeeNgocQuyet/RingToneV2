@@ -76,7 +76,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-
+    implementation("androidx.datastore:datastore-preferences:1.1.0")
     implementation("androidx.navigation3:navigation3-runtime:1.1.0")
     implementation("androidx.navigation3:navigation3-ui:1.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
