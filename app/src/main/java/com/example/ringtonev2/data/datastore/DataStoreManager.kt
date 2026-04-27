@@ -7,12 +7,14 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 
 private val Context.dataStore by preferencesDataStore(name = "app_prefs")
 
 class DataStoreManager(private val context: Context) {
     object PrefKeys {
         val ONBOARDING_SHOWN = booleanPreferencesKey("onboarding_shown")
+        val LANGUAGE = stringPreferencesKey("language")
     }
 
     val onboardingShownFlow: Flow<Boolean> =
@@ -22,6 +24,16 @@ class DataStoreManager(private val context: Context) {
     suspend fun setOnboardingShown() {
         context.dataStore.edit { prefs ->
             prefs[PrefKeys.ONBOARDING_SHOWN] = true
+        }
+    }
+    val languageFlow: Flow<String> =
+        context.dataStore.data.map { prefs ->
+            prefs[PrefKeys.LANGUAGE]
+                ?: Locale.getDefault().language
+        }
+    suspend fun setLanguage(lang: String) {
+        context.dataStore.edit { prefs ->
+            prefs[PrefKeys.LANGUAGE] = lang
         }
     }
 }
