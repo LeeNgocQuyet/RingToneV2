@@ -69,6 +69,11 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.compose.foundation)
     implementation(libs.navigation3.ui)
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.foundation)
+    implementation(libs.material3)
+    implementation(libs.androidx.compose.ui.text)
+    implementation(libs.androidx.foundation.layout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,4 +85,5 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("com.google.android.material:material:1.12.0")
+
 }

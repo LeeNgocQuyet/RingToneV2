@@ -24,7 +24,7 @@ fun RingtoneTheme(
 ) {
     MaterialTheme(
         colorScheme = DarkColorScheme,
-        typography = Typography,
+        typography = AppTypography,
         content = content
     )
 }

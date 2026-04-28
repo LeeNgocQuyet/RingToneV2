@@ -1,6 +1,5 @@
 package com.example.ringtonev2.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -11,7 +10,7 @@ import com.example.ringtonev2.navigation.Routes.MainRoute
 import com.example.ringtonev2.navigation.Routes.PlayerRoute
 import com.example.ringtonev2.navigation.Routes.ExtractRoute
 import com.example.ringtonev2.navigation.Routes.ExtractionHistoryRoute
-import com.example.ringtonev2.ui.main.MainScreen
+import com.example.ringtonev2.ui.home.MainScreen
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
 import com.example.ringtonev2.ui.splash.SplashScreen
 
