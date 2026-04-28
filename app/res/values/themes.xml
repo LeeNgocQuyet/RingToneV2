@@ -1,24 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.RingtoneV2" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Thuộc tính Material 3 không có tiền tố android: -->
         <item name="colorPrimary">@color/content_brand</item>
+        <item name="colorOnPrimary">@color/Black</item>
+        
         <item name="android:statusBarColor">@color/Black</item>
         <item name="android:navigationBarColor">@color/Black</item>
-        
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.RingtoneV2.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/Black</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
         <item name="windowSplashScreenAnimationDuration">0</item>
-        
         <item name="postSplashScreenTheme">@style/Theme.RingtoneV2</item>
-        
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>
