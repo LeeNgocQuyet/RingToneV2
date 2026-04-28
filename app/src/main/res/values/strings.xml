@@ -9,4 +9,5 @@
     <string name="download_audio">Download Audio</string>
     <string name="download_description">"Paste Tik video link to create high-quality\nringtones."</string>
     <string name="download_title">Download Tik Audio</string>"
+    <string name="category_title">Top Ringtone</string>
 </resources>
