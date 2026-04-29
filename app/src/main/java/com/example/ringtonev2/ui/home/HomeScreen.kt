@@ -1,11 +1,11 @@
 package com.example.ringtonev2.ui.home
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +18,10 @@ import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,14 +39,17 @@ import com.example.ringtonev2.ui.playlist.PlayListScreen
 import com.example.ringtonev2.ui.ringtone.RingtoneScreen
 import com.example.ringtonev2.ui.settings.SettingsScreen
 import com.example.ringtonev2.R
-import com.google.android.material.snackbar.Snackbar
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat.startActivity
 import android.provider.Settings
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.app.ActivityCompat
+import com.example.ringtonev2.data.datastore.DataStoreManager
+import kotlinx.coroutines.launch
 
 private enum class MainTab(val title: String, val icon: ImageVector) {
     Home("Home", Icons.Default.Home),
@@ -70,29 +71,62 @@ fun MainScreen(
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
 
     var showPermissionDialog by remember { mutableStateOf(false) }
-
+    val settingsManager = remember { DataStoreManager(context) }
+    val cardShownCount by settingsManager.notificationCardCountFlow.collectAsState(initial = -1)
+    val scope = rememberCoroutineScope()
+    var hasHandledThisState by remember { mutableStateOf(false) }
+    val activity = context as? Activity
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (!isGranted) {
-            showPermissionDialog = true
+        if (!isGranted && activity != null) {
+
+            val shouldShow = ActivityCompat.shouldShowRequestPermissionRationale(
+                activity, Manifest.permission.POST_NOTIFICATIONS
+            )
+
+            if (shouldShow && cardShownCount < 2) {
+                showPermissionDialog = true
+            }
         }
     }
 
-    LaunchedEffect(Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    LaunchedEffect(cardShownCount) {
+        if (cardShownCount == -1) return@LaunchedEffect
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && activity != null) {
             val isGranted = ContextCompat.checkSelfPermission(
                 context, Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
 
-            if (!isGranted) {
-                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (!isGranted && cardShownCount < 2) {
+                val shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(
+                    activity, Manifest.permission.POST_NOTIFICATIONS
+                )
+
+                if (shouldShowRationale) {
+                    if (!hasHandledThisState) {
+                        showPermissionDialog = true
+                        hasHandledThisState = true
+                    }
+                } else {
+                    if (cardShownCount == 0 && !hasHandledThisState) {
+                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        hasHandledThisState = true
+                    }
+                }
             }
         }
     }
 
     if (showPermissionDialog) {
-        Dialog(onDismissRequest = { showPermissionDialog = false }) {
+        Dialog(onDismissRequest = {
+
+            showPermissionDialog = false
+            scope.launch {
+                settingsManager.incrementNotificationCardCount()
+            }
+        }) {
             EnableNotificationCard(
                 painter = painterResource(id = R.drawable.enable_notification),
                 title = stringResource(id = R.string.enable_notifications),
@@ -105,45 +139,34 @@ fun MainScreen(
                     context.startActivity(intent)
                     showPermissionDialog = false
                 },
-                onDismiss = { showPermissionDialog = false }
+                onDismiss = {
+                    showPermissionDialog = false
+                    hasHandledThisState = false
+                }
             )
         }
     }
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            TopAppBar(
-                title = { Text("Main Screen") },
-                actions = {
-                    IconButton(onClick = {
-                        tab = MainTab.Setting
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
-                        )
-                    }
-                }
-            )
-        },
         bottomBar = {
             NavigationBar {
                 MainTab.entries
                     .filter { it != MainTab.Setting }
                     .forEach { entry ->
-                    NavigationBarItem(
-                        selected = tab == entry,
-                        onClick = { tab = entry },
-                        icon = { Icon(entry.icon, contentDescription = null) },
-                        label = { Text(entry.title) },
-                    )
-                }
+                        NavigationBarItem(
+                            selected = tab == entry,
+                            onClick = { tab = entry },
+                            icon = { Icon(entry.icon, contentDescription = null) },
+                            label = { Text(entry.title) },
+                        )
+                    }
             }
         },
     ) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             when (tab) {
                 MainTab.Home -> RingtoneScreen()
                 MainTab.Download -> DownloadScreen(onOpenPlayer = onOpenPlayer)
