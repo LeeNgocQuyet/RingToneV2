@@ -39,12 +39,17 @@ import androidx.compose.ui.window.Dialog
 import android.provider.Settings
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
@@ -154,45 +159,62 @@ fun MainScreen(
     }
 
     Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            )
+            MainTopBar(
+                title = stringResource(id = R.string.app_name),
+                onSearchClick = { },
+                onSettingsClick = { }
+            )
+        },
         bottomBar = {
             Box(
-                modifier = Modifier.fillMaxWidth().height(84.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(84.dp)
                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
             ) {
 
-            NavigationBar {
-                MainTab.entries
-                    .forEach { entry ->
-                        NavigationBarItem(
-                            selected = tab == entry,
-                            onClick = { tab = entry },
-                            icon = {Icon(
-                                painter = painterResource(id = entry.icon),
-                                contentDescription = entry.title
-                            )},
-                            label = {
-                                Text(
-                                    text = entry.title,
-                                    style = AppTypography.bodyMedium.copy(
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.W600
-                                    ),
-                                color = if (tab == entry)
-                                    colorResource(R.color.text_bar_selected)
-                                else
-                                    colorResource(R.color.text_bar_default)
-                            ) },
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = colorResource(R.color.icon_bar_selected),
-                                unselectedIconColor = colorResource(R.color.icon_bar_default),
-                                selectedTextColor = colorResource(R.color.text_bar_selected),
-                                unselectedTextColor = colorResource(R.color.text_bar_default),
-                                indicatorColor = Color.Transparent
+                NavigationBar {
+                    MainTab.entries
+                        .forEach { entry ->
+                            NavigationBarItem(
+                                selected = tab == entry,
+                                onClick = { tab = entry },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = entry.icon),
+                                        contentDescription = entry.title
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = entry.title,
+                                        style = AppTypography.bodyMedium.copy(
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.W600
+                                        ),
+                                        color = if (tab == entry)
+                                            colorResource(R.color.text_bar_selected)
+                                        else
+                                            colorResource(R.color.text_bar_default)
+                                    )
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = colorResource(R.color.icon_bar_selected),
+                                    unselectedIconColor = colorResource(R.color.icon_bar_default),
+                                    selectedTextColor = colorResource(R.color.text_bar_selected),
+                                    unselectedTextColor = colorResource(R.color.text_bar_default),
+                                    indicatorColor = Color.Transparent
+                                )
                             )
-                        )
-                    }
+                        }
+                }
             }
-        }
 
         },
     ) { padding ->
@@ -211,3 +233,61 @@ fun MainScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainTopBar(
+    title: String,
+    onSearchClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Box(
+                modifier = Modifier.width(254.dp).height(30.dp)
+            )
+            {
+                Text(
+                    text = title,
+                    style = AppTypography.titleMedium.copy(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.W600
+                    ),
+                    color = colorResource(R.color.content_brand),
+                )
+            }
+        },
+        actions = {
+            IconButton(
+                onClick = onSearchClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(R.color.content_subtlest))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.search),
+                    contentDescription = "Search",
+                    tint = Color.White,
+                )
+            }
+            Spacer(modifier = Modifier.width(24.dp))
+            IconButton(
+                onClick = onSettingsClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(R.color.content_subtlest))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.setting),
+                    contentDescription = "Settings",
+                    tint = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Black
+        )
+    )
+}
