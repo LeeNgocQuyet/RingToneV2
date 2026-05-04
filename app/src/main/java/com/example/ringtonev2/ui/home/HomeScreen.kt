@@ -80,7 +80,7 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
-
+    var link by remember { mutableStateOf("") }
     var showPermissionDialog by remember { mutableStateOf(false) }
     val settingsManager = remember { DataStoreManager(context) }
     val cardShownCount by settingsManager.notificationCardCountFlow.collectAsState(initial = -1)
@@ -228,8 +228,8 @@ fun MainScreen(
                 MainTab.Home -> RingtoneScreen()
                 MainTab.Download -> DownloadScreen(
                     onOpenPlayer = onOpenPlayer,
-                    link = "",
-                    onLinkChange = {},
+                    link = link,
+                    onLinkChange = { link = it},
                     onDownloadClick = {})
 
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)

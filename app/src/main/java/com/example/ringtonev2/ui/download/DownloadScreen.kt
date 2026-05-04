@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -43,100 +44,108 @@ fun DownloadScreen(
     onLinkChange: (String) -> Unit,
     onDownloadClick: () -> Unit
 ) {
-        Box(modifier = Modifier.fillMaxWidth()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
             .height(248.dp)
             .padding(start = 16.dp, end = 16.dp)
             .clip(RoundedCornerShape(16.dp))
+    ) {
+        Image(
+            painter = painterResource(R.drawable.bg_download_screen),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentScale = ContentScale.Crop,
+        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.bg_download_screen),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                ,contentScale = ContentScale.Crop,
+            Text(
+                stringResource(id = R.string.download_tik_audio),
+                style = AppTypography.titleMedium.copy(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.W600
+                ),
+                color = colorResource(R.color.content_secondary),
             )
-            Column (
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    stringResource(id = R.string.download_tik_audio),
-                    style = AppTypography.titleMedium.copy(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.W600
-                    ),
-                    color = colorResource(R.color.content_secondary),
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    stringResource(id = R.string.paste_tik_link),
-                    style = AppTypography.bodyMedium.copy(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W500
-                    ),
-                        color = colorResource(R.color.content_subtlest),
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                OutlinedTextField(
-                    leadingIcon = {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(id = R.drawable.ic_link_download),
-                            contentDescription = null,
-                        )
-                    },
-                    value = link,
-                    onValueChange = onLinkChange,
-                    placeholder = {
-                        Text(stringResource(id = R.string.paste_tik_link_here),
-                            style = AppTypography.bodyMedium.copy(
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.W500
-                            ),
-                            color = colorResource(R.color.content_disabled),
-                        ) },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = colorResource(R.color.border_bold),
-                        unfocusedContainerColor = colorResource(R.color.border_bold),
-                        focusedIndicatorColor = colorResource(R.color.border_bold),
-                        unfocusedIndicatorColor = colorResource(R.color.border_bold),
-                        cursorColor = colorResource(R.color.White)
-                    ),
-                    singleLine = true,
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Button(
-                    onClick = onDownloadClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.background_secondary),
-                        contentColor = colorResource(R.color.Black))
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.download_audio),
-                        style = AppTypography.labelMedium.copy(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W600
-                        ),
-                        color = colorResource(R.color.Black)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                stringResource(id = R.string.paste_tik_link),
+                style = AppTypography.bodyMedium.copy(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.W500
+                ),
+                color = colorResource(R.color.content_subtlest),
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            OutlinedTextField(
+                leadingIcon = {
                     Icon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(R.drawable.download_icon),
-                        contentDescription = "download audio icon"
+                        painter = painterResource(id = R.drawable.ic_link_download),
+                        contentDescription = null,
                     )
-                }
-
+                },
+                value = link,
+                onValueChange = onLinkChange,
+                placeholder = {
+                    Text(
+                        stringResource(id = R.string.paste_tik_link_here),
+                        style = AppTypography.bodyMedium.copy(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.W500
+                        ),
+                        color = colorResource(R.color.content_disabled),
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = colorResource(R.color.border_bold),
+                    unfocusedContainerColor = colorResource(R.color.border_bold),
+                    focusedIndicatorColor = colorResource(R.color.border_bold),
+                    unfocusedIndicatorColor = colorResource(R.color.border_bold),
+                    focusedTextColor = colorResource(R.color.content_default),
+                    unfocusedTextColor = colorResource(R.color.content_disabled),
+                    cursorColor = colorResource(R.color.White)
+                ),
+                singleLine = true,
+                shape = RoundedCornerShape(50),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = onDownloadClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.background_secondary),
+                    contentColor = colorResource(R.color.Black)
+                )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.download_audio),
+                    style = AppTypography.labelMedium.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600
+                    ),
+                    color = colorResource(R.color.Black)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(R.drawable.download_icon),
+                    contentDescription = "download audio icon"
+                )
             }
+
         }
     }
+}
+
 @Preview
 @Composable
 fun DownloadScreenPreview() {
