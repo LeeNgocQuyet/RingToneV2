@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,11 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalGraphicsContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,18 +42,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ringtonev2.R
 import com.example.ringtonev2.data.repository.RetrofitInstance
-import com.example.ringtonev2.ui.home.MainTopBar
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.viewmodel.DownloadViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -66,7 +62,6 @@ fun DownloadScreen(
     link: String,
     onLinkChange: (String) -> Unit
 ) {
-    //val viewModel: DownloadViewModel = hiltViewModel()
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -200,6 +195,50 @@ fun DownloadScreen(
     }
 }
 
+fun downloadFileInternal(context: Context, audioUrl: String) {
+    val fileName = "tiktok_${System.currentTimeMillis()}.mp3"
+    val file = File(context.filesDir, fileName)
+
+    Thread {
+        try {
+            val url = URL(audioUrl)
+            val connection = url.openConnection() as HttpURLConnection
+            connection.connectTimeout = 15000
+            connection.readTimeout = 15000
+            connection.requestMethod = "GET"
+            connection.setRequestProperty(
+                "User-Agent",
+                "Mozilla/5.0"
+            )
+            connection.connect()
+
+            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+                Log.e("DOWNLOAD", "Server returned ${connection.responseCode}")
+                return@Thread
+            }
+
+            val input = BufferedInputStream(connection.inputStream)
+            val output = FileOutputStream(file)
+
+            val data = ByteArray(4096)
+            var count: Int
+
+            while (input.read(data).also { count = it } != -1) {
+                output.write(data, 0, count)
+            }
+
+            output.flush()
+            output.close()
+            input.close()
+
+            Log.d("DOWNLOAD", "Saved internal: ${file.absolutePath}")
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }.start()
+}
+
 fun downloadAudioDirect(
     context: Context,
     link: String,
@@ -211,15 +250,12 @@ fun downloadAudioDirect(
         try {
             val api = RetrofitInstance.api
             val response = api.getAudio(link)
-            Log.d("DOWNLOAD", "RAW RESPONSE = ${response}")
+            Log.d("DOWNLOAD", "RAW RESPONSE = $response")
 
-            val audioUrl = response
-                ?.data
-                ?.data
-                ?.music
+            val audioUrl = response?.data?.data?.music
             Log.d("DOWNLOAD", "WRAPPER = ${response?.data}")
             Log.d("DOWNLOAD", "DATA = ${response?.data?.data}")
-            Log.d("DOWNLOAD", "MUSIC = ${response?.data?.data?.music}")
+            Log.d("DOWNLOAD", "MUSIC = $audioUrl")
             withContext(Dispatchers.Main) {
                 onResult(audioUrl)
             }
