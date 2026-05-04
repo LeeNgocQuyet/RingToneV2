@@ -225,7 +225,7 @@ fun MainScreen(
         ) {
             when (tab) {
                 MainTab.Home -> RingtoneScreen()
-                MainTab.Download -> DownloadScreen(onOpenPlayer = onOpenPlayer)
+                MainTab.Download -> DownloadScreen(onOpenPlayer = onOpenPlayer, link = "", onLinkChange = {}, onDownloadClick = {})
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
             }

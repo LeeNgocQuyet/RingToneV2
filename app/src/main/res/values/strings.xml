@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">RingTonev2</string>
     <string name="download_screen">Download</string>
+    <string name="download_tik_audio">Download Tik Audio</string>
+    <string name="paste_tik_link">Paste Tik video link to create high-quality ringtones.</string>
+    <string name="paste_tik_link_here">Paste Tik video link here</string>
+    <string name="download_audio">Download Audio</string>
     <string name="slogan">"Your Phone, Your Vibe"</string>
     <string name="onboarding_text">"Fresh ringtones that match your personality, updated daily.</string>
     <string name="get_started"> Get Started </string>
     <string name="This_action_may_contain_ads">"This action may contain ads"</string>
-    <string name="tik_link">Paste TikTok Video Link</string>"
-    <string name="download_audio">Download Audio</string>
-    <string name="download_description">"Paste Tik video link to create high-quality\nringtones."</string>
-    <string name="download_title">Download Tik Audio</string>"
     <string name="category_title">Top Ringtone</string>
     <string name="enable_notifications">Enable Notifications</string>
     <string name="enable_notifications_description">This app requires Notifications Access to work properly.</string>
