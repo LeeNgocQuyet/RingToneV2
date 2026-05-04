@@ -59,6 +59,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
@@ -230,8 +231,7 @@ fun MainScreen(
                     onOpenPlayer = onOpenPlayer,
                     link = link,
                     onLinkChange = { link = it},
-                    onDownloadClick = {})
-
+                    )
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
             }
