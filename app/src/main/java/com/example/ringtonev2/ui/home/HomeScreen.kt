@@ -10,12 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.Download
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LibraryMusic
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -28,7 +22,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
@@ -37,7 +30,6 @@ import com.example.ringtonev2.ui.category.CategoryScreen
 import com.example.ringtonev2.ui.download.DownloadScreen
 import com.example.ringtonev2.ui.playlist.PlayListScreen
 import com.example.ringtonev2.ui.ringtone.RingtoneScreen
-import com.example.ringtonev2.ui.settings.SettingsScreen
 import com.example.ringtonev2.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.LaunchedEffect
@@ -45,19 +37,38 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import android.provider.Settings
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.ringtonev2.data.datastore.DataStoreManager
+import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
-private enum class MainTab(val title: String, val icon: ImageVector) {
-    Home("Home", Icons.Default.Home),
-    Download("Download", Icons.Default.Download),
-    Category("Category", Icons.Default.Category),
-    Playlist("Playlist", Icons.Default.LibraryMusic),
+private enum class MainTab(val title: String, @DrawableRes val icon: Int) {
+    Home("Home", R.drawable.home),
+    Download("Download", R.drawable.download),
+    Category("Category", R.drawable.category),
+    Playlist("Playlist", R.drawable.playlist),
 
-    Setting("Settings", Icons.Default.Settings)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -146,20 +157,65 @@ fun MainScreen(
             )
         }
     }
+
     Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+            )
+            MainTopBar(
+                title = stringResource(id = R.string.app_name),
+                onSearchClick = { },
+                onSettingsClick = { }
+            )
+        },
         bottomBar = {
-            NavigationBar {
-                MainTab.entries
-                    .filter { it != MainTab.Setting }
-                    .forEach { entry ->
-                        NavigationBarItem(
-                            selected = tab == entry,
-                            onClick = { tab = entry },
-                            icon = { Icon(entry.icon, contentDescription = null) },
-                            label = { Text(entry.title) },
-                        )
-                    }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(84.dp)
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            ) {
+
+                NavigationBar {
+                    MainTab.entries
+                        .forEach { entry ->
+                            NavigationBarItem(
+                                selected = tab == entry,
+                                onClick = { tab = entry },
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = entry.icon),
+                                        contentDescription = entry.title
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = entry.title,
+                                        style = AppTypography.bodyMedium.copy(
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.W600
+                                        ),
+                                        color = if (tab == entry)
+                                            colorResource(R.color.text_bar_selected)
+                                        else
+                                            colorResource(R.color.text_bar_default)
+                                    )
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = colorResource(R.color.icon_bar_selected),
+                                    unselectedIconColor = colorResource(R.color.icon_bar_default),
+                                    selectedTextColor = colorResource(R.color.text_bar_selected),
+                                    unselectedTextColor = colorResource(R.color.text_bar_default),
+                                    indicatorColor = Color.Transparent
+                                )
+                            )
+                        }
+                }
             }
+
         },
     ) { padding ->
         Box(
@@ -172,60 +228,66 @@ fun MainScreen(
                 MainTab.Download -> DownloadScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
-
-                MainTab.Setting -> SettingsScreen(onOpenPlayer = onOpenPlayer, onBack = {
-                    tab = MainTab.Home
-                })
             }
         }
     }
 }
-/*
-private fun askNotificationPermission() {
-    // This is only necessary for API level >= 33 (TIRAMISU)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-//                Log.e(TAG, "PERMISSION_GRANTED")
-            // FCM SDK (and your app) can post notifications.
-        } else {
-//                Log.e(TAG, "NO_PERMISSION")
-            // Directly ask for the permission
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-}
 
-private val requestPermissionLauncher = registerForActivityResult(
-    ActivityResultContracts.RequestPermission()
-) { isGranted: Boolean ->
-    if (isGranted) {
-        Toast.makeText(this, "Notifications permission granted", Toast.LENGTH_SHORT)
-            .show()
-    } else {
-//            Toast.makeText(
-//                this, "${getString(R.string.app_name)} can't post notifications without Notification permission",
-//                Toast.LENGTH_LONG
-//            ).show()
-
-        Snackbar.make(
-                MainScreen.containermain,
-            String.format(
-                String.format(
-                    getString(R.string.txt_error_post_notification),
-                    getString(R.string.app_name)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainTopBar(
+    title: String,
+    onSearchClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    TopAppBar(
+        title = {
+            Box(
+                modifier = Modifier.width(254.dp).height(30.dp)
+            )
+            {
+                Text(
+                    text = title,
+                    style = AppTypography.titleMedium.copy(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.W600
+                    ),
+                    color = colorResource(R.color.content_brand),
                 )
-            ),
-            Snackbar.LENGTH_INDEFINITE
-        ).setAction(getString(R.string.goto_settings)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val settingsIntent: Intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-                startActivity(settingsIntent)
             }
-        }.show()
-    }
+        },
+        actions = {
+            IconButton(
+                onClick = onSearchClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(R.color.content_subtlest))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.search),
+                    contentDescription = "Search",
+                    tint = Color.White,
+                )
+            }
+            Spacer(modifier = Modifier.width(24.dp))
+            IconButton(
+                onClick = onSettingsClick,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(R.color.content_subtlest))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.setting),
+                    contentDescription = "Settings",
+                    tint = Color.White
+                )
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Black
+        )
+    )
 }
-*/

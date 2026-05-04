@@ -52,4 +52,10 @@
     <color name="White">#ffffffff</color>
     <color name="accent">#ff202322</color>
     <color name="on_accent">#fff7f6fb</color>
+
+    <color name="icon_bar_selected">#D6FE74</color>
+    <color name="icon_bar_default">#8C8C8C</color>
+    <color name="text_bar_selected">#D6FE74</color>
+    <color name="text_bar_default">#8C8C8C</color>
+
 </resources>
