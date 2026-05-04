@@ -166,6 +166,7 @@ fun MainScreen(
                     .height(56.dp)
             )
             MainTopBar(
+                isSearchIcon = (tab == MainTab.Download),
                 title = stringResource(id = R.string.app_name),
                 onSearchClick = { },
                 onSettingsClick = { }
@@ -225,7 +226,12 @@ fun MainScreen(
         ) {
             when (tab) {
                 MainTab.Home -> RingtoneScreen()
-                MainTab.Download -> DownloadScreen(onOpenPlayer = onOpenPlayer)
+                MainTab.Download -> DownloadScreen(
+                    onOpenPlayer = onOpenPlayer,
+                    link = "",
+                    onLinkChange = {},
+                    onDownloadClick = {})
+
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
             }
@@ -236,6 +242,7 @@ fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainTopBar(
+    isSearchIcon: Boolean,
     title: String,
     onSearchClick: () -> Unit,
     onSettingsClick: () -> Unit
@@ -243,7 +250,9 @@ fun MainTopBar(
     TopAppBar(
         title = {
             Box(
-                modifier = Modifier.width(254.dp).height(30.dp)
+                modifier = Modifier
+                    .width(254.dp)
+                    .height(30.dp)
             )
             {
                 Text(
@@ -257,18 +266,20 @@ fun MainTopBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = onSearchClick,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(colorResource(R.color.content_subtlest))
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.search),
-                    contentDescription = "Search",
-                    tint = Color.White,
-                )
+            if (!isSearchIcon) {
+                IconButton(
+                    onClick = onSearchClick,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(colorResource(R.color.content_subtlest))
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.search),
+                        contentDescription = "Search",
+                        tint = Color.White,
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(24.dp))
             IconButton(

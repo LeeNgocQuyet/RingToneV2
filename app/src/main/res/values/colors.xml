@@ -7,7 +7,7 @@
     <color name="content_disabled">#ffbfbfbf</color>
     <color name="content_inverse">#ffffffff</color>
     <color name="content_brand">#ffccfe51</color>
-    <color name="content_secondary">#ffccfe51</color>
+    <color name="content_secondary">#CFA3FF</color>
     <color name="content_onbrand">#ffffffff</color>
     <color name="content_onsecondary">#ffffffff</color>
     <color name="content_selected">#ffbae74a</color>
@@ -26,7 +26,7 @@
     <color name="background_selected">#fffaffee</color>
     <color name="background_selected_bold">#ffefffc9</color>
     <color name="background_brand">#ffd6fe74</color>
-    <color name="background_secondary">#ff7b62e1</color>
+    <color name="background_secondary">#CFA3FF</color>
     <color name="background_brand_bold">#ffccfe51</color>
 
     <color name="background_warning">#fffff7d6</color>
@@ -37,7 +37,7 @@
     <color name="background_success_bold">#ffbaf3db</color>
 
     <color name="border_default">#ffe5e5e5</color>
-    <color name="border_bold">#ffd9d9d9</color>
+    <color name="border_bold">#434343</color>
     <color name="border_subtlest">#ffeeeeee</color>
     <color name="border_focused">#ffd6fe74</color>
     <color name="border_input">#ffd9d9d9</color>
