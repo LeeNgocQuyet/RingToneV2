@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="background_default">#fffbf8f9</color>
-    <color name="content_default">#cc000000</color>
+    <color name="content_default">#FFFFFF</color>
     <color name="content_subtle">#99000000</color>
     <color name="content_subtlest">#ff8c8c8c</color>
     <color name="content_disabled">#ffbfbfbf</color>

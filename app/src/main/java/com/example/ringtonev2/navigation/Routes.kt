@@ -18,4 +18,7 @@ object Routes {
     @Serializable data class AudioPreviewRoute(val filePath: String, val title: String) : NavKey
     
     @Serializable data class CategoryDetailRoute(val categoryId: String) : NavKey
+
+    /** JSON của [com.example.ringtonev2.data.remote.dto.TikTokData] (Gson). */
+    @Serializable data class AudioInfoRoute(val tikTokDataJson: String) : NavKey
 }
