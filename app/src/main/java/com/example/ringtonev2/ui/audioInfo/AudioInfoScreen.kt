@@ -272,3 +272,10 @@ fun VideoPlayer(
     }
 }
 
+@Composable
+fun AudioInfoScreen(
+    viewModel: AudioInfoScreenViewModel = hiltViewModel<AudioInfoScreenViewModel>(),
+    onBack: () -> Unit,
+){
+
+}

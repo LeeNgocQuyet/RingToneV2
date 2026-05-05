@@ -53,6 +53,7 @@ fun DownloadScreen(
     viewModel: DownloadScreenViewModel = hiltViewModel< DownloadScreenViewModel>(),
     onOpenPlayer: (String) -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
+    onOpenErrorScreen: () -> Unit
 ) {
     var error by remember { mutableStateOf<String?>(null) }
     var link by remember { mutableStateOf("") }
@@ -63,7 +64,7 @@ fun DownloadScreen(
     LaunchedEffect(state) {
         when (val s = state) {
             is AudioState.Error -> {
-                Toast.makeText(context, s.message, Toast.LENGTH_SHORT).show()
+                onOpenErrorScreen()
                 viewModel.resetAudioState()
             }
 
@@ -72,7 +73,8 @@ fun DownloadScreen(
                 viewModel.resetAudioState()
             }
 
-            else -> {}
+            else -> {
+            }
         }
     }
 
@@ -194,14 +196,4 @@ fun DownloadScreen(
 
         }
     }
-}
-
-
-@Preview
-@Composable
-fun DownloadScreenPreview() {
-    DownloadScreen(
-        onOpenPlayer = {},
-        onOpenAudioInfo = {},
-    )
 }

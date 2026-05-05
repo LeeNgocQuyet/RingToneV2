@@ -13,6 +13,7 @@ import com.example.ringtonev2.navigation.Routes.ExtractRoute
 import com.example.ringtonev2.navigation.Routes.ExtractionHistoryRoute
 import com.example.ringtonev2.navigation.Routes.AudioInfoRoute
 import com.example.ringtonev2.data.remote.dto.TikTokData
+import com.example.ringtonev2.ui.audioInfo.AudioErrorScreen
 import com.example.ringtonev2.ui.audioInfo.AudioInfoScreen
 import com.example.ringtonev2.ui.home.MainScreen
 import com.google.gson.Gson
@@ -56,6 +57,7 @@ fun AppNavigation() {
                     onOpenAudioInfo = { data ->
                         backStack.add(AudioInfoRoute(Gson().toJson(data)))
                     },
+                    onOpenErrorInfo = {backStack.add(Routes.AudioErrorRoute)}
                 )
             }
 
@@ -67,6 +69,11 @@ fun AppNavigation() {
                 AudioInfoScreen(
                     data = data,
                     onBack = { backStack.removeLastOrNull() },
+                )
+            }
+            entry<Routes.AudioErrorRoute> {
+                AudioErrorScreen(
+                    onBack = { backStack.removeLastOrNull() }
                 )
             }
         },

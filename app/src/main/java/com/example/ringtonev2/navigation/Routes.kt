@@ -21,4 +21,6 @@ object Routes {
 
     /** JSON của [com.example.ringtonev2.data.remote.dto.TikTokData] (Gson). */
     @Serializable data class AudioInfoRoute(val tikTokDataJson: String) : NavKey
+    @Serializable data object AudioErrorRoute : NavKey
+
 }
