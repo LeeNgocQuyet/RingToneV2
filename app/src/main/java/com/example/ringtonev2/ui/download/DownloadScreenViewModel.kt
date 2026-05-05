@@ -104,11 +104,15 @@ class DownloadScreenViewModel @Inject constructor() : ViewModel()
             try {
                 val response = RetrofitInstance.api.getAudio(link)
                 val audioUrl = response?.data?.data?.music
-
+                Log.d("DownloadViewModel", "RAW RESPONSE = $response")
+                Log.d("DownloadViewModel", "WRAPPER = ${response?.data}")
+                Log.d("DownloadViewModel", "DATA = ${response?.data?.data}")
+                Log.d("DownloadViewModel", "MUSIC = $audioUrl")
                 if (audioUrl == null) {
                     Log.e("DownloadViewModel", "Không lấy được audio")
                     return@launch
                 }
+                Log.d("DownloadViewModel", "Audio URL: $audioUrl")
 
                 downloadFileInternal(context, audioUrl)
 
