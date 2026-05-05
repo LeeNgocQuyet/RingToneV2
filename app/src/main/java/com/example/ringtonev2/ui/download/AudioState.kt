@@ -1,4 +1,4 @@
-package com.example.ringtonev2.ui.download.state
+package com.example.ringtonev2.ui.download
 
 import com.example.ringtonev2.data.remote.dto.TikTokData
 

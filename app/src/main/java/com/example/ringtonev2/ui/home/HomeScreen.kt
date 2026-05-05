@@ -80,6 +80,7 @@ fun MainScreen(
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
+    onOpenErrorInfo: () -> Unit
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
@@ -232,6 +233,7 @@ fun MainScreen(
                 MainTab.Download -> DownloadScreen(
                     onOpenPlayer = onOpenPlayer,
                     onOpenAudioInfo = onOpenAudioInfo,
+                    onOpenErrorScreen = onOpenErrorInfo
                 )
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
