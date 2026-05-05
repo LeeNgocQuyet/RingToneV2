@@ -1,73 +1,59 @@
 package com.example.ringtonev2.ui.audioInfo
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.*
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.compose.PlayerSurface
+import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import com.example.ringtonev2.R
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.theme.AppTypography
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
-import com.example.ringtonev2.ui.download.DownloadScreenViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioInfoScreen(
-    viewModel: AudioInfoScreenViewModel = hiltViewModel<AudioInfoScreenViewModel>(),
     data: TikTokData,
     onBack: () -> Unit,
-    //onDownload: () -> Unit,
+    onStartDownload: (TikTokData) -> Unit,
 ) {
+    val viewModel: AudioInfoScreenViewModel = hiltViewModel()
+    val context = LocalContext.current
+
+    val player = remember {
+        ExoPlayer.Builder(context).build()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            player.release()
+        }
+    }
 
     LaunchedEffect(data) {
-        viewModel.init(data)
+        val url = data.hdPlay ?: data.play
+        url?.let {
+            player.setMediaItem(MediaItem.fromUri(it))
+            player.prepare()
+        }
     }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -75,23 +61,23 @@ fun AudioInfoScreen(
                     Text(
                         text = stringResource(R.string.audio_info_title),
                         style = AppTypography.titleMedium.copy(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.W700
+                            fontSize = 18.sp
                         ),
-                        color = colorResource(R.color.content_default),
+                        color = colorResource(R.color.content_default)
                     )
                 },
                 navigationIcon = {
                     IconButton(
                         onClick = onBack,
                         modifier = Modifier
+                            .padding(start = 16.dp)
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(colorResource(R.color.content_subtlest))
+                            .background(Color(0xFF1F1F1F))
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.arrow_left_02),
-                            contentDescription = stringResource(R.string.cd_back)
+                            contentDescription = null
                         )
                     }
                 },
@@ -100,34 +86,70 @@ fun AudioInfoScreen(
                 )
             )
         },
-        bottomBar = {
-
-        },
-        containerColor = Color.Black,
+        containerColor = Color.Black
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(16.dp)
         ) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 20.dp)
-                    .padding(horizontal = 20.dp)
                     .aspectRatio(0.75f)
-                    .clip(RoundedCornerShape(32.dp))
+                    .clip(RoundedCornerShape(24.dp))
                     .background(Color.DarkGray),
                 contentAlignment = Alignment.Center
-            ){
-                VideoPlayer(
-                    player = viewModel.player,
-                    viewModel = viewModel,
-                    modifier = Modifier.fillMaxSize()
+            ) {
+
+                PlayerSurface(
+                    player = player,
+                    surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(9f / 16f)
                 )
+
+
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable {
+                            viewModel.togglePlay(
+                                player.isPlaying,
+                                onPlay = { player.play() },
+                                onPause = { player.pause() }
+                            )
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (!viewModel.isPlaying.value) {
+                        IconButton(
+                            onClick = {
+                                viewModel.togglePlay(
+                                    player.isPlaying,
+                                    onPlay = { player.play() },
+                                    onPause = { player.pause() }
+                                )
+                            },
+                            modifier = Modifier
+                                .size(64.dp)
+                                .background(
+                                    Color.Black.copy(alpha = 0.5f),
+                                    CircleShape
+                                )
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_play),
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(40.dp))
             data.author?.nickname?.let {
@@ -172,38 +194,30 @@ fun AudioInfoScreen(
                     color = colorResource(R.color.content_subtlest),
                 )
             }
-            Box(
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = { onStartDownload(data) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.Black)
-                    .padding(horizontal = 20.dp, vertical = 24.dp)
+                    .height(56.dp),
+                shape = RoundedCornerShape(28.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.background_secondary),
+                    contentColor = Color.Black
+                )
             ) {
-                Button(
-                    onClick = {  },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.background_secondary),
-                        contentColor = Color.Black
-                    )
-                ) {
-                    Text(
-                        text = stringResource(R.string.download_screen),
-                        style = AppTypography.labelMedium.copy(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W600
-                        ),
-                        color = colorResource(R.color.Black)
-                    )
-                }
+                Text(
+                    text = stringResource(R.string.download_screen),
+                    style = AppTypography.labelMedium.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600
+                    ),
+                    color = colorResource(R.color.Black)
+                )
             }
         }
     }
 }
-
-
 private fun formatDuration(seconds: Long?): String {
     if (seconds == null || seconds <= 0L) return "—"
     val s = seconds.toInt().coerceAtLeast(0)
@@ -215,67 +229,5 @@ private fun formatDuration(seconds: Long?): String {
 fun formatSize(size: Long?): String {
     if (size == null) return "—"
     val mb = size.toDouble() / (1024 * 1024)
-    return String.format("%.2f MB", mb)
-}
-
-@Composable
-fun VideoPlayer(
-    player: ExoPlayer,
-    viewModel: AudioInfoScreenViewModel,
-    modifier: Modifier = Modifier
-) {
-    Box(modifier = modifier) {
-
-        AndroidView(
-            factory = { context ->
-                PlayerView(context).apply {
-                    this.player = player
-                    useController = false
-                }
-            },
-            update = {
-                it.player = player
-            },
-            modifier = Modifier.matchParentSize()
-        )
-
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color.Transparent)
-                .clickable {
-                    viewModel.onVideoTap()
-                },
-            contentAlignment = Alignment.Center
-        ) {
-
-            if (viewModel.isPlaying.value) {
-                IconButton(
-                    onClick = { viewModel.togglePlay() },
-                    modifier = Modifier
-                        .size(64.dp)
-                        .background(
-                            Color.Black.copy(alpha = 0.5f),
-                            CircleShape
-                        )
-                ) {
-                    Icon(
-                        painter = painterResource(
-                                R.drawable.ic_play
-                        ),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun AudioInfoScreen(
-    viewModel: AudioInfoScreenViewModel = hiltViewModel<AudioInfoScreenViewModel>(),
-    onBack: () -> Unit,
-){
-
+    return String.format(Locale.getDefault(), "%.2f MB", mb)
 }

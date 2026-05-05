@@ -83,3 +83,7 @@ data class Author(
     @SerializedName("nickname") val nickname: String? = null,
     @SerializedName("avatar") val avatar: String? = null
 )
+
+fun TikTokData.resolveAudioDownloadUrl(): String? =
+    listOfNotNull(music, musicInfo?.play, hdPlay, play)
+        .firstOrNull { !it.isNullOrBlank() }

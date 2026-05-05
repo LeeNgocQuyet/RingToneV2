@@ -24,4 +24,11 @@
     <string name="audio_info_duration_sec">Duration</string>
     <string name="audio_info_audio_url">Audio URL</string>
     <string name="cd_back">Back</string>
+    <string name="downloading_audio_title">Downloading Audio</string>
+    <string name="downloading_audio_subtitle">Downloading audio…</string>
+    <string name="downloading_audio_description">Processing link to generate ringtone</string>
+    <string name="download_success_title">Download Successfull!</string>
+    <string name="download_success_description">Your ringtone is ready.</string>
+    <string name="continue_label">Continue</string>
+    <string name="download_failed">Could not download audio</string>
 </resources>
