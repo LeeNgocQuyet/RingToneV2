@@ -45,7 +45,7 @@ import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ringtonev2.data.remote.dto.TikTokData
-import com.example.ringtonev2.ui.download.state.AudioState
+import com.example.ringtonev2.ui.download.AudioState
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
