@@ -2,6 +2,7 @@ package com.example.ringtonev2.ui.download
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,12 +17,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
@@ -41,24 +44,38 @@ import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.ringtonev2.data.remote.dto.TikTokData
+import com.example.ringtonev2.ui.download.state.AudioState
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun DownloadScreen(
     viewModel: DownloadScreenViewModel = hiltViewModel< DownloadScreenViewModel>(),
     onOpenPlayer: (String) -> Unit,
+    onOpenAudioInfo: (TikTokData) -> Unit,
 ) {
-    var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var link by remember { mutableStateOf("") }
     val context = LocalContext.current
-    var audioUrl by remember { mutableStateOf<String?>(null) }
-    //val audioUrl = viewModel.audioUrl
+    val state by viewModel.audioState.collectAsState()
+    val isLoading = state is AudioState.Loading
 
+    LaunchedEffect(state) {
+        when (val s = state) {
+            is AudioState.Error -> {
+                Toast.makeText(context, s.message, Toast.LENGTH_SHORT).show()
+                viewModel.resetAudioState()
+            }
 
-    LaunchedEffect(audioUrl) {
-        Log.d("DOWNLOAD", "audioUrl updated = $audioUrl")
+            is AudioState.Success -> {
+                onOpenAudioInfo(s.data)
+                viewModel.resetAudioState()
+            }
+
+            else -> {}
+        }
     }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,7 +122,7 @@ fun DownloadScreen(
                     )
                 },
                 value = link,
-                onValueChange ={ link = it } ,
+                onValueChange = { link = it },
                 placeholder = {
                     Text(
                         stringResource(id = R.string.paste_tik_link_here),
@@ -131,16 +148,18 @@ fun DownloadScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                //onClick = {viewModel.downloadAudio(link)},
-                    onClick = {
-                        if(!link.isBlank())
-                            viewModel.download(context, link)
-                        else {
-                            error = "Please enter a link"
-                            Log.d("DOWNLOAD", "error = $error")
-                        }
+                onClick = {
+                    if(isLoading) {
+                        return@Button
+                    }
+                    if (!link.isBlank())
+                        viewModel.getInfoAudio(context, link)
+                    else {
+                        error = "Please enter a link"
+                        Log.d("DOWNLOAD", "error = $error")
+                    }
 
-                    },
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),
@@ -159,11 +178,18 @@ fun DownloadScreen(
                     color = colorResource(R.color.Black)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(R.drawable.download_icon),
-                    contentDescription = "download audio icon"
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(R.drawable.download_icon),
+                        contentDescription = "download audio icon"
+                    )
+                }
             }
 
         }
@@ -171,11 +197,11 @@ fun DownloadScreen(
 }
 
 
-
 @Preview
 @Composable
 fun DownloadScreenPreview() {
     DownloadScreen(
         onOpenPlayer = {},
+        onOpenAudioInfo = {},
     )
 }

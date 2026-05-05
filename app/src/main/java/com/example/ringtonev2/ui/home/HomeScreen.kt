@@ -30,6 +30,7 @@ import com.example.ringtonev2.ui.category.CategoryScreen
 import com.example.ringtonev2.ui.download.DownloadScreen
 import com.example.ringtonev2.ui.playlist.PlayListScreen
 import com.example.ringtonev2.ui.ringtone.RingtoneScreen
+import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.LaunchedEffect
@@ -78,6 +79,7 @@ fun MainScreen(
     onOpenPlayer: (String) -> Unit,
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
+    onOpenAudioInfo: (TikTokData) -> Unit,
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
@@ -228,7 +230,9 @@ fun MainScreen(
             when (tab) {
                 MainTab.Home -> RingtoneScreen()
                 MainTab.Download -> DownloadScreen(
-                    onOpenPlayer = onOpenPlayer)
+                    onOpenPlayer = onOpenPlayer,
+                    onOpenAudioInfo = onOpenAudioInfo,
+                )
                 MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
             }
