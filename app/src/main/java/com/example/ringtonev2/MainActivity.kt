@@ -28,7 +28,9 @@ import com.example.ringtonev2.music.util.NetworkMonitor
 import com.example.ringtonev2.navigation.AppNavigation
 import com.example.ringtonev2.ui.theme.RingtoneTheme
 import com.example.ringtonev2.components.EnableNotificationCard
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
