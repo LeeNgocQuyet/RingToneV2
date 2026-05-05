@@ -49,6 +49,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okio.buffer
+import okio.sink
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -69,11 +73,6 @@ fun DownloadScreen(
     var audioUrl by remember { mutableStateOf<String?>(null) }
     //val audioUrl = viewModel.audioUrl
 
-    LaunchedEffect(audioUrl) {
-        audioUrl?.let {
-            downloadFile(context, it)
-        }
-    }
 
     LaunchedEffect(audioUrl) {
         Log.d("DOWNLOAD", "audioUrl updated = $audioUrl")
@@ -158,7 +157,7 @@ fun DownloadScreen(
                             onResult = { url ->
                                 if (url != null) {
                                     audioUrl = url
-                                    downloadFile(context, url)
+                                    downloadFileInternal(context, url)
                                 } else {
 
                                     Log.d("DOWNLOAD", "Không lấy được audio")
@@ -198,26 +197,27 @@ fun DownloadScreen(
 fun downloadFileInternal(context: Context, audioUrl: String) {
     val fileName = "tiktok_${System.currentTimeMillis()}.mp3"
     val file = File(context.filesDir, fileName)
-
-    Thread {
+    val client = OkHttpClient()
+    val request = Request.Builder()
+        .url(audioUrl)
+        .addHeader("User-Agent", "Mozilla/5.0")
+        .build()
+    CoroutineScope(Dispatchers.IO).launch {
         try {
-            val url = URL(audioUrl)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.connectTimeout = 15000
-            connection.readTimeout = 15000
-            connection.requestMethod = "GET"
-            connection.setRequestProperty(
-                "User-Agent",
-                "Mozilla/5.0"
-            )
-            connection.connect()
-
-            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
-                Log.e("DOWNLOAD", "Server returned ${connection.responseCode}")
-                return@Thread
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) {
+                Log.e("downloadFileInternal", "Server returned ${response.code}")
+                return@launch
             }
+            val body = response.body
+            if (body == null) {
+                Log.e("downloadFileInternal", "Empty body")
+                return@launch
+            }
+            Log.d("OKHTTP", "Code: ${response.code}")
+            Log.d("OKHTTP", "Message: ${response.message}")
 
-            val input = BufferedInputStream(connection.inputStream)
+            val input = body.byteStream()
             val output = FileOutputStream(file)
 
             val data = ByteArray(4096)
@@ -236,7 +236,7 @@ fun downloadFileInternal(context: Context, audioUrl: String) {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }.start()
+    }
 }
 
 fun downloadAudioDirect(
@@ -268,25 +268,6 @@ fun downloadAudioDirect(
     }
 }
 
-fun downloadFile(context: Context, audioUrl: String) {
-
-    val fileName = "tiktok_${System.currentTimeMillis()}.mp3"
-    val file = File(
-        context.getExternalFilesDir(Environment.DIRECTORY_MUSIC),
-        fileName
-    )
-    val request = DownloadManager.Request(Uri.parse(audioUrl))
-        .setTitle("Downloading audio")
-        .setDescription("Saving file...")
-        .setNotificationVisibility(
-            DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED
-        )
-        .setDestinationUri(Uri.fromFile(file))
-
-    val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-    manager.enqueue(request)
-    Log.d("DOWNLOAD", "Saved to app folder: ${file.absolutePath}")
-}
 @Preview
 @Composable
 fun DownloadScreenPreview() {
