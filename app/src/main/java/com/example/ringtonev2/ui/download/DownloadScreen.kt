@@ -1,7 +1,6 @@
 package com.example.ringtonev2.ui.download
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,13 +51,7 @@ fun DownloadScreen(
     var error by remember { mutableStateOf<String?>(null) }
     var link by remember { mutableStateOf("") }
     val context = LocalContext.current
-    var audioUrl by remember { mutableStateOf<String?>(null) }
-    //val audioUrl = viewModel.audioUrl
 
-
-    LaunchedEffect(audioUrl) {
-        Log.d("DOWNLOAD", "audioUrl updated = $audioUrl")
-    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,13 +124,11 @@ fun DownloadScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                //onClick = {viewModel.downloadAudio(link)},
                     onClick = {
                         if(!link.isBlank())
                             viewModel.download(context, link)
                         else {
-                            error = "Please enter a link"
-                            Log.d("DOWNLOAD", "error = $error")
+
                         }
 
                     },

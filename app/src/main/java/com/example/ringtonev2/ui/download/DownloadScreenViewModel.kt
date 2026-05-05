@@ -40,16 +40,13 @@ class DownloadScreenViewModel @Inject constructor() : ViewModel()
             try {
                 val response = client.newCall(request).execute()
                 if (!response.isSuccessful) {
-                    Log.e("downloadFileInternal", "Server returned ${response.code}")
                     return@launch
                 }
                 val body = response.body
                 if (body == null) {
-                    Log.e("downloadFileInternal", "Empty body")
                     return@launch
                 }
-                Log.d("OKHTTP", "Code: ${response.code}")
-                Log.d("OKHTTP", "Message: ${response.message}")
+
 
                 val input = body.byteStream()
                 val output = FileOutputStream(file)
@@ -65,7 +62,6 @@ class DownloadScreenViewModel @Inject constructor() : ViewModel()
                 output.close()
                 input.close()
 
-                Log.d("DOWNLOAD", "Saved internal: ${file.absolutePath}")
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -73,46 +69,14 @@ class DownloadScreenViewModel @Inject constructor() : ViewModel()
         }
     }
 
-    fun downloadAudioDirect(
-        context: Context,
-        link: String,
-        onResult: (String?) -> Unit
-    ) {
-        viewModelScope.launch {
-            try {
-                val api = RetrofitInstance.api
-                val response = api.getAudio(link)
-                Log.d("DOWNLOAD", "RAW RESPONSE = $response")
-
-                val audioUrl = response?.data?.data?.music
-                Log.d("DOWNLOAD", "WRAPPER = ${response?.data}")
-                Log.d("DOWNLOAD", "DATA = ${response?.data?.data}")
-                Log.d("DOWNLOAD", "MUSIC = $audioUrl")
-                withContext(Dispatchers.Main) {
-                    onResult(audioUrl)
-                }
-
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    onResult(null)
-                }
-            }
-        }
-    }
     fun download(context: Context, link: String){
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.api.getAudio(link)
                 val audioUrl = response?.data?.data?.music
-                Log.d("DownloadViewModel", "RAW RESPONSE = $response")
-                Log.d("DownloadViewModel", "WRAPPER = ${response?.data}")
-                Log.d("DownloadViewModel", "DATA = ${response?.data?.data}")
-                Log.d("DownloadViewModel", "MUSIC = $audioUrl")
                 if (audioUrl == null) {
-                    Log.e("DownloadViewModel", "Không lấy được audio")
                     return@launch
                 }
-                Log.d("DownloadViewModel", "Audio URL: $audioUrl")
 
                 downloadFileInternal(context, audioUrl)
 
