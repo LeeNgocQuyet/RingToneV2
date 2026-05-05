@@ -48,13 +48,16 @@ import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.theme.AppTypography
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.ringtonev2.ui.download.DownloadScreenViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,7 +86,10 @@ fun AudioInfoScreen(
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = onBack,
+                        onClick = {
+                            viewModel.player.pause()
+                            viewModel.player.clearVideoSurface()
+                                onBack()},
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
@@ -201,6 +207,13 @@ fun AudioInfoScreen(
             }
         }
     }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.player.pause()
+            viewModel.player.stop()
+            viewModel.player.clearVideoSurface()
+        }
+    }
 }
 
 
@@ -218,6 +231,7 @@ fun formatSize(size: Long?): String {
     return String.format("%.2f MB", mb)
 }
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayer(
     player: ExoPlayer,
@@ -235,6 +249,10 @@ fun VideoPlayer(
             },
             update = {
                 it.player = player
+            },
+            onRelease = {
+                it.player?.clearVideoSurface()
+                it.player = null
             },
             modifier = Modifier.matchParentSize()
         )
@@ -272,10 +290,9 @@ fun VideoPlayer(
     }
 }
 
-@Composable
-fun AudioInfoScreen(
-    viewModel: AudioInfoScreenViewModel = hiltViewModel<AudioInfoScreenViewModel>(),
-    onBack: () -> Unit,
-){
-
+fun ExoPlayer.safeRelease() {
+    stop()
+    clearMediaItems()
+    clearVideoSurface()
+    release()
 }

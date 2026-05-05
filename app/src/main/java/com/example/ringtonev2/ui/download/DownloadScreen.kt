@@ -50,7 +50,7 @@ import com.example.ringtonev2.ui.download.AudioState
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun DownloadScreen(
-    viewModel: DownloadScreenViewModel = hiltViewModel< DownloadScreenViewModel>(),
+    viewModel: DownloadScreenViewModel = hiltViewModel<DownloadScreenViewModel>(),
     onOpenPlayer: (String) -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
     onOpenErrorScreen: () -> Unit
@@ -151,7 +151,7 @@ fun DownloadScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    if(isLoading) {
+                    if (isLoading) {
                         return@Button
                     }
                     if (!link.isBlank())
@@ -171,21 +171,23 @@ fun DownloadScreen(
                     contentColor = colorResource(R.color.Black)
                 )
             ) {
-                Text(
-                    text = stringResource(id = R.string.download_audio),
-                    style = AppTypography.labelMedium.copy(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.W600
-                    ),
-                    color = colorResource(R.color.Black)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
                 if (isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
+                        strokeWidth = 2.dp,
+                        color = colorResource(R.color.Black)
                     )
                 } else {
+                    Text(
+                        text = stringResource(id = R.string.download_audio),
+                        style = AppTypography.labelMedium.copy(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W600
+                        ),
+                        color = colorResource(R.color.Black)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     Icon(
                         modifier = Modifier.size(24.dp),
                         painter = painterResource(R.drawable.download_icon),
@@ -193,7 +195,6 @@ fun DownloadScreen(
                     )
                 }
             }
-
         }
     }
 }

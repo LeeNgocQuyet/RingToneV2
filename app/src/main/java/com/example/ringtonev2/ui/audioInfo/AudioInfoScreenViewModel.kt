@@ -62,6 +62,10 @@ class AudioInfoScreenViewModel @Inject constructor(
     }
 
     override fun onCleared() {
+        player.pause()
+        player.stop()
+        player.clearMediaItems()
+        player.clearVideoSurface()
         player.release()
         super.onCleared()
     }
