@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.androidx.foundation.layout)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.paging.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
