@@ -31,6 +31,7 @@ uiText = "1.11.0"
 foundationLayoutVersion = "1.11.0"
 roomCommonJvm = "2.8.4"
 lifecycleViewmodelKtx = "2.10.0"
+uiGraphics = "1.11.0"
 
 [libraries]
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
@@ -80,6 +81,7 @@ androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", 
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics", version.ref = "uiGraphics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

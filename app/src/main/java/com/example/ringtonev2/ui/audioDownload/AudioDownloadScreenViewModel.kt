@@ -1,17 +1,13 @@
-package com.example.ringtonev2.ui.audioInfo
+package com.example.ringtonev2.ui.audioDownload
 
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
-import com.example.ringtonev2.data.remote.dto.TikTokData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -20,64 +16,19 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 import androidx.compose.runtime.State
-import com.example.ringtonev2.ui.download.AudioState
+
+data class DownloadState(
+    val progress: Float = 0f,
+    val isDone: Boolean = false
+)
 
 @HiltViewModel
-class AudioInfoScreenViewModel @Inject constructor(
+class AudioDownloadScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
-    private val _downloadUrl = mutableStateOf<String?>(null)
-    val downloadUrl: State<String?> = _downloadUrl
-
-    val player: ExoPlayer = ExoPlayer.Builder(context).build()
-    private val _isPlaying = mutableStateOf(false)
-    val isPlaying: State<Boolean> = _isPlaying
-
-    private val _showControls = mutableStateOf(true)
-
-    fun init( data: TikTokData,
-    ) {
-        val videoUrl = data.hdPlay ?: data.play
-        videoUrl?.let  {
-            player.setMediaItem(MediaItem.fromUri(it))
-            player.prepare()
-        }
-    }
-
-    fun togglePlay() {
-        if (player.isPlaying) {
-            player.pause()
-            _isPlaying.value = false
-        } else {
-            player.play()
-            _isPlaying.value = true
-        }
-    }
-    fun onVideoTap() {
-        if (player.isPlaying) {
-            player.pause()
-            _isPlaying.value = false
-        } else {
-            player.play()
-            _isPlaying.value = true
-
-        }
-    }
-
-    override fun onCleared() {
-        player.pause()
-        player.stop()
-        player.clearMediaItems()
-        player.clearVideoSurface()
-        player.release()
-        super.onCleared()
-    }
-
-    fun resetAudioState() {
-        _downloadUrl.value = AudioState.Idle
-    }
-
-    fun downloadFileInternal(context: Context, audioUrl: String) {
+    private val _state = mutableStateOf(DownloadState())
+    val state: State<DownloadState> = _state
+    fun downloadFileInternal(audioUrl: String) {
         val fileName = "tiktok_${System.currentTimeMillis()}.mp3"
         val file = File(context.filesDir, fileName)
         val client = OkHttpClient()
@@ -96,20 +47,31 @@ class AudioInfoScreenViewModel @Inject constructor(
                     val body = response.body ?: return@withContext
                     Log.d("OKHTTP", "Code: ${response.code}")
                     Log.d("OKHTTP", "Message: ${response.message}")
-
+                    var downloadedBytes = 0L
+                    val totalBytes = body.contentLength()
                     val input = body.byteStream()
                     val output = FileOutputStream(file)
-
                     val data = ByteArray(4096)
                     var count: Int
-
                     while (input.read(data).also { count = it } != -1) {
                         output.write(data, 0, count)
+
+                        downloadedBytes += count
+
+                        val progress = if (totalBytes > 0)
+                            downloadedBytes.toFloat() / totalBytes
+                        else 0f
+
+                        _state.value = _state.value.copy(progress = progress)
                     }
 
                     output.flush()
                     output.close()
                     input.close()
+                    _state.value = _state.value.copy(
+                        progress = 1f,
+                        isDone = true
+                    )
 
                     Log.d("DOWNLOAD", "Saved internal: ${file.absolutePath}")
 
@@ -119,4 +81,5 @@ class AudioInfoScreenViewModel @Inject constructor(
             }
         }
     }
+
 }

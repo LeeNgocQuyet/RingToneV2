@@ -5,7 +5,13 @@
     <string name="paste_tik_link">Paste Tik video link to create high-quality ringtones.</string>
     <string name="paste_tik_link_here">Paste Tik video link here</string>
     <string name="download_audio">Download Audio</string>
-    <string name="link_unavailable">Link Unavailable"</string>
+    <string name="continue_audio">Continue</string>">
+    <string name="link_unavailable">Link Unavailable</string>
+    <string name="title_processing_finish">Processing your ringtone</string>
+    <string name="description_processing_finish">Your ringtone is ready</string>
+    <string name="title_processing_downloading">Downloading audio...</string>
+    <string name="description_processing_downloading">Processing link to generate ringtone</string>
+    <string name="error_title">Error</string>
     <string name="try_another_link">Try Another Link</string>
     <string name="try_another_link_description">This link might be private or deleted. Please try another link.</string>
     <string name="slogan">"Your Phone, Your Vibe"</string>

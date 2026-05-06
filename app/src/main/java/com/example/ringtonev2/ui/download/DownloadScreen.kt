@@ -155,7 +155,9 @@ fun DownloadScreen(
                         return@Button
                     }
                     if (!link.isBlank())
-                        viewModel.getInfoAudio(context, link)
+                        viewModel.getInfoAudio(
+                            context, link
+                        )
                     else {
                         error = "Please enter a link"
                         Log.d("DOWNLOAD", "error = $error")

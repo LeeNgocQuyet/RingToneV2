@@ -1,7 +1,10 @@
 package com.example.ringtonev2.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -13,6 +16,8 @@ import com.example.ringtonev2.navigation.Routes.ExtractRoute
 import com.example.ringtonev2.navigation.Routes.ExtractionHistoryRoute
 import com.example.ringtonev2.navigation.Routes.AudioInfoRoute
 import com.example.ringtonev2.data.remote.dto.TikTokData
+import com.example.ringtonev2.ui.audioDownload.AudioDownloadScreenViewModel
+import com.example.ringtonev2.ui.audioDownload.DownloadingScreen
 import com.example.ringtonev2.ui.audioInfo.AudioErrorScreen
 import com.example.ringtonev2.ui.audioInfo.AudioInfoScreen
 import com.example.ringtonev2.ui.home.MainScreen
@@ -74,6 +79,21 @@ fun AppNavigation() {
             entry<Routes.AudioErrorRoute> {
                 AudioErrorScreen(
                     onBack = { backStack.removeLastOrNull() }
+                )
+            }
+            entry<Routes.AudioDownloadRoute> { route ->
+                val viewModel = hiltViewModel<AudioDownloadScreenViewModel>()
+
+                val state by viewModel.state
+
+                LaunchedEffect(route.url) {
+                    viewModel.downloadFileInternal(route.url)
+                }
+
+                DownloadingScreen(
+                    progress = state.progress,
+                    isDone = state.isDone,
+                    onContinue = { backStack.removeLastOrNull() }
                 )
             }
         },
