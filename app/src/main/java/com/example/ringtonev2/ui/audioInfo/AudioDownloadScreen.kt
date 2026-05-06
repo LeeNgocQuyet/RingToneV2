@@ -64,7 +64,7 @@ fun AudioDownloadScreen(
     LaunchedEffect(audioUrl) {
         when {
             audioUrl.isNullOrBlank() -> viewModel.markInvalidUrl()
-            else -> viewModel.startDownloadIfNeeded(audioUrl)
+            else -> viewModel.startDownloadIfNeeded(audioUrl,data)
         }
     }
 
