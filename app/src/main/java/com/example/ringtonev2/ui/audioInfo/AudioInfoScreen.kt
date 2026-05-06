@@ -18,14 +18,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.MediaItem
+import android.util.Log
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import com.example.ringtonev2.R
 import com.example.ringtonev2.data.remote.dto.TikTokData
+import com.example.ringtonev2.data.remote.dto.resolveAudioDownloadUrl
 import com.example.ringtonev2.ui.theme.AppTypography
 import java.util.Locale
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioInfoScreen(
@@ -36,9 +44,27 @@ fun AudioInfoScreen(
     val viewModel: AudioInfoScreenViewModel = hiltViewModel()
     val context = LocalContext.current
 
+    val dataSourceFactory = DefaultHttpDataSource.Factory()
+        .setUserAgent("Mozilla/5.0 (Linux; Android 10)")
+        .setAllowCrossProtocolRedirects(true)
+        .setConnectTimeoutMs(15000)
+        .setReadTimeoutMs(15000)
+
     val player = remember {
-        ExoPlayer.Builder(context).build()
+        ExoPlayer.Builder(context)
+            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
+            .build().apply {
+                addListener(object : Player.Listener {
+                    override fun onIsPlayingChanged(playing: Boolean) {
+                        viewModel.setPlaying(playing)
+                    }
+                    override fun onPlayerError(error: PlaybackException) {
+                        Log.e("AudioInfoScreen", "Player Error: ${error.errorCodeName}", error)
+                    }
+                })
+            }
     }
+    Log.d("AudioInfoScreen", "Player: $player")
 
     DisposableEffect(Unit) {
         onDispose {
@@ -47,7 +73,9 @@ fun AudioInfoScreen(
     }
 
     LaunchedEffect(data) {
-        val url = data.hdPlay ?: data.play
+        //val url = data.hdPlay ?: data.play
+        val url = data.resolveAudioDownloadUrl()
+        Log.d("AudioInfoScreen", "URL: $url")
         url?.let {
             player.setMediaItem(MediaItem.fromUri(it))
             player.prepare()

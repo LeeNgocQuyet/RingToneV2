@@ -92,7 +92,7 @@ class AudioDownloadViewModel @Inject constructor(
                             }
                         }
                     }
-                    Log.d("DOWNLOAD", "Saved internal: ${file.absolutePath}")
+                    Log.d("AudioDownloadViewModel", "Saved internal: ${file.absolutePath}")
                     val entity = DownloadEntity(
                         ringtoneId = data.id ?: "",
                         title = data.title ?: "Unknown",
@@ -102,6 +102,7 @@ class AudioDownloadViewModel @Inject constructor(
                     )
 
                     downloadDao.insert(entity)
+                    Log.d("AudioDownloadViewModel", "Saved to database: $entity")
                     _uiState.value = AudioDownloadUiState.Success(file.absolutePath)
                 } catch (e: Exception) {
                     e.printStackTrace()
