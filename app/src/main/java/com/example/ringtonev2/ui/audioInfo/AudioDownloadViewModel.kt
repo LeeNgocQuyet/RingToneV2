@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ringtonev2.data.local.dao.DownloadDao
+import com.example.ringtonev2.data.local.entity.DownloadedRingtone
+import com.example.ringtonev2.data.remote.dto.TikTokData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +31,8 @@ sealed interface AudioDownloadUiState {
 @HiltViewModel
 class AudioDownloadViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
+    private val downloadDao: DownloadDao
+
 ) : ViewModel() {
 
     private val client = OkHttpClient()
@@ -35,16 +40,19 @@ class AudioDownloadViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AudioDownloadUiState>(AudioDownloadUiState.Idle)
     val uiState: StateFlow<AudioDownloadUiState> = _uiState.asStateFlow()
 
+    fun reset() {
+        _uiState.value = AudioDownloadUiState.Idle
+    }
     fun markInvalidUrl() {
         _uiState.value = AudioDownloadUiState.Error
     }
 
-    fun startDownloadIfNeeded(audioUrl: String) {
+    fun startDownloadIfNeeded(audioUrl: String,data: TikTokData) {
         if (_uiState.value != AudioDownloadUiState.Idle) return
-        downloadFileInternal(audioUrl)
+        downloadFileInternal(audioUrl,data)
     }
 
-    fun downloadFileInternal(audioUrl: String) {
+    fun downloadFileInternal(audioUrl: String,data: TikTokData) {
         val fileName = "tiktok_${System.currentTimeMillis()}.mp3"
         val file = File(appContext.filesDir, fileName)
         viewModelScope.launch {
@@ -87,7 +95,18 @@ class AudioDownloadViewModel @Inject constructor(
                             }
                         }
                     }
-                    Log.d("DOWNLOAD", "Saved internal: ${file.absolutePath}")
+                    Log.d("AudioDownloadViewModel", "Saved internal: ${file.absolutePath}")
+                    val entity = DownloadedRingtone(
+                        ringtoneId = data.id ?: "",
+                        title = data.title ?: "Unknown",
+                        artist = data.author?.nickname ?: "Unknown",
+                        filePath = file.absolutePath,
+                        downloadedAt = System.currentTimeMillis(),
+                        duration = data.duration ?: 0L
+                    )
+
+                    downloadDao.insert(entity)
+                    Log.d("AudioDownloadViewModel", "Saved to database: $entity")
                     _uiState.value = AudioDownloadUiState.Success(file.absolutePath)
                 } catch (e: Exception) {
                     e.printStackTrace()

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    alias(libs.plugins.google.ksp)
     id("kotlin-parcelize")
     id("kotlin-kapt")
 }
@@ -77,8 +78,8 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.androidx.compose.ui.text)
     implementation(libs.androidx.foundation.layout)
-    implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.paging.common)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -97,4 +98,8 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.android)
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 }
