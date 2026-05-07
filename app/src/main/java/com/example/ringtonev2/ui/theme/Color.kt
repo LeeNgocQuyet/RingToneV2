@@ -43,7 +43,7 @@ val ContentBrand = Color(0xFFCCFE51)
 val ContentSecondary = Color(0xFFCCFE51)
 
 val ContentOnBrand = Color(0xFFFFFFFF)
-val ContentOnSecondary = Color(0xFFFFFFFF)
+val ContentOnSecondary = Color(0xFF000000)
 
 val ContentSelected = Color(0xFFBAE74A)
 

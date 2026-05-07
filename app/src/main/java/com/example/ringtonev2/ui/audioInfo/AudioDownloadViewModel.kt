@@ -40,6 +40,9 @@ class AudioDownloadViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<AudioDownloadUiState>(AudioDownloadUiState.Idle)
     val uiState: StateFlow<AudioDownloadUiState> = _uiState.asStateFlow()
 
+    fun reset() {
+        _uiState.value = AudioDownloadUiState.Idle
+    }
     fun markInvalidUrl() {
         _uiState.value = AudioDownloadUiState.Error
     }

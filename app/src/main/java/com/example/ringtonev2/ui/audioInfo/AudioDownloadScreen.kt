@@ -22,6 +22,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,15 +54,13 @@ fun AudioDownloadScreen(
     onBack: () -> Unit,
 ) {
     val viewModel: AudioDownloadViewModel = hiltViewModel()
-    var uiState by remember(viewModel) { mutableStateOf(viewModel.uiState.value) }
-
-    LaunchedEffect(viewModel) {
-        viewModel.uiState.collect { uiState = it }
-    }
+    val uiState by viewModel.uiState.collectAsState()
 
     val audioUrl = remember(data) { data.resolveAudioDownloadUrl() }
 
-    LaunchedEffect(audioUrl) {
+    LaunchedEffect(audioUrl,data) {
+        viewModel.reset()
+
         when {
             audioUrl.isNullOrBlank() -> viewModel.markInvalidUrl()
             else -> viewModel.startDownloadIfNeeded(audioUrl,data)
@@ -170,6 +169,7 @@ fun AudioDownloadScreen(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                             ),
+                            color = colorResource(R.color.content_onsecondary),
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
