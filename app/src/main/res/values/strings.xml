@@ -8,6 +8,8 @@
     <string name="link_unavailable">Link Unavailable"</string>
     <string name="try_another_link">Try Another Link</string>
     <string name="try_another_link_description">This link might be private or deleted. Please try another link.</string>
+    <string name="audio_preview">Audio Preview</string>
+    <string name="set_ring_tone">Set Ringtone</string>
     <string name="slogan">"Your Phone, Your Vibe"</string>
     <string name="onboarding_text">"Fresh ringtones that match your personality, updated daily.</string>
     <string name="get_started"> Get Started </string>
