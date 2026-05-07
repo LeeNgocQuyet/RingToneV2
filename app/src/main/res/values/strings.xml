@@ -10,6 +10,13 @@
     <string name="try_another_link_description">This link might be private or deleted. Please try another link.</string>
     <string name="audio_preview">Audio Preview</string>
     <string name="set_ring_tone">Set Ringtone</string>
+    <string name="alarm_title">Alarm</string>
+    <string name="notify_title">Notify</string>
+    <string name="ringtone_title">Ringtone</string>
+    <string name="success_title">Success</string>
+    <string name="success_description">Ringtone has been set successfully.</string>"
+    <string name="assign_usage_type">Assign Usage Type"</string>
+    <string name="ok">OK</string>
     <string name="slogan">"Your Phone, Your Vibe"</string>
     <string name="onboarding_text">"Fresh ringtones that match your personality, updated daily.</string>
     <string name="get_started"> Get Started </string>

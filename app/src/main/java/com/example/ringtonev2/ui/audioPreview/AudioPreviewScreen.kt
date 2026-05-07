@@ -4,19 +4,16 @@ import java.io.File
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -33,9 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +43,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,7 +52,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.delay
 
 import com.example.ringtonev2.R
-import com.example.ringtonev2.data.remote.dto.TikTokData
+import com.example.ringtonev2.components.AssignUsageDialog
+import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
 
 
@@ -67,7 +65,13 @@ fun AudioPreviewScreen(
 ) {
     val viewModel: AudioPreviewScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val duration = uiState.duration *1000L
+    val duration = uiState.duration * 1000L
+
+    var showAssignDialog by remember {
+        mutableStateOf(false)
+    }
+    var showSuccessDialog by remember {
+        mutableStateOf(false) }
 
     val progress =
         if (duration > 0)
@@ -77,6 +81,29 @@ fun AudioPreviewScreen(
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build()
+    }
+
+    if (showAssignDialog) {
+        AssignUsageDialog(
+            onDismiss = { showAssignDialog = false },
+            onRingtoneClick = {
+                showAssignDialog = false
+                showSuccessDialog = true
+            },
+            onNotifiClick = {
+                showAssignDialog = false
+                showSuccessDialog = true
+            },
+            onAlarmClick = {
+                showAssignDialog = false
+                showSuccessDialog = true
+            }
+        )
+    }
+    if (showSuccessDialog) {
+        SetRingtoneSuccessDialog(
+            onDismiss = { showSuccessDialog = false }
+        )
     }
 
     LaunchedEffect(ringtoneId) {
@@ -321,7 +348,9 @@ fun AudioPreviewScreen(
 
             // 🔥 BUTTON
             Button(
-                onClick = {},
+                onClick = {
+                    showAssignDialog = true
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
@@ -343,11 +372,11 @@ fun AudioPreviewScreen(
 }
 
 fun formatDuration(milliseconds: Long?): String {
-    if (milliseconds  == null || milliseconds  <= 0L) return "00:00"
+    if (milliseconds == null || milliseconds <= 0L) return "00:00"
 
-    val totalmilliseconds  = milliseconds / 1000
-    val minutes = totalmilliseconds  / 60
-    val secs = totalmilliseconds  % 60
+    val totalmilliseconds = milliseconds / 1000
+    val minutes = totalmilliseconds / 60
+    val secs = totalmilliseconds % 60
 
     return "%02d:%02d".format(minutes, secs)
 }
