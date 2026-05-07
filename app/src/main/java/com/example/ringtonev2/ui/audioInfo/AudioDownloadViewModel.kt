@@ -98,7 +98,8 @@ class AudioDownloadViewModel @Inject constructor(
                         title = data.title ?: "Unknown",
                         artist = data.author?.nickname ?: "Unknown",
                         filePath = file.absolutePath,
-                        downloadedAt = System.currentTimeMillis()
+                        downloadedAt = System.currentTimeMillis(),
+                        duration = data.duration ?: 0L
                     )
 
                     downloadDao.insert(entity)

@@ -18,4 +18,5 @@ data class DownloadItem(
     val artist: String,
     val filePath: String,
     val downloadedAt: Long,
+    val duration: Long
 )

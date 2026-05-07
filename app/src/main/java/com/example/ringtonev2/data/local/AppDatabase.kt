@@ -13,7 +13,7 @@ import com.example.ringtonev2.data.local.entity.DownloadEntity
         DownloadEntity::class,
 
     ],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {

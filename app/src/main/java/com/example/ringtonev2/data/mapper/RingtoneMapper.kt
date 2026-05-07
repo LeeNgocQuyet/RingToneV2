@@ -11,4 +11,5 @@ fun DownloadEntity.toDomain(): DownloadItem = DownloadItem(
     artist = artist,
     filePath = filePath,
     downloadedAt = downloadedAt,
+    duration = duration
 )
