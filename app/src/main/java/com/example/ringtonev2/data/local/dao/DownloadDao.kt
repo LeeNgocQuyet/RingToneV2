@@ -18,4 +18,6 @@ interface DownloadDao {
 
     @Query("DELETE FROM downloads WHERE id = :id")
     suspend fun delete(id: Long)
+    @Query("SELECT * FROM downloads WHERE ringtoneId = :ringtoneId")
+    suspend fun getByRingtoneId(ringtoneId: String): DownloadedRingtone?
 }
