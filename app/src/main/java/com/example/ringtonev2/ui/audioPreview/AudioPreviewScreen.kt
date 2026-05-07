@@ -1,7 +1,10 @@
 package com.example.ringtonev2.ui.audioPreview
 
+import android.content.Context
+import android.content.Intent
 import java.io.File
 import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -87,16 +90,34 @@ fun AudioPreviewScreen(
         AssignUsageDialog(
             onDismiss = { showAssignDialog = false },
             onRingtoneClick = {
-                showAssignDialog = false
-                showSuccessDialog = true
+                if (canWriteSettings(context)) {
+                    viewModel.setAsSystemSound(context, RingtoneType.RINGTONE) {
+                        showAssignDialog = false
+                        showSuccessDialog = true
+                    }
+                } else {
+                    requestWriteSettingsPermission(context)
+                }
             },
             onNotifiClick = {
-                showAssignDialog = false
-                showSuccessDialog = true
+                if (canWriteSettings(context)) {
+                    viewModel.setAsSystemSound(context, RingtoneType.NOTIFICATION) {
+                        showAssignDialog = false
+                        showSuccessDialog = true
+                    }
+                } else {
+                    requestWriteSettingsPermission(context)
+                }
             },
             onAlarmClick = {
-                showAssignDialog = false
-                showSuccessDialog = true
+                if (canWriteSettings(context)) {
+                    viewModel.setAsSystemSound(context, RingtoneType.ALARM) {
+                        showAssignDialog = false
+                        showSuccessDialog = true
+                    }
+                } else {
+                    requestWriteSettingsPermission(context)
+                }
             }
         )
     }
@@ -379,4 +400,16 @@ fun formatDuration(milliseconds: Long?): String {
     val secs = totalmilliseconds % 60
 
     return "%02d:%02d".format(minutes, secs)
+}
+
+fun canWriteSettings(context: Context): Boolean {
+    return Settings.System.canWrite(context)
+}
+
+fun requestWriteSettingsPermission(context: Context) {
+    val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+        data = Uri.parse("package:${context.packageName}")
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    context.startActivity(intent)
 }
