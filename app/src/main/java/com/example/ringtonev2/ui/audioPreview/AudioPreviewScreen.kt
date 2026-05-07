@@ -260,7 +260,13 @@ fun AudioPreviewScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    val newPosition =
+                        (exoPlayer.currentPosition - 10_000L)
+                            .coerceAtLeast(0L)
+
+                    exoPlayer.seekTo(newPosition)
+                }) {
                     Icon(
                         painter = painterResource(R.drawable.go_backward_10sec),
                         contentDescription = null,
@@ -296,7 +302,13 @@ fun AudioPreviewScreen(
                     }
                 }
 
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    val newPosition =
+                        (exoPlayer.currentPosition + 10_000L)
+                            .coerceAtMost(duration)
+
+                    exoPlayer.seekTo(newPosition)
+                }) {
                     Icon(
                         painter = painterResource(R.drawable.go_forward_10sec),
                         contentDescription = null,
