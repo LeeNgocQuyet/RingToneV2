@@ -44,26 +44,8 @@ fun AudioInfoScreen(
     val viewModel: AudioInfoScreenViewModel = hiltViewModel()
     val context = LocalContext.current
 
-    val dataSourceFactory = DefaultHttpDataSource.Factory()
-        .setUserAgent("Mozilla/5.0 (Linux; Android 10)")
-        .setAllowCrossProtocolRedirects(true)
-        .setConnectTimeoutMs(15000)
-        .setReadTimeoutMs(15000)
+    val player = remember { ExoPlayer.Builder(context).build() }
 
-    val player = remember {
-        ExoPlayer.Builder(context)
-            .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
-            .build().apply {
-                addListener(object : Player.Listener {
-                    override fun onIsPlayingChanged(playing: Boolean) {
-                        viewModel.setPlaying(playing)
-                    }
-                    override fun onPlayerError(error: PlaybackException) {
-                        Log.e("AudioInfoScreen", "Player Error: ${error.errorCodeName}", error)
-                    }
-                })
-            }
-    }
     Log.d("AudioInfoScreen", "Player: $player")
 
     DisposableEffect(Unit) {
@@ -73,8 +55,7 @@ fun AudioInfoScreen(
     }
 
     LaunchedEffect(data) {
-        //val url = data.hdPlay ?: data.play
-        val url = data.resolveAudioDownloadUrl()
+        val url = data.hdPlay ?: data.play
         Log.d("AudioInfoScreen", "URL: $url")
         url?.let {
             player.setMediaItem(MediaItem.fromUri(it))
