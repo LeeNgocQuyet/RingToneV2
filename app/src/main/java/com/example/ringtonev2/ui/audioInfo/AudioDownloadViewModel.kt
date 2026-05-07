@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.local.dao.DownloadDao
-import com.example.ringtonev2.data.local.entity.DownloadEntity
+import com.example.ringtonev2.data.local.entity.DownloadedRingtone
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -96,7 +96,7 @@ class AudioDownloadViewModel @Inject constructor(
                         }
                     }
                     Log.d("AudioDownloadViewModel", "Saved internal: ${file.absolutePath}")
-                    val entity = DownloadEntity(
+                    val entity = DownloadedRingtone(
                         ringtoneId = data.id ?: "",
                         title = data.title ?: "Unknown",
                         artist = data.author?.nickname ?: "Unknown",
