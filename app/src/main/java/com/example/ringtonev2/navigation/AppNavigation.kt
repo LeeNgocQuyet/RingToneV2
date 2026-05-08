@@ -2,10 +2,8 @@ package com.example.ringtonev2.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.example.ringtonev2.navigation.Routes.SplashRoute
 import com.example.ringtonev2.navigation.Routes.OnboardingRoute
@@ -20,7 +18,7 @@ import com.example.ringtonev2.ui.audioInfo.AudioErrorScreen
 import com.example.ringtonev2.ui.audioInfo.AudioDownloadScreen
 import com.example.ringtonev2.ui.audioInfo.AudioInfoScreen
 import com.example.ringtonev2.ui.audioPreview.AudioPreviewScreen
-import com.example.ringtonev2.ui.home.MainScreen
+import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
 import com.example.ringtonev2.ui.splash.SplashScreen

@@ -1,4 +1,4 @@
-package com.example.ringtonev2.ui.home
+package com.example.ringtonev2.ui.main
 
 import android.Manifest
 import android.app.Activity
@@ -60,7 +60,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
