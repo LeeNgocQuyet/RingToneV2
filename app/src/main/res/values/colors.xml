@@ -9,7 +9,7 @@
     <color name="content_brand">#ffccfe51</color>
     <color name="content_secondary">#CFA3FF</color>
     <color name="content_onbrand">#ffffffff</color>
-    <color name="content_onsecondary">#ffffffff</color>
+    <color name="content_onsecondary">#ff000000</color>
     <color name="content_selected">#ffbae74a</color>
     <color name="content_warning">#ff946f00</color>
     <color name="content_error">#ffc9372c</color>
@@ -20,7 +20,7 @@
     <color name="content_link_visited">#ff6e5dc6</color>
 
     <color name="background_neutral">#ffffffff</color>
-    <color name="background_neutral_subtle">#ffeeeeee</color>
+    <color name="background_neutral_subtle">#262626</color>
     <color name="background_neutral_bold">#ffe5e5e5</color>
     <color name="background_neutral_bolder">#ffd9d9d9</color>
     <color name="background_selected">#fffaffee</color>

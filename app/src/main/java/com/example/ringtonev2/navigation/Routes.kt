@@ -15,7 +15,7 @@ object Routes {
     @Serializable data object ExtractionHistoryRoute : NavKey
     @Serializable data class ExtractingRoute(val url: String) : NavKey
     @Serializable data class GetInfoRoute(val filePath: String) : NavKey
-    @Serializable data class AudioPreviewRoute(val filePath: String, val title: String) : NavKey
+    @Serializable data class AudioPreviewRoute(val ringtoneId: String) : NavKey
     
     @Serializable data class CategoryDetailRoute(val categoryId: String) : NavKey
 

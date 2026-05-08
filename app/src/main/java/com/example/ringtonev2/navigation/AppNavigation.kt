@@ -19,6 +19,7 @@ import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.audioInfo.AudioErrorScreen
 import com.example.ringtonev2.ui.audioInfo.AudioDownloadScreen
 import com.example.ringtonev2.ui.audioInfo.AudioInfoScreen
+import com.example.ringtonev2.ui.audioPreview.AudioPreviewScreen
 import com.example.ringtonev2.ui.home.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
@@ -62,7 +63,7 @@ fun AppNavigation() {
                     onOpenAudioInfo = { data ->
                         backStack.add(AudioInfoRoute(Gson().toJson(data)))
                     },
-                    onOpenErrorInfo = {backStack.add(Routes.AudioErrorRoute)}
+                    onOpenErrorInfo = { backStack.add(Routes.AudioErrorRoute) }
                 )
             }
 
@@ -84,15 +85,30 @@ fun AppNavigation() {
                 val downloadData = remember(route.tikTokDataJson) {
                     gson.fromJson(route.tikTokDataJson, TikTokData::class.java)
                 }
+                val ringtoneId = downloadData.id
                 AudioDownloadScreen(
                     data = downloadData,
-                    onContinue = { backStack.removeLastOrNull() },
+                    onContinue = { ringtoneId?.let {
+                        backStack.add(
+                            Routes.AudioPreviewRoute(it)
+                        )
+                    } },
                     onBack = { backStack.removeLastOrNull() },
                 )
             }
             entry<Routes.AudioErrorRoute> {
                 AudioErrorScreen(
                     onBack = { backStack.removeLastOrNull() }
+                )
+            }
+            entry<Routes.AudioPreviewRoute> { route ->
+                AudioPreviewScreen(
+                    ringtoneId = route.ringtoneId,
+                    onBack = { backStack.removeLastOrNull()
+                        backStack.removeLastOrNull()
+                        // màn audio download không có back nên remove 2 lần
+                        // sẽ sửa logic sau để tái sử dụng lại
+                    }
                 )
             }
         },
