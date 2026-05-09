@@ -1,5 +1,6 @@
 package com.example.ringtonev2.ui.home
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -46,7 +47,6 @@ fun HomeScreen(
             .fillMaxSize()
             .background(colorResource(id = R.color.Black))
     ) {
-
         when (val state = uiState) {
             HomeState.Idle -> {}
             HomeState.Loading -> {
@@ -101,10 +101,14 @@ fun HomeScreen(
                     ) { index ->
 
                         val ringtone = pagingItems[index] ?: return@items
-
                         RingtoneItemRow(
                             ringtone = ringtone,
-                            onPlayClick = {
+                            onSetClick = {
+                                Log.d("HomeScreen", "onSetClick: ${ringtone.id}")
+                                Log.d("HomeScreen", "onSetClick: ${ringtone.name}")
+                                onOpenPlayer(ringtone.id.toString())
+                            },
+                            onSwipeRight = {
                                 onOpenPlayer(ringtone.id.toString())
                             }
                         )
@@ -220,6 +224,7 @@ fun CategoryTabsSection(
 ) {
 
     LazyRow(
+        modifier = Modifier.background(Color.Black),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 

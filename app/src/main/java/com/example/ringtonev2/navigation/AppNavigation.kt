@@ -1,5 +1,6 @@
 package com.example.ringtonev2.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.entryProvider
@@ -55,7 +56,7 @@ fun AppNavigation() {
 
             entry<MainRoute> {
                 MainScreen(
-                    onOpenPlayer = { id -> backStack.add(PlayerRoute(id)) },
+                    onOpenPlayer = { id -> backStack.add(Routes.AudioPreviewRoute(id)) ; Log.d("AppNavigation", "onOpenPlayer: $id")},
                     onOpenExtract = { backStack.add(ExtractRoute) },
                     onOpenHistory = { backStack.add(ExtractionHistoryRoute) },
                     onOpenAudioInfo = { data ->
@@ -66,6 +67,7 @@ fun AppNavigation() {
             }
 
             entry<AudioInfoRoute> { route ->
+
                 val gson = remember { Gson() }
                 val data = remember(route.tikTokDataJson) {
                     gson.fromJson(route.tikTokDataJson, TikTokData::class.java)
@@ -99,7 +101,9 @@ fun AppNavigation() {
                     onBack = { backStack.removeLastOrNull() }
                 )
             }
-            entry<Routes.AudioPreviewRoute> { route ->
+            entry<Routes.AudioPreviewRoute> {
+                route ->
+                Log.d("AppNavigation", "AudioPreviewRoute: ${route.ringtoneId}")
                 AudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()
@@ -109,6 +113,7 @@ fun AppNavigation() {
                     }
                 )
             }
+
         },
     )
 }
