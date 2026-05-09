@@ -24,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.domain.Category
@@ -38,7 +40,7 @@ fun HomeScreen(
     val uiState by viewModel.homeState.collectAsState()
 
     val listState = rememberLazyListState()
-
+    val pagingItems = viewModel.ringtones.collectAsLazyPagingItems()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,20 +68,6 @@ fun HomeScreen(
             }
 
             is HomeState.Success -> {
-                LaunchedEffect(listState, state.ringtones.size) {
-                    snapshotFlow {
-                        listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                    }.collect { lastIndex ->
-
-                        if (
-                            lastIndex != null &&
-                            lastIndex >= state.ringtones.lastIndex - 3
-                        ) {
-                            viewModel.loadMore()
-                        }
-                    }
-                }
-
                 LazyColumn(
                     state = listState,
                     modifier = Modifier
@@ -88,16 +76,10 @@ fun HomeScreen(
                 ) {
 
                     item {
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
                         FeaturedBannerSection()
                     }
 
-                    item {
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
+                    stickyHeader {
                         CategoryTabsSection(
                             categories = state.categories,
                             selectedCategoryId = state.selectedCategoryId,
@@ -112,9 +94,13 @@ fun HomeScreen(
                     }
 
                     items(
-                        items = state.ringtones,
-                        key = { it.id }
-                    ) { ringtone ->
+                        count = pagingItems.itemCount,
+                        key = { index ->
+                            pagingItems[index]?.id ?: index
+                        }
+                    ) { index ->
+
+                        val ringtone = pagingItems[index] ?: return@items
 
                         RingtoneItemRow(
                             ringtone = ringtone,
@@ -128,6 +114,11 @@ fun HomeScreen(
                             thickness = 0.5.dp,
                             color = colorResource(id = R.color.border_subtlest)
                         )
+                    }
+                    if (pagingItems.loadState.append is LoadState.Loading) {
+                        item {
+                            CircularProgressIndicator()
+                        }
                     }
                 }
             }

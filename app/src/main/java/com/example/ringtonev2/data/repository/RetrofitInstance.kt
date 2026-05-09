@@ -2,12 +2,16 @@ package com.example.ringtonev2.data.repository
 
 import com.example.ringtonev2.BuildConfig
 import com.example.ringtonev2.data.remote.api.ApiService
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-
+import dagger.hilt.components.SingletonComponent
 object RetrofitInstance {
 
     private const val BASE_URL = "https://api-project2.h5cdn.com/"
@@ -41,5 +45,32 @@ object RetrofitInstance {
 
     val api: ApiService by lazy {
         retrofit.create(ApiService::class.java)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object NetworkModule {
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api-project2.h5cdn.com/")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): ApiService {
+        return retrofit.create(ApiService::class.java)
     }
 }

@@ -12,8 +12,7 @@ sealed interface HomeState {
 
     data class Success(
         val categories: List<Category>,
-        val ringtones: List<Ringtone>,
-        val selectedCategoryId: Int? = null
+        val selectedCategoryId: Int?
     ) : HomeState
 
     data class Error(
