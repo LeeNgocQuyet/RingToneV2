@@ -4,30 +4,13 @@ import com.google.gson.annotations.SerializedName
 
 data class Ringtone(
     val id: Int,
-    val category_id: Int?,
+    @SerializedName("category_id")
+    val categoryId: Int?,
     val name: String?,
-    val watch_count: Int?,
-    val audio_path: String?,
+    @SerializedName("watch_count")
+    val watchCount: Int?,
+    @SerializedName("audio_path")
+    val audioPath: String?,
     val image: String?,
     val duration: Int?
-)
-
-data class DownloadItem(
-    val id: Long,
-    val ringtoneId: String,
-    val title: String,
-    val artist: String,
-    val filePath: String,
-    val downloadedAt: Long,
-    val duration: Long
-)
-
-data class Category(
-    val id: Int,
-    val icon: String,
-    val name: String,
-    val weight: Int,
-    @SerializedName("background_image")
-    val backgroundImage: String,
-    val description: String
 )
