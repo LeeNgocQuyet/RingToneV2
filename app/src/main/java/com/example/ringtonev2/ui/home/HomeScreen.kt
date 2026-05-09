@@ -82,7 +82,7 @@ fun HomeScreen(
                             categories = state.categories,
                             selectedCategoryId = state.selectedCategoryId,
                             onCategoryClick = {
-                                //viewModel.selectCategory(it)
+                                viewModel.selectCategory(it)
                             }
                         )
                     }
@@ -251,14 +251,6 @@ fun CategoryTabsSection(
             }
         }
     }
-}
-fun formatDuration(seconds: Int?): String {
-    if (seconds == null || seconds <= 0L) return "00:00"
-
-    val minutes = seconds / 60
-    val secs = seconds % 60
-
-    return "%02d:%02d".format(minutes, secs)
 }
 
 @Preview

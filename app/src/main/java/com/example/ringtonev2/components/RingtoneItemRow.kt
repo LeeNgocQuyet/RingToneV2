@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 import com.example.ringtonev2.domain.Ringtone
-import com.example.ringtonev2.ui.home.formatDuration
 import com.example.ringtonev2.ui.theme.AppTypography
 
 @Composable
@@ -69,7 +68,7 @@ fun RingtoneItemRow(ringtone: Ringtone, onPlayClick: () -> Unit) {
                 .padding(horizontal = 16.dp)
         ) {
             Text(
-                text = ringtone.title,
+                text = ringtone.name ?: "Unknown",
                 style = AppTypography.labelLarge.copy(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.W600,
@@ -77,7 +76,7 @@ fun RingtoneItemRow(ringtone: Ringtone, onPlayClick: () -> Unit) {
                 )
             )
             Text(
-                text = formatDuration(ringtone.durationSec),
+                text = formatDuration(ringtone.duration),
                 style = AppTypography.bodySmall.copy(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.W500,
@@ -112,4 +111,12 @@ fun RingtoneItemRow(ringtone: Ringtone, onPlayClick: () -> Unit) {
             modifier = Modifier.size(20.dp)
         )
     }
+}
+fun formatDuration(milisecond: Int?): String {
+    if (milisecond == null || milisecond <= 0L) return "00:00"
+    val seconds = milisecond / 1000L
+    val minutes = seconds / 60
+    val secs = seconds % 60
+
+    return "%02d:%02d".format(minutes, secs)
 }

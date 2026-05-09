@@ -3,14 +3,13 @@ package com.example.ringtonev2.domain
 import com.google.gson.annotations.SerializedName
 
 data class Ringtone(
-    val id: String,
-    val title: String,
-    val artist: String,
-    val category: String,
-    val durationSec: Int,
-    val coverUrl: String,
-    val audioUrl: String,
-    val plays: Int,
+    val id: Int,
+    val category_id: Int?,
+    val name: String?,
+    val watch_count: Int?,
+    val audio_path: String?,
+    val image: String?,
+    val duration: Int?
 )
 
 data class DownloadItem(
