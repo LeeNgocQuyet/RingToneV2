@@ -69,7 +69,8 @@ fun AudioPreviewScreen(
 ) {
     val viewModel: AudioPreviewScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val duration = uiState.duration * 1000L
+    
+    val duration = uiState.duration
 
     var showAssignDialog by remember {
         mutableStateOf(false)
@@ -368,8 +369,6 @@ fun AudioPreviewScreen(
                 // 🔥 BUTTON
                 Button(
                     onClick = {
-                        // Lưu ý: Logic setAsSystemSound hiện tại yêu cầu file local.
-                        // Nếu là nhạc online (audioPath bắt đầu bằng http), bạn có thể cần tải về trước.
                         showAssignDialog = true
                     },
                     modifier = Modifier
@@ -393,15 +392,6 @@ fun AudioPreviewScreen(
     }
 }
 
-fun formatDurationMil(milliseconds: Long?): String {
-    if (milliseconds == null || milliseconds <= 0L) return "00:00"
-
-    val totalSeconds = milliseconds / 1000
-    val minutes = totalSeconds / 60
-    val secs = totalSeconds % 60
-
-    return "%02d:%02d".format(minutes, secs)
-}
 fun formatDuration(milliseconds: Long?): String {
     if (milliseconds == null || milliseconds <= 0L) return "00:00"
 

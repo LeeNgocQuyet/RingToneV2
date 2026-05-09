@@ -49,7 +49,6 @@ class AudioPreviewScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
-            // 1. Thử tìm trong database local (đã tải về)
             val localAudio = repository.getByRingtoneId(audioId)
 
             if (localAudio != null) {
@@ -59,25 +58,21 @@ class AudioPreviewScreenViewModel @Inject constructor(
                     audioPath = localAudio.filePath ?: "",
                     isLoading = false
                 )
-                Log.d("AudioPreviewVM", "Loaded from local: ${localAudio.filePath}")
             } else {
-                // 2. Nếu không có local, gọi API lấy thông tin online
                 try {
                     val response = api.getRingtones(listIds = audioId)
                     if (response.status && response.data.isNotEmpty()) {
                         val remoteAudio = response.data.first()
                         _uiState.value = _uiState.value.copy(
                             title = remoteAudio.name ?: "",
-                            duration = remoteAudio.duration?.toLong() ?: 0L,
+                            duration = (remoteAudio.duration?.toLong() ?: 0L) ,
                             audioPath = remoteAudio.audioPath ?: "",
                             isLoading = false
                         )
-                        Log.d("AudioPreviewVM", "Loaded from remote: ${remoteAudio.audioPath}")
                     } else {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                     }
                 } catch (e: Exception) {
-                    Log.e("AudioPreviewVM", "Error loading remote: ${e.message}")
                     _uiState.value = _uiState.value.copy(isLoading = false)
                 }
             }
@@ -97,22 +92,15 @@ class AudioPreviewScreenViewModel @Inject constructor(
     }
 
     fun setPlaying(isPlaying: Boolean) {
-        _uiState.value =
-            _uiState.value.copy(
-                isPlaying = isPlaying
-            )
+        _uiState.value = _uiState.value.copy(isPlaying = isPlaying)
     }
 
     fun setAsSystemSound(context: Context, type: RingtoneType, onSuccess: () -> Unit) {
-        // Hàm này vẫn yêu cầu file local. Nếu chưa tải, bạn có thể cần thông báo user tải trước khi set.
         val appContext = context.applicationContext
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val path = _uiState.value.audioPath
-                if (path.isEmpty() || path.startsWith("http")) {
-                    Log.e("RingtoneError", "File must be downloaded before setting as system sound")
-                    return@launch
-                }
+                if (path.isEmpty() || path.startsWith("http")) return@launch
                 
                 val internalFile = File(path)
                 if (!internalFile.exists()) return@launch
@@ -130,30 +118,20 @@ class AudioPreviewScreenViewModel @Inject constructor(
                         else -> Environment.DIRECTORY_RINGTONES
                     }
                     put(MediaStore.MediaColumns.RELATIVE_PATH, folder)
-
                     put(MediaStore.Audio.Media.IS_RINGTONE, type == RingtoneType.RINGTONE)
                     put(MediaStore.Audio.Media.IS_NOTIFICATION, type == RingtoneType.NOTIFICATION)
                     put(MediaStore.Audio.Media.IS_ALARM, type == RingtoneType.ALARM)
                 }
 
                 val newUri = resolver.insert(audioUri, values)
-
                 if (newUri != null) {
                     resolver.openOutputStream(newUri)?.use { output ->
-                        FileInputStream(internalFile).use { input ->
-                            input.copyTo(output)
-                        }
+                        FileInputStream(internalFile).use { input -> input.copyTo(output) }
                     }
-
                     RingtoneManager.setActualDefaultRingtoneUri(appContext, type.value, newUri)
-
-                    withContext(Dispatchers.Main) {
-                        onSuccess()
-                    }
-                    Log.d("RingtoneSuccess", "success: $newUri")
+                    withContext(Dispatchers.Main) { onSuccess() }
                 }
             } catch (e: Exception) {
-                Log.e("RingtoneError", "error: ${e.message}")
                 e.printStackTrace()
             }
         }
