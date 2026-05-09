@@ -1,23 +1,17 @@
 package com.example.ringtonev2.ui.home
 
-import androidx.compose.animation.core.*
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -25,242 +19,194 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ringtonev2.R
+import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.domain.Category
-import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.ui.theme.AppTypography
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
     onOpenPlayer: (String) -> Unit
 ) {
-
+    val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.homeState.collectAsState()
 
+    Log.d("HomeScreen", "uiState = $uiState")
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.background_default))
+            .background(colorResource(id = R.color.Black))
     ) {
 
-        if (uiState.isLoading) {
-
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                FeaturedBannerSection()
+        when (val state = uiState) {
+            HomeState.Idle -> {}
+            HomeState.Loading -> {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            is HomeState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = state.message,
+                        color = Color.White
+                    )
+                }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(24.dp))
+            is HomeState.Success -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
 
-                CategoryTabsSection(
-                    categories = uiState.categories,
-                    selectedCategoryId = uiState.selectedCategoryId,
-                    onCategoryClick = {
-                        viewModel.selectCategory(it)
+                    item {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        FeaturedBannerSection()
                     }
-                )
-            }
 
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+                    item {
 
-            items(uiState.ringtones) { ringtone ->
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                MusicItemRow(
-                    ringtone = ringtone,
-                    onPlayClick = {
-                        onOpenPlayer(ringtone.id.toString())
+                        CategoryTabsSection(
+                            categories = state.categories,
+                            selectedCategoryId = state.selectedCategoryId,
+                            onCategoryClick = {
+                                //viewModel.selectCategory(it)
+                            }
+                        )
                     }
-                )
 
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 4.dp),
-                    thickness = 0.5.dp,
-                    color = colorResource(id = R.color.border_subtlest)
-                )
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    items(
+                        items = state.ringtones,
+                        key = { it.id }
+                    ) { ringtone ->
+
+                        RingtoneItemRow(
+                            ringtone = ringtone,
+                            onPlayClick = {
+                                onOpenPlayer(ringtone.id.toString())
+                            }
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            thickness = 0.5.dp,
+                            color = colorResource(id = R.color.border_subtlest)
+                        )
+                    }
+                }
             }
         }
     }
 }
-
 
 
 @Composable
 fun FeaturedBannerSection() {
-    // Format Box border và background giống hệt DownloadScreen bạn gửi
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(180.dp)
-            .border(
-                width = 1.dp,
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color(0x00CFA3FF), Color(0xFFCFA3FF))
-                ),
-                shape = RoundedCornerShape(24.dp)
-            )
-            .clip(RoundedCornerShape(24.dp))
+            .height(170.dp)
     ) {
-        // Hình nền của Banner
-        Image(
-            painter = painterResource(id = R.drawable.bg_download_screen), // Dùng chung tài nguyên nền
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-
-        // Nội dung Banner (Bên trái)
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(start = 24.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Top Ringtone",
-                style = AppTypography.titleLarge.copy(
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            )
-            Text(
-                text = "Your phone, your vibe",
-                style = AppTypography.bodyMedium.copy(
-                    color = colorResource(id = R.color.content_subtlest)
-                )
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.background_secondary) // Màu tím nhạt
-                ),
-                shape = RoundedCornerShape(50),
-                contentPadding = PaddingValues(horizontal = 20.dp)
-            ) {
-                Icon(Icons.Default.PlayArrow, null, tint = Color.Black)
-                Text("Play", color = Color.Black, fontWeight = FontWeight.Bold)
-            }
-        }
-
-        // Hộp nhạc rời (Vinyl) - Nằm bên phải và đè lên trên
-        VinylComponent(Modifier.align(Alignment.CenterEnd))
-    }
-}
-
-@Composable
-fun VinylComponent(modifier: Modifier) {
-
-    Box(
-        modifier = modifier
-            .offset(x = 10.dp)
-            .size(130.dp)
-            .rotate(5f)
-            .clip(RoundedCornerShape(12.dp))
-            .background(colorResource(id = R.color.border_bold)) // Màu xanh lơ của vỏ đĩa
-            .padding(8.dp)
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            shape = CircleShape,
-            color = Color.Black
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                // Tâm đĩa than
-                Box(
-                    Modifier
-                        .size(30.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(id = R.color.background_secondary))
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun MusicItemRow(ringtone: Ringtone, onPlayClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Thumbnail
+        // Banner background
         Box(
             modifier = Modifier
-                .size(56.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(colorResource(id = R.color.border_bold)),
-            contentAlignment = Alignment.Center
+                .matchParentSize()
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_play), // Icon play của bạn
+            Image(
+                painter = painterResource(R.drawable.bg_home),
                 contentDescription = null,
-                tint = colorResource(id = R.color.content_brand)
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
             )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(
+                        start = 28.dp,
+                        top = 22.dp,
+                        bottom = 20.dp
+                    ),
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                Column {
+                    Text(
+                        text = stringResource(R.string.top_ringtones),
+                        style = AppTypography.displayLarge.copy(
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.W700,
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color(0xFFFFFFFF),
+                                    Color(0xFFD6BEFF)
+                                )
+                            )
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = stringResource(R.string.home_description),
+                        style = AppTypography.labelLarge.copy(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W600,
+                            color = Color(0xFFD6BEFF)
+                        )
+                    )
+                }
+
+                Button(
+                    onClick = { },
+                    modifier = Modifier.height(52.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.background_secondary)
+                    ),
+                    shape = RoundedCornerShape(100.dp),
+                    contentPadding = PaddingValues(
+                        horizontal = 22.dp
+                    )
+                ) {
+
+                    Image(
+                        painter = painterResource(R.drawable.ic_home_play),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(6.dp))
+
+                    Text(
+                        text = stringResource(R.string.play),
+                        style = AppTypography.labelLarge.copy(
+                            color = colorResource(R.color.content_onbrand),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W600
+                        )
+                    )
+                }
+            }
         }
-
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(
-                text = "Tik Viral Hit 2024",
-                style = AppTypography.bodyLarge.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    color = colorResource(id = R.color.content_secondary)
-                )
-            )
-            Text(
-                text = "00:30",
-                style = AppTypography.bodySmall.copy(
-                    color = colorResource(id = R.color.content_disabled)
-                )
-            )
-        }
-
-        // Nút Set
-        Button(
-            onClick = { },
-            modifier = Modifier.height(32.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.background_secondary)),
-            shape = RoundedCornerShape(50)
-        ) {
-            Text("Set", style = AppTypography.labelMedium.copy(color = Color.Black))
-        }
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Icon(
-            painter = painterResource(id = R.drawable.ic_favourite),
-            contentDescription = null,
-            tint = Color.Red,
-            modifier = Modifier.size(20.dp)
-        )
     }
 }
+
 
 @Composable
 fun CategoryTabsSection(
@@ -269,23 +215,20 @@ fun CategoryTabsSection(
     onCategoryClick: (Int?) -> Unit
 ) {
 
-    Row(
+    LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        categories.forEach { category ->
+        items(categories) { category ->
 
             val isSelected = category.id == selectedCategoryId
 
             Surface(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .background(
-                        if (isSelected)
-                            colorResource(id = R.color.content_secondary)
-                        else
-                            colorResource(id = R.color.border_bold)
-                    ),
+                shape = RoundedCornerShape(50),
+                color = if (isSelected)
+                    colorResource(id = R.color.content_secondary)
+                else
+                    colorResource(id = R.color.border_bold),
 
                 onClick = {
                     onCategoryClick(category.id)
@@ -299,15 +242,29 @@ fun CategoryTabsSection(
                         vertical = 8.dp
                     ),
                     style = AppTypography.labelMedium.copy(
-                        color =
-                            if (isSelected)
-                                Color.Black
-                            else
-                                colorResource(id = R.color.content_disabled)
+                        color = if (isSelected)
+                            Color.Black
+                        else
+                            colorResource(id = R.color.content_disabled)
                     )
                 )
             }
         }
     }
 }
+fun formatDuration(seconds: Int?): String {
+    if (seconds == null || seconds <= 0L) return "00:00"
 
+    val minutes = seconds / 60
+    val secs = seconds % 60
+
+    return "%02d:%02d".format(minutes, secs)
+}
+
+@Preview
+@Composable
+fun PreviewHomeScreen() {
+    HomeScreen {
+
+    }
+}

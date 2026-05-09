@@ -32,7 +32,7 @@ interface ApiService {
         @Query("is_clone") isClone: Boolean? = null,
     ): RingtoneResponse
 
-    @GET("api/category/list")
+    @GET("api/ringtone/categories/list")
     suspend fun getCategories(
         @Query("page") page: Int = 1,
         @Query("limit") limit: Int = 25,

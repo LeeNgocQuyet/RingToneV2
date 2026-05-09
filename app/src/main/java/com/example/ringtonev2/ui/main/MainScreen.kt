@@ -29,7 +29,6 @@ import com.example.ringtonev2.components.EnableNotificationCard
 import com.example.ringtonev2.ui.category.CategoryScreen
 import com.example.ringtonev2.ui.download.DownloadScreen
 import com.example.ringtonev2.ui.playlist.PlayListScreen
-import com.example.ringtonev2.ui.ringtone.RingtoneScreen
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.R
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -61,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.ringtonev2.data.datastore.DataStoreManager
+import com.example.ringtonev2.ui.home.HomeScreen
 import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
@@ -228,7 +228,9 @@ fun MainScreen(
                 .padding(padding)
         ) {
             when (tab) {
-                MainTab.Home -> RingtoneScreen()
+                MainTab.Home -> HomeScreen(
+                    onOpenPlayer = onOpenPlayer,
+                )
                 MainTab.Download -> DownloadScreen(
                     onOpenPlayer = onOpenPlayer,
                     onOpenAudioInfo = onOpenAudioInfo,
