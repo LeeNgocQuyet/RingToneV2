@@ -23,7 +23,7 @@ interface ApiService {
     @GET("api/ringtone/list")
     suspend fun getRingtones(
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 25,
+        @Query("limit") limit: Int = 24,
         @Query("order_by") orderBy: String = "id",
         @Query("order") order: String = "asc",
         @Query("category_ids") categoryIds: String? = null,
@@ -35,7 +35,7 @@ interface ApiService {
     @GET("api/ringtone/categories/list")
     suspend fun getCategories(
         @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 25,
+        @Query("limit") limit: Int = 24,
         @Query("order_by") orderBy: String = "id",
         @Query("order") order: String = "asc",
     ): CategoryResponse

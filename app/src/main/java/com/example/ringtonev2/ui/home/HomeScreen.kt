@@ -1,15 +1,16 @@
 package com.example.ringtonev2.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -32,10 +33,12 @@ import com.example.ringtonev2.ui.theme.AppTypography
 fun HomeScreen(
     onOpenPlayer: (String) -> Unit
 ) {
+
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.homeState.collectAsState()
 
-    Log.d("HomeScreen", "uiState = $uiState")
+    val listState = rememberLazyListState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,6 +52,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+
             is HomeState.Error -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -62,13 +66,29 @@ fun HomeScreen(
             }
 
             is HomeState.Success -> {
+                LaunchedEffect(listState, state.ringtones.size) {
+                    snapshotFlow {
+                        listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                    }.collect { lastIndex ->
+
+                        if (
+                            lastIndex != null &&
+                            lastIndex >= state.ringtones.lastIndex - 3
+                        ) {
+                            viewModel.loadMore()
+                        }
+                    }
+                }
+
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(horizontal = 16.dp)
                 ) {
 
                     item {
+
                         Spacer(modifier = Modifier.height(8.dp))
 
                         FeaturedBannerSection()
@@ -115,98 +135,91 @@ fun HomeScreen(
     }
 }
 
-
 @Composable
 fun FeaturedBannerSection() {
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(170.dp)
     ) {
-        // Banner background
-        Box(
+
+        Image(
+            painter = painterResource(R.drawable.bg_home),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
             modifier = Modifier
-                .matchParentSize()
+                .fillMaxHeight()
+                .padding(
+                    start = 28.dp,
+                    top = 22.dp,
+                    bottom = 20.dp
+                ),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Image(
-                painter = painterResource(R.drawable.bg_home),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
 
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(
-                        start = 28.dp,
-                        top = 22.dp,
-                        bottom = 20.dp
-                    ),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
+            Column {
 
-                Column {
-                    Text(
-                        text = stringResource(R.string.top_ringtones),
-                        style = AppTypography.displayLarge.copy(
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.W700,
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    Color(0xFFFFFFFF),
-                                    Color(0xFFD6BEFF)
-                                )
+                Text(
+                    text = stringResource(R.string.top_ringtones),
+                    style = AppTypography.displayLarge.copy(
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.W700,
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFFFFFFFF),
+                                Color(0xFFD6BEFF)
                             )
                         )
                     )
+                )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                    Text(
-                        text = stringResource(R.string.home_description),
-                        style = AppTypography.labelLarge.copy(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W600,
-                            color = Color(0xFFD6BEFF)
-                        )
+                Text(
+                    text = stringResource(R.string.home_description),
+                    style = AppTypography.labelLarge.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600,
+                        color = Color(0xFFD6BEFF)
                     )
-                }
+                )
+            }
 
-                Button(
-                    onClick = { },
-                    modifier = Modifier.height(52.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.background_secondary)
-                    ),
-                    shape = RoundedCornerShape(100.dp),
-                    contentPadding = PaddingValues(
-                        horizontal = 22.dp
+            Button(
+                onClick = { },
+                modifier = Modifier.height(52.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.background_secondary)
+                ),
+                shape = RoundedCornerShape(100.dp),
+                contentPadding = PaddingValues(horizontal = 22.dp)
+            ) {
+
+                Image(
+                    painter = painterResource(R.drawable.ic_home_play),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = stringResource(R.string.play),
+                    style = AppTypography.labelLarge.copy(
+                        color = colorResource(R.color.content_onbrand),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600
                     )
-                ) {
-
-                    Image(
-                        painter = painterResource(R.drawable.ic_home_play),
-                        contentDescription = null,
-                        modifier = Modifier.size(24.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(6.dp))
-
-                    Text(
-                        text = stringResource(R.string.play),
-                        style = AppTypography.labelLarge.copy(
-                            color = colorResource(R.color.content_onbrand),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W600
-                        )
-                    )
-                }
+                )
             }
         }
     }
 }
-
 
 @Composable
 fun CategoryTabsSection(
@@ -225,11 +238,11 @@ fun CategoryTabsSection(
 
             Surface(
                 shape = RoundedCornerShape(50),
-                color = if (isSelected)
+                color = if (isSelected) {
                     colorResource(id = R.color.content_secondary)
-                else
-                    colorResource(id = R.color.border_bold),
-
+                } else {
+                    colorResource(id = R.color.border_bold)
+                },
                 onClick = {
                     onCategoryClick(category.id)
                 }
@@ -242,10 +255,11 @@ fun CategoryTabsSection(
                         vertical = 8.dp
                     ),
                     style = AppTypography.labelMedium.copy(
-                        color = if (isSelected)
+                        color = if (isSelected) {
                             Color.Black
-                        else
+                        } else {
                             colorResource(id = R.color.content_disabled)
+                        }
                     )
                 )
             }
@@ -256,7 +270,8 @@ fun CategoryTabsSection(
 @Preview
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreen {
 
-    }
+    HomeScreen(
+        onOpenPlayer = {}
+    )
 }
