@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -130,21 +131,21 @@ fun AudioPreviewScreen(
     LaunchedEffect(ringtoneId) {
         viewModel.load(ringtoneId)
     }
+    
     LaunchedEffect(uiState.audioPath) {
-
         if (uiState.audioPath.isNotEmpty()) {
-
-            val mediaItem = MediaItem.fromUri(
-                Uri.fromFile(
-                    File(uiState.audioPath)
-                )
-            )
-
+            val uri = if (uiState.audioPath.startsWith("http")) {
+                Uri.parse(uiState.audioPath)
+            } else {
+                Uri.fromFile(File(uiState.audioPath))
+            }
+            
+            val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
-
             exoPlayer.prepare()
         }
     }
+    
     LaunchedEffect(exoPlayer) {
         while (true) {
             viewModel.seekTo(
@@ -153,6 +154,7 @@ fun AudioPreviewScreen(
             delay(300)
         }
     }
+    
     DisposableEffect(exoPlayer) {
         val listener =
             object : Player.Listener {
@@ -169,6 +171,7 @@ fun AudioPreviewScreen(
             exoPlayer.release()
         }
     }
+    
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -199,205 +202,212 @@ fun AudioPreviewScreen(
         containerColor = Color.Black
     ) { padding ->
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(horizontal = 16.dp)
-        ) {
-
-            Spacer(Modifier.height(20.dp))
-
-            // DISC IMAGE
-            Box(
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = colorResource(R.color.background_brand))
+            }
+        } else {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.bg_removal),
-                    contentDescription = null,
-                    modifier = Modifier.size(280.dp)
-                )
-            }
-
-            Spacer(Modifier.height(32.dp))
-
-            // TITLE + HEART
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = uiState.title,
-                        style = AppTypography.bodyMedium.copy(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W600
-                        ),
-                        color = colorResource(R.color.content_default)
-                    )
-                }
-
-                IconButton(onClick = { }) {
-
-                    Icon(
-                        painter = painterResource(R.drawable.ic_favourite),
-                        contentDescription = null,
-                        tint = Color.Red
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(20.dp))
-
-            // PROGRESS BAR
-            Slider(
-                value = progress,
-                colors = androidx.compose.material3.SliderDefaults.colors(
-                    thumbColor = colorResource(R.color.background_brand),
-                    activeTrackColor = colorResource(R.color.background_brand),
-                    inactiveTrackColor = colorResource(R.color.background_neutral),
-
-                    disabledThumbColor = colorResource(R.color.background_brand),
-                    disabledActiveTrackColor = colorResource(R.color.background_brand),
-                    disabledInactiveTrackColor = colorResource(R.color.background_neutral),
-                ),
-                enabled = true,
-                onValueChange = {
-                    val newPosition = (it * duration).toLong()
-                    exoPlayer.seekTo(newPosition)
-                    viewModel.seekTo(newPosition)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // TIME
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    formatDuration(uiState.currentPosition),
-                    style = AppTypography.bodySmall.copy(
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        lineHeight = 16.sp,
-                    ),
-                    color = colorResource(R.color.content_subtlest)
-                )
-                Text(
-                    formatDuration(
-                        duration
-                    ),
-                    style = AppTypography.bodySmall.copy(
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        lineHeight = 16.sp,
-                    ),
-                    color = colorResource(R.color.content_subtlest)
-                )
-            }
-
-            Spacer(Modifier.height(30.dp))
-
-            // 🔥 CONTROLS
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 16.dp)
             ) {
 
-                IconButton(onClick = {
-                    val newPosition =
-                        (exoPlayer.currentPosition - 10_000L)
-                            .coerceAtLeast(0L)
+                Spacer(Modifier.height(20.dp))
 
-                    exoPlayer.seekTo(newPosition)
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.go_backward_10sec),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-
+                // DISC IMAGE
                 Box(
                     modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(R.color.background_brand)),
+                        .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    val icon =
-                        if (uiState.isPlaying)
-                            R.drawable.ic_pause
-                        else
-                            R.drawable.ic_play
-                    IconButton(onClick = {
-                        if (exoPlayer.isPlaying) {
-                            exoPlayer.pause()
-                        } else {
-                            exoPlayer.play()
-                        }
-                    })
-                    {
+                    Image(
+                        painter = painterResource(R.drawable.bg_removal),
+                        contentDescription = null,
+                        modifier = Modifier.size(280.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(32.dp))
+
+                // TITLE + HEART
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = uiState.title,
+                            style = AppTypography.bodyMedium.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.W600
+                            ),
+                            color = colorResource(R.color.content_default)
+                        )
+                    }
+
+                    IconButton(onClick = { }) {
                         Icon(
-                            painter = painterResource(icon),
+                            painter = painterResource(R.drawable.ic_favourite),
                             contentDescription = null,
-                            tint = Color.Black
+                            tint = Color.Red
                         )
                     }
                 }
 
-                IconButton(onClick = {
-                    val newPosition =
-                        (exoPlayer.currentPosition + 10_000L)
-                            .coerceAtMost(duration)
+                Spacer(Modifier.height(20.dp))
 
-                    exoPlayer.seekTo(newPosition)
-                }) {
-                    Icon(
-                        painter = painterResource(R.drawable.go_forward_10sec),
-                        contentDescription = null,
-                        tint = Color.White
+                // PROGRESS BAR
+                Slider(
+                    value = progress,
+                    colors = androidx.compose.material3.SliderDefaults.colors(
+                        thumbColor = colorResource(R.color.background_brand),
+                        activeTrackColor = colorResource(R.color.background_brand),
+                        inactiveTrackColor = colorResource(R.color.background_neutral),
+
+                        disabledThumbColor = colorResource(R.color.background_brand),
+                        disabledActiveTrackColor = colorResource(R.color.background_brand),
+                        disabledInactiveTrackColor = colorResource(R.color.background_neutral),
+                    ),
+                    enabled = true,
+                    onValueChange = {
+                        val newPosition = (it * duration).toLong()
+                        exoPlayer.seekTo(newPosition)
+                        viewModel.seekTo(newPosition)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // TIME
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        formatDuration(uiState.currentPosition),
+                        style = AppTypography.bodySmall.copy(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 16.sp,
+                        ),
+                        color = colorResource(R.color.content_subtlest)
+                    )
+                    Text(
+                        formatDuration(duration),
+                        style = AppTypography.bodySmall.copy(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            lineHeight = 16.sp,
+                        ),
+                        color = colorResource(R.color.content_subtlest)
                     )
                 }
+
+                Spacer(Modifier.height(30.dp))
+
+                // 🔥 CONTROLS
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    IconButton(onClick = {
+                        val newPosition =
+                            (exoPlayer.currentPosition - 10_000L)
+                                .coerceAtLeast(0L)
+                        exoPlayer.seekTo(newPosition)
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.go_backward_10sec),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .background(colorResource(R.color.background_brand)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val icon = if (uiState.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                        IconButton(onClick = {
+                            if (exoPlayer.isPlaying) {
+                                exoPlayer.pause()
+                            } else {
+                                exoPlayer.play()
+                            }
+                        }) {
+                            Icon(
+                                painter = painterResource(icon),
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
+                        }
+                    }
+
+                    IconButton(onClick = {
+                        val newPosition =
+                            (exoPlayer.currentPosition + 10_000L)
+                                .coerceAtMost(duration)
+                        exoPlayer.seekTo(newPosition)
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.go_forward_10sec),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
+                }
+
+                Spacer(Modifier.weight(1f))
+
+                // 🔥 BUTTON
+                Button(
+                    onClick = {
+                        // Lưu ý: Logic setAsSystemSound hiện tại yêu cầu file local.
+                        // Nếu là nhạc online (audioPath bắt đầu bằng http), bạn có thể cần tải về trước.
+                        showAssignDialog = true
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(R.color.background_secondary),
+                    )
+                ) {
+                    Text(
+                        stringResource(R.string.set_ring_tone),
+                        color = colorResource(R.color.content_onsecondary),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Spacer(Modifier.height(16.dp))
             }
-
-            Spacer(Modifier.weight(1f))
-
-            // 🔥 BUTTON
-            Button(
-                onClick = {
-                    showAssignDialog = true
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(28.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_secondary),
-                )
-            ) {
-                Text(
-                    stringResource(R.string.set_ring_tone),
-                    color = colorResource(R.color.content_onsecondary),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
         }
     }
 }
 
+fun formatDurationMil(milliseconds: Long?): String {
+    if (milliseconds == null || milliseconds <= 0L) return "00:00"
+
+    val totalSeconds = milliseconds / 1000
+    val minutes = totalSeconds / 60
+    val secs = totalSeconds % 60
+
+    return "%02d:%02d".format(minutes, secs)
+}
 fun formatDuration(milliseconds: Long?): String {
     if (milliseconds == null || milliseconds <= 0L) return "00:00"
 
-    val totalmilliseconds = milliseconds / 1000
-    val minutes = totalmilliseconds / 60
-    val secs = totalmilliseconds % 60
+    val totalSeconds = milliseconds / 1000
+    val minutes = totalSeconds / 60
+    val secs = totalSeconds % 60
 
     return "%02d:%02d".format(minutes, secs)
 }

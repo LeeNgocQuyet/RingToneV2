@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,8 @@ data class AudioPreviewUiState(
     val audioPath: String = "",
     val duration: Long = 0L,
     val currentPosition: Long = 0L,
-    val isPlaying: Boolean = false
+    val isPlaying: Boolean = false,
+    val isLoading: Boolean = false
 )
 
 enum class RingtoneType(val value: Int) {
@@ -33,9 +35,11 @@ enum class RingtoneType(val value: Int) {
     NOTIFICATION(RingtoneManager.TYPE_NOTIFICATION),
     ALARM(RingtoneManager.TYPE_ALARM)
 }
+
 @HiltViewModel
 class AudioPreviewScreenViewModel @Inject constructor(
-    private val repository: RingtoneRepository
+    private val repository: RingtoneRepository,
+    private val api: ApiService
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AudioPreviewUiState())
@@ -43,15 +47,40 @@ class AudioPreviewScreenViewModel @Inject constructor(
 
     fun load(audioId: String) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            // 1. Thử tìm trong database local (đã tải về)
+            val localAudio = repository.getByRingtoneId(audioId)
 
-            val audio = repository.getByRingtoneId(audioId)
-
-            _uiState.value = _uiState.value.copy(
-                title = audio?.title ?: "",
-                duration = audio?.duration ?: 0L,
-                audioPath = audio?.filePath ?: ""
-            )
-            Log.d("AudioPreviewScreenViewModel", "load: ${audio?.filePath}")
+            if (localAudio != null) {
+                _uiState.value = _uiState.value.copy(
+                    title = localAudio.title ?: "",
+                    duration = localAudio.duration ?: 0L,
+                    audioPath = localAudio.filePath ?: "",
+                    isLoading = false
+                )
+                Log.d("AudioPreviewVM", "Loaded from local: ${localAudio.filePath}")
+            } else {
+                // 2. Nếu không có local, gọi API lấy thông tin online
+                try {
+                    val response = api.getRingtones(listIds = audioId)
+                    if (response.status && response.data.isNotEmpty()) {
+                        val remoteAudio = response.data.first()
+                        _uiState.value = _uiState.value.copy(
+                            title = remoteAudio.name ?: "",
+                            duration = remoteAudio.duration?.toLong() ?: 0L,
+                            audioPath = remoteAudio.audioPath ?: "",
+                            isLoading = false
+                        )
+                        Log.d("AudioPreviewVM", "Loaded from remote: ${remoteAudio.audioPath}")
+                    } else {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                    }
+                } catch (e: Exception) {
+                    Log.e("AudioPreviewVM", "Error loading remote: ${e.message}")
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }
+            }
         }
     }
 
@@ -60,11 +89,13 @@ class AudioPreviewScreenViewModel @Inject constructor(
             isPlaying = !_uiState.value.isPlaying
         )
     }
+
     fun seekTo(position: Long) {
         _uiState.value = _uiState.value.copy(
             currentPosition = position
         )
     }
+
     fun setPlaying(isPlaying: Boolean) {
         _uiState.value =
             _uiState.value.copy(
@@ -73,10 +104,17 @@ class AudioPreviewScreenViewModel @Inject constructor(
     }
 
     fun setAsSystemSound(context: Context, type: RingtoneType, onSuccess: () -> Unit) {
+        // Hàm này vẫn yêu cầu file local. Nếu chưa tải, bạn có thể cần thông báo user tải trước khi set.
         val appContext = context.applicationContext
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val internalFile = File(_uiState.value.audioPath)
+                val path = _uiState.value.audioPath
+                if (path.isEmpty() || path.startsWith("http")) {
+                    Log.e("RingtoneError", "File must be downloaded before setting as system sound")
+                    return@launch
+                }
+                
+                val internalFile = File(path)
                 if (!internalFile.exists()) return@launch
 
                 val resolver = appContext.contentResolver
@@ -86,7 +124,7 @@ class AudioPreviewScreenViewModel @Inject constructor(
                     put(MediaStore.MediaColumns.DISPLAY_NAME, internalFile.name)
                     put(MediaStore.MediaColumns.TITLE, _uiState.value.title)
                     put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg")
-                    val folder = when(type) {
+                    val folder = when (type) {
                         RingtoneType.ALARM -> Environment.DIRECTORY_ALARMS
                         RingtoneType.NOTIFICATION -> Environment.DIRECTORY_NOTIFICATIONS
                         else -> Environment.DIRECTORY_RINGTONES
@@ -118,26 +156,6 @@ class AudioPreviewScreenViewModel @Inject constructor(
                 Log.e("RingtoneError", "error: ${e.message}")
                 e.printStackTrace()
             }
-        }
-    }
-    fun copyFileToPublicFolder(context: Context, sourceFile: File, type: RingtoneType): File? {
-        try {
-            val publicDir = context.getExternalFilesDir(Environment.DIRECTORY_RINGTONES)
-            val destFile = File(publicDir, sourceFile.name)
-
-            if (!destFile.exists()) {
-                val inputStream = FileInputStream(sourceFile)
-                val outputStream = FileOutputStream(destFile)
-                inputStream.use { input ->
-                    outputStream.use { output ->
-                        input.copyTo(output)
-                    }
-                }
-            }
-            return destFile
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
         }
     }
 }

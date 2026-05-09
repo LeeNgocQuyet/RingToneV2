@@ -107,7 +107,6 @@ fun AppNavigation() {
                 AudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()
-                        backStack.removeLastOrNull()
                         // màn audio download không có back nên remove 2 lần
                         // sẽ sửa logic sau để tái sử dụng lại
                     }
