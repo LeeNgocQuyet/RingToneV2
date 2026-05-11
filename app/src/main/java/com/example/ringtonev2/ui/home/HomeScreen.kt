@@ -158,8 +158,11 @@ fun HomeScreen(
                             pagingItems[index]?.id ?: index
                         }
                     ) { index ->
-
                         val ringtone = pagingItems[index] ?: return@items
+                        val favoriteIds by viewModel.favoriteIds.collectAsState()
+
+                        val isFavorite = ringtone.id.toString() in favoriteIds
+
                         RingtoneItemRow(
                             ringtone = ringtone,
                             onPlayClick = {
@@ -179,8 +182,10 @@ fun HomeScreen(
                                 onOpenPlayer(ringtone.id.toString())
                             },
                             onFavorite = {
-
-                            }
+                                viewModel.toggleFavorite(
+                                    ringtone)
+                            },
+                            isFavorite = isFavorite
                         )
 
                         HorizontalDivider(

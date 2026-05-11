@@ -24,10 +24,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -46,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.ui.theme.AppTypography
+import com.example.ringtonev2.ui.theme.White
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +55,8 @@ fun RingtoneItemRow(
     onPlayClick: () -> Unit,
     onSetClick: () -> Unit,
     onSwipeRight: () -> Unit,
-    onFavorite: () -> Unit
+    onFavorite: () -> Unit,
+    isFavorite: Boolean
 ) {
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -119,12 +119,13 @@ fun RingtoneItemRow(
                         onClick = onPlayClick,
                         modifier = Modifier.size(24.dp),
                         content = {
-                        Icon(
-                            painter = if (!isPlaying) painterResource(id = R.drawable.ic_play)
-                            else painterResource(id = R.drawable.ic_pause),
-                        contentDescription = null,
-                        tint = colorResource(id = R.color.content_brand),
-                        modifier = Modifier.size(18.dp))
+                            Icon(
+                                painter = if (!isPlaying) painterResource(id = R.drawable.ic_play)
+                                else painterResource(id = R.drawable.ic_pause),
+                                contentDescription = null,
+                                tint = colorResource(id = R.color.content_brand),
+                                modifier = Modifier.size(18.dp)
+                            )
                         }
                     )
                 }
@@ -171,25 +172,40 @@ fun RingtoneItemRow(
                     style = AppTypography.bodySmall.copy(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,
-                        color = colorResource(id = R.color.content_onsecondary))
+                        color = colorResource(id = R.color.content_onsecondary)
+                    )
                 )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             IconButton(
-                onClick = onFavorite
+                onClick = onFavorite,
+                modifier = Modifier.size(30.dp).background(
+                    color = Color.White.copy(alpha = 0.12f),
+                    shape = CircleShape
+                ),
+
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Transparent
+
+                )
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_favourite),
+                    modifier = Modifier.size(20.dp),
+                    painter = painterResource(
+                        if (isFavorite) R.drawable.ic_favorite_fullfill
+                        else R.drawable.ic_favorite
+                    ),
                     contentDescription = null,
-                    tint = Color.Red,
-                    modifier = Modifier.size(20.dp)
+                    tint = if (isFavorite) Color.Red else Color.White
+
                 )
             }
         }
     }
 }
+
 fun formatDuration(milisecond: Int?): String {
     if (milisecond == null || milisecond <= 0L) return "00:00"
     val seconds = milisecond / 1000L

@@ -10,17 +10,23 @@ import androidx.paging.cachedIn
 import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.data.repository.RetrofitInstance
 import com.example.ringtonev2.domain.Ringtone
+import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val api: ApiService
+    private val api: ApiService,
+    private val repository: RingtoneRepository
 ) : ViewModel() {
 
     private val _homeState = MutableStateFlow<HomeState>(HomeState.Idle)
@@ -47,6 +53,18 @@ class HomeViewModel @Inject constructor(
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
 
+    val favoriteIds =
+        repository.getFavorites()
+            .map { list ->
+                list.map {
+                    it.id.toString()
+                }.toSet()
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptySet()
+            )
     init {
         loadCategories()
     }
@@ -98,6 +116,25 @@ class HomeViewModel @Inject constructor(
 
     fun onPlaybackCompleted(){
         _isPlaying.value = false
+    }
+
+    fun toggleFavorite(
+        ringtone: Ringtone
+    ) {
+
+        viewModelScope.launch {
+
+            repository
+                .toggleFavorite(ringtone)
+        }
+    }
+
+    fun isFavorite(
+        ringtoneId: String
+    ): Flow<Boolean> {
+
+        return repository
+            .isFavorite(ringtoneId)
     }
 }
 class RingtonePagingSource(

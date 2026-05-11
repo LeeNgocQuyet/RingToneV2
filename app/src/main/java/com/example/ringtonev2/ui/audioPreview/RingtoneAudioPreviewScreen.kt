@@ -250,7 +250,7 @@ fun RingtoneAudioPreviewScreen(
 
                     IconButton(onClick = { }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_favourite),
+                            painter = painterResource(R.drawable.ic_favorite),
                             contentDescription = null,
                             tint = Color.Red
                         )
