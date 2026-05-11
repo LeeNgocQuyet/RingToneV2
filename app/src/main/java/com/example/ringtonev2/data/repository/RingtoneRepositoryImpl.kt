@@ -6,12 +6,16 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.ringtonev2.data.local.AppDatabase
 import com.example.ringtonev2.data.local.dao.DownloadDao
+import com.example.ringtonev2.data.local.dao.FavoriteDao
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
+import com.example.ringtonev2.data.local.entity.FavoriteEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import com.example.ringtonev2.data.mapper.toDomain
+import com.example.ringtonev2.data.mapper.toFavoriteEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -19,16 +23,9 @@ import javax.inject.Inject
 class RingtoneRepositoryImpl @Inject constructor(
     private val db: AppDatabase,
     private val downloadDao: DownloadDao,
+    private val favoriteDao: FavoriteDao
 
 ) : RingtoneRepository {
-
-
-    private fun pagingConfig(pageSize: Int) = PagingConfig(
-        pageSize = pageSize,
-        initialLoadSize = pageSize,
-        prefetchDistance = pageSize / 2,
-        enablePlaceholders = false,
-    )
 
     override suspend fun deleteDownload(id: Long) {
         downloadDao.delete(id)
@@ -40,44 +37,6 @@ class RingtoneRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun downloadRingtone(ringtone: Ringtone): Result<DownloadItem> {
-        TODO("Not yet implemented")
-    }
-
-    override fun trendingPager(pageSize: Int): Flow<PagingData<Ringtone>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun categoryPager(
-        category: String,
-        pageSize: Int
-    ): Flow<PagingData<Ringtone>> {
-        TODO("Not yet implemented")
-    }
-
-    override fun searchPager(
-        query: String,
-        pageSize: Int
-    ): Flow<PagingData<Ringtone>> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getTrending(): java.util.List<Ringtone> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getCategories(): java.util.List<String> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getByCategory(category: String): java.util.List<Ringtone> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun search(query: String): java.util.List<Ringtone> {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun getById(id: String): DownloadedRingtone? {
         return downloadDao.getByRingtoneId(id)
     }
@@ -86,11 +45,53 @@ class RingtoneRepositoryImpl @Inject constructor(
         return downloadDao.getByRingtoneId(ringtoneId)
     }
 
-    override suspend fun isFavorite(ringtoneId: String): Boolean {
-        TODO("Not yet implemented")
+    override fun getFavorites(): Flow<List<Ringtone>> {
+        return favoriteDao.getFavorites()
+            .map { entities ->
+                entities.map { entity ->
+                    entity.toDomain()
+                }
+            }
     }
 
-    override suspend fun toggleFavorite(ringtone: Ringtone) {
-        TODO("Not yet implemented")
+    override fun isFavorite(
+        ringtoneId: String
+    ): Flow<Boolean> {
+        return favoriteDao.isFavorite(ringtoneId)
+    }
+
+    override suspend fun addFavorite(
+        ringtone: Ringtone
+    ) {
+        favoriteDao.insertFavorite(
+            ringtone.toFavoriteEntity()
+        )
+    }
+
+    override suspend fun removeFavorite(
+        ringtoneId: String
+    ) {
+        favoriteDao.deleteFavoriteById(ringtoneId)
+    }
+
+    override suspend fun toggleFavorite(
+        ringtone: Ringtone
+    ) {
+        val ringtoneId = ringtone.id.toString()
+
+        val existing =
+            favoriteDao.getFavoriteById(
+                ringtoneId
+            )
+
+        if (existing == null) {
+            favoriteDao.insertFavorite(
+                ringtone.toFavoriteEntity()
+            )
+        } else {
+            favoriteDao.deleteFavoriteById(
+                ringtoneId
+            )
+        }
     }
 }

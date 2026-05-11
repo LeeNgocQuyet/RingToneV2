@@ -8,7 +8,7 @@
     <color name="content_inverse">#ffffffff</color>
     <color name="content_brand">#ffccfe51</color>
     <color name="content_secondary">#CFA3FF</color>
-    <color name="content_onbrand">#ffffffff</color>
+    <color name="content_onbrand">#ff000000</color>
     <color name="content_onsecondary">#ff000000</color>
     <color name="content_selected">#ffbae74a</color>
     <color name="content_warning">#ff946f00</color>

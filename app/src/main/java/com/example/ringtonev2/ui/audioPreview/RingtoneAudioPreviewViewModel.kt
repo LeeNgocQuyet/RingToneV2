@@ -21,23 +21,9 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-data class AudioPreviewUiState(
-    val title: String = "",
-    val audioPath: String = "",
-    val duration: Long = 0L,
-    val currentPosition: Long = 0L,
-    val isPlaying: Boolean = false,
-    val isLoading: Boolean = false
-)
-
-enum class RingtoneType(val value: Int) {
-    RINGTONE(RingtoneManager.TYPE_RINGTONE),
-    NOTIFICATION(RingtoneManager.TYPE_NOTIFICATION),
-    ALARM(RingtoneManager.TYPE_ALARM)
-}
 
 @HiltViewModel
-class AudioPreviewScreenViewModel @Inject constructor(
+class RingtoneAudioPreviewScreenViewModel @Inject constructor(
     private val repository: RingtoneRepository,
     private val api: ApiService
 ) : ViewModel() {
@@ -47,14 +33,35 @@ class AudioPreviewScreenViewModel @Inject constructor(
 
     fun load(audioId: String) {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
 
-            val audio = repository.getByRingtoneId(audioId)
+            val localAudio = repository.getByRingtoneId(audioId)
 
-            _uiState.value = _uiState.value.copy(
-                title = audio?.title ?: "",
-                duration = audio?.duration ?: 0L,
-                audioPath = audio?.filePath ?: ""
-            )
+            if (localAudio != null) {
+                _uiState.value = _uiState.value.copy(
+                    title = localAudio.title ?: "",
+                    duration = localAudio.duration ?: 0L,
+                    audioPath = localAudio.filePath ?: "",
+                    isLoading = false
+                )
+            } else {
+                try {
+                    val response = api.getRingtones(listIds = audioId)
+                    if (response.status && response.data.isNotEmpty()) {
+                        val remoteAudio = response.data.first()
+                        _uiState.value = _uiState.value.copy(
+                            title = remoteAudio.name ?: "",
+                            duration = (remoteAudio.duration?.toLong() ?: 0L) ,
+                            audioPath = remoteAudio.audioPath ?: "",
+                            isLoading = false
+                        )
+                    } else {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                    }
+                } catch (e: Exception) {
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }
+            }
         }
     }
 
@@ -80,7 +87,7 @@ class AudioPreviewScreenViewModel @Inject constructor(
             try {
                 val path = _uiState.value.audioPath
                 if (path.isEmpty() || path.startsWith("http")) return@launch
-                
+
                 val internalFile = File(path)
                 if (!internalFile.exists()) return@launch
 

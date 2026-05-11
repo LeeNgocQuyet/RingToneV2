@@ -1,307 +1,348 @@
 package com.example.ringtonev2.ui.home
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat
-import com.example.ringtonev2.components.EnableNotificationCard
-import com.example.ringtonev2.ui.category.CategoryScreen
-import com.example.ringtonev2.ui.download.DownloadScreen
-import com.example.ringtonev2.ui.playlist.PlayListScreen
-import com.example.ringtonev2.ui.ringtone.RingtoneScreen
-import com.example.ringtonev2.data.remote.dto.TikTokData
-import com.example.ringtonev2.R
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.window.Dialog
-import android.provider.Settings
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.ringtonev2.data.datastore.DataStoreManager
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.example.ringtonev2.R
+import com.example.ringtonev2.components.RingtoneItemRow
+import com.example.ringtonev2.domain.Category
 import com.example.ringtonev2.ui.theme.AppTypography
-import kotlinx.coroutines.launch
 
-private enum class MainTab(val title: String, @DrawableRes val icon: Int) {
-    Home("Home", R.drawable.home),
-    Download("Download", R.drawable.download),
-    Category("Category", R.drawable.category),
-    Playlist("Playlist", R.drawable.playlist),
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
-    onOpenPlayer: (String) -> Unit,
-    onOpenExtract: () -> Unit,
-    onOpenHistory: () -> Unit,
-    onOpenAudioInfo: (TikTokData) -> Unit,
-    onOpenErrorInfo: () -> Unit
+fun HomeScreen(
+    onOpenPlayer: (String) -> Unit
 ) {
+
+    val viewModel: HomeViewModel = hiltViewModel()
+    val uiState by viewModel.homeState.collectAsState()
+
+    val listState = rememberLazyListState()
+    val pagingItems = viewModel.ringtones.collectAsLazyPagingItems()
+
     val context = LocalContext.current
-    var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
-    var link by remember { mutableStateOf("") }
-    var showPermissionDialog by remember { mutableStateOf(false) }
-    val settingsManager = remember { DataStoreManager(context) }
-    val cardShownCount by settingsManager.notificationCardCountFlow.collectAsState(initial = -1)
-    val scope = rememberCoroutineScope()
-    var hasHandledThisState by remember { mutableStateOf(false) }
-    val activity = context as? Activity
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (!isGranted && activity != null) {
-
-            val shouldShow = ActivityCompat.shouldShowRequestPermissionRationale(
-                activity, Manifest.permission.POST_NOTIFICATIONS
-            )
-
-            if (shouldShow && cardShownCount < 2) {
-                showPermissionDialog = true
-            }
-        }
+    val currentPlayingId by viewModel.currentPlayingId.collectAsState()
+    val isPlaying by viewModel.isPlaying.collectAsState()
+    val player = remember {
+        ExoPlayer.Builder(context).build()
     }
 
-    LaunchedEffect(cardShownCount) {
-        if (cardShownCount == -1) return@LaunchedEffect
+    DisposableEffect(Unit) {
+        onDispose {
+            player.release()
+        }
+    }
+    DisposableEffect(player) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && activity != null) {
-            val isGranted = ContextCompat.checkSelfPermission(
-                context, Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+        val listener = object : Player.Listener {
 
-            if (!isGranted && cardShownCount < 2) {
-                val shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-                    activity, Manifest.permission.POST_NOTIFICATIONS
-                )
+            override fun onPlaybackStateChanged(playbackState: Int) {
 
-                if (shouldShowRationale) {
-                    if (!hasHandledThisState) {
-                        showPermissionDialog = true
-                        hasHandledThisState = true
-                    }
-                } else {
-                    if (cardShownCount == 0 && !hasHandledThisState) {
-                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        hasHandledThisState = true
-                    }
+                if (playbackState == Player.STATE_ENDED) {
+
+                    viewModel.onPlaybackCompleted()
                 }
             }
         }
+
+        player.addListener(listener)
+
+        onDispose {
+            player.removeListener(listener)
+            player.release()
+        }
     }
+    LaunchedEffect(currentPlayingId, isPlaying) {
 
-    if (showPermissionDialog) {
-        Dialog(onDismissRequest = {
+        val ringtone = pagingItems.itemSnapshotList.items
+            .find { it.id.toString() == currentPlayingId }
 
-            showPermissionDialog = false
-            scope.launch {
-                settingsManager.incrementNotificationCardCount()
-            }
-        }) {
-            EnableNotificationCard(
-                painter = painterResource(id = R.drawable.enable_notification),
-                title = stringResource(id = R.string.enable_notifications),
-                description = stringResource(id = R.string.enable_notifications_description),
-                buttonTitle = "Go to Settings",
-                onClick = {
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                    }
-                    context.startActivity(intent)
-                    showPermissionDialog = false
-                },
-                onDismiss = {
-                    showPermissionDialog = false
-                    hasHandledThisState = false
-                }
+        val url = ringtone?.audioPath ?: return@LaunchedEffect
+
+        if (isPlaying) {
+
+            player.setMediaItem(
+                MediaItem.fromUri(url)
             )
+
+            player.prepare()
+            player.play()
+
+        } else {
+
+            player.pause()
         }
     }
 
-    Scaffold(
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-            )
-            MainTopBar(
-                isSearchIcon = (tab == MainTab.Download),
-                title = stringResource(id = R.string.app_name),
-                onSearchClick = { },
-                onSettingsClick = { }
-            )
-        },
-        bottomBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(84.dp)
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-            ) {
-
-                NavigationBar {
-                    MainTab.entries
-                        .forEach { entry ->
-                            NavigationBarItem(
-                                selected = tab == entry,
-                                onClick = { tab = entry },
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(id = entry.icon),
-                                        contentDescription = entry.title
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        text = entry.title,
-                                        style = AppTypography.bodyMedium.copy(
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.W600
-                                        ),
-                                        color = if (tab == entry)
-                                            colorResource(R.color.text_bar_selected)
-                                        else
-                                            colorResource(R.color.text_bar_default)
-                                    )
-                                },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = colorResource(R.color.icon_bar_selected),
-                                    unselectedIconColor = colorResource(R.color.icon_bar_default),
-                                    selectedTextColor = colorResource(R.color.text_bar_selected),
-                                    unselectedTextColor = colorResource(R.color.text_bar_default),
-                                    indicatorColor = Color.Transparent
-                                )
-                            )
-                        }
-                }
-            }
-
-        },
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            when (tab) {
-                MainTab.Home -> RingtoneScreen()
-                MainTab.Download -> DownloadScreen(
-                    onOpenPlayer = onOpenPlayer,
-                    onOpenAudioInfo = onOpenAudioInfo,
-                    onOpenErrorScreen = onOpenErrorInfo
-                )
-                MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
-                MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainTopBar(
-    isSearchIcon: Boolean,
-    title: String,
-    onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit
-) {
-    TopAppBar(
-        title = {
-            Box(
-                modifier = Modifier
-                    .width(254.dp)
-                    .height(30.dp)
-            )
-            {
-                Text(
-                    text = title,
-                    style = AppTypography.titleMedium.copy(
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.W600
-                    ),
-                    color = colorResource(R.color.content_brand),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(id = R.color.Black))
+    ) {
+        when (val state = uiState) {
+            HomeState.Idle -> {}
+            HomeState.Loading -> {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
-        },
-        actions = {
-            if (!isSearchIcon) {
-                IconButton(
-                    onClick = onSearchClick,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(colorResource(R.color.content_subtlest))
+
+            is HomeState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.search),
-                        contentDescription = "Search",
-                        tint = Color.White,
+                    Text(
+                        text = state.message,
+                        color = Color.White
                     )
                 }
             }
-            Spacer(modifier = Modifier.width(24.dp))
-            IconButton(
-                onClick = onSettingsClick,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(colorResource(R.color.content_subtlest))
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.setting),
-                    contentDescription = "Settings",
-                    tint = Color.White
+
+            is HomeState.Success -> {
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp)
+                ) {
+
+                    item {
+                        FeaturedBannerSection()
+                    }
+
+                    stickyHeader {
+                        CategoryTabsSection(
+                            categories = state.categories,
+                            selectedCategoryId = state.selectedCategoryId,
+                            onCategoryClick = {
+                                viewModel.selectCategory(it)
+                            }
+                        )
+                    }
+
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    items(
+                        count = pagingItems.itemCount,
+                        key = { index ->
+                            pagingItems[index]?.id ?: index
+                        }
+                    ) { index ->
+                        val ringtone = pagingItems[index] ?: return@items
+                        val favoriteIds by viewModel.favoriteIds.collectAsState()
+
+                        val isFavorite = ringtone.id.toString() in favoriteIds
+
+                        RingtoneItemRow(
+                            ringtone = ringtone,
+                            onPlayClick = {
+                                viewModel.togglePlaying(
+                                    ringtone.id.toString()
+                                )
+                            },
+                            isPlaying =
+                                currentPlayingId == ringtone.id.toString()
+                                        && isPlaying,
+                            onSetClick = {
+                                Log.d("HomeScreen", "onSetClick: ${ringtone.id}")
+                                Log.d("HomeScreen", "onSetClick: ${ringtone.name}")
+                                onOpenPlayer(ringtone.id.toString())
+                            },
+                            onSwipeRight = {
+                                onOpenPlayer(ringtone.id.toString())
+                            },
+                            onFavorite = {
+                                viewModel.toggleFavorite(
+                                    ringtone)
+                            },
+                            isFavorite = isFavorite
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            thickness = 0.5.dp,
+                            color = colorResource(id = R.color.border_subtlest)
+                        )
+                    }
+                    if (pagingItems.loadState.append is LoadState.Loading) {
+                        item {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FeaturedBannerSection() {
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(170.dp)
+    ) {
+
+        Image(
+            painter = painterResource(R.drawable.bg_home),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(
+                    start = 28.dp,
+                    top = 22.dp,
+                    bottom = 20.dp
+                ),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column {
+
+                Text(
+                    text = stringResource(R.string.top_ringtones),
+                    style = AppTypography.displayLarge.copy(
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.W700,
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFFFFFFFF),
+                                Color(0xFFD6BEFF)
+                            )
+                        )
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = stringResource(R.string.home_description),
+                    style = AppTypography.labelLarge.copy(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600,
+                        color = Color(0xFFD6BEFF)
+                    )
                 )
             }
-            Spacer(modifier = Modifier.width(16.dp))
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color.Black
-        )
+
+            Button(
+                onClick = { },
+                modifier = Modifier.height(52.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.background_secondary)
+                ),
+                shape = RoundedCornerShape(100.dp),
+                contentPadding = PaddingValues(horizontal = 22.dp)
+            ) {
+
+                Image(
+                    painter = painterResource(R.drawable.ic_home_play),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = stringResource(R.string.play),
+                    style = AppTypography.labelLarge.copy(
+                        color = colorResource(R.color.content_onbrand),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.W600
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryTabsSection(
+    categories: List<Category>,
+    selectedCategoryId: Int?,
+    onCategoryClick: (Int?) -> Unit
+) {
+
+    LazyRow(
+        modifier = Modifier.background(Color.Black),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
+        items(categories) { category ->
+
+            val isSelected = category.id == selectedCategoryId
+
+            Surface(
+                shape = RoundedCornerShape(50),
+                color = if (isSelected) {
+                    colorResource(id = R.color.background_brand)
+                } else {
+                    colorResource(id = R.color.accent)
+                },
+                onClick = {
+                    onCategoryClick(category.id)
+                }
+            ) {
+
+                Text(
+                    text = category.name,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp,
+                        vertical = 8.dp
+                    ),
+                    style = AppTypography.labelMedium.copy(
+                        color = if (isSelected) {
+                            colorResource(id = R.color.content_onbrand)
+                        } else {
+                            colorResource(id = R.color.content_subtlest)
+                        }
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewHomeScreen() {
+
+    HomeScreen(
+        onOpenPlayer = {}
     )
 }

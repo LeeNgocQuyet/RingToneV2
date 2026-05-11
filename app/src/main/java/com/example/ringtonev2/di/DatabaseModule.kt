@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.ringtonev2.data.local.AppDatabase
 import com.example.ringtonev2.data.local.dao.DownloadDao
+import com.example.ringtonev2.data.local.dao.FavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +31,13 @@ object DatabaseModule {
     @Provides
     fun provideDownloadDao(db: AppDatabase): DownloadDao {
         return db.downloadDao()
+    }
+
+
+    @Provides
+    fun provideFavoriteDao(
+        database: AppDatabase
+    ): FavoriteDao {
+        return database.favoriteDao()
     }
 }
