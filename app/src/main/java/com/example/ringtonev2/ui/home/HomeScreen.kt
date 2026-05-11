@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,6 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ringtonev2.R
@@ -42,6 +46,61 @@ fun HomeScreen(
 
     val listState = rememberLazyListState()
     val pagingItems = viewModel.ringtones.collectAsLazyPagingItems()
+
+    val context = LocalContext.current
+    val currentPlayingId by viewModel.currentPlayingId.collectAsState()
+    val isPlaying by viewModel.isPlaying.collectAsState()
+    val player = remember {
+        ExoPlayer.Builder(context).build()
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            player.release()
+        }
+    }
+    DisposableEffect(player) {
+
+        val listener = object : Player.Listener {
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+
+                if (playbackState == Player.STATE_ENDED) {
+
+                    viewModel.onPlaybackCompleted()
+                }
+            }
+        }
+
+        player.addListener(listener)
+
+        onDispose {
+            player.removeListener(listener)
+            player.release()
+        }
+    }
+    LaunchedEffect(currentPlayingId, isPlaying) {
+
+        val ringtone = pagingItems.itemSnapshotList.items
+            .find { it.id.toString() == currentPlayingId }
+
+        val url = ringtone?.audioPath ?: return@LaunchedEffect
+
+        if (isPlaying) {
+
+            player.setMediaItem(
+                MediaItem.fromUri(url)
+            )
+
+            player.prepare()
+            player.play()
+
+        } else {
+
+            player.pause()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -103,6 +162,14 @@ fun HomeScreen(
                         val ringtone = pagingItems[index] ?: return@items
                         RingtoneItemRow(
                             ringtone = ringtone,
+                            onPlayClick = {
+                                viewModel.togglePlaying(
+                                    ringtone.id.toString()
+                                )
+                            },
+                            isPlaying =
+                                currentPlayingId == ringtone.id.toString()
+                                        && isPlaying,
                             onSetClick = {
                                 Log.d("HomeScreen", "onSetClick: ${ringtone.id}")
                                 Log.d("HomeScreen", "onSetClick: ${ringtone.name}")
@@ -110,6 +177,9 @@ fun HomeScreen(
                             },
                             onSwipeRight = {
                                 onOpenPlayer(ringtone.id.toString())
+                            },
+                            onFavorite = {
+
                             }
                         )
 

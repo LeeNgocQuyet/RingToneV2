@@ -41,6 +41,12 @@ class HomeViewModel @Inject constructor(
         ).flow
     }.cachedIn(viewModelScope)
 
+    private val _currentPlayingId = MutableStateFlow<String?>(null)
+    val currentPlayingId = _currentPlayingId.asStateFlow()
+
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying = _isPlaying.asStateFlow()
+
     init {
         loadCategories()
     }
@@ -79,6 +85,19 @@ class HomeViewModel @Inject constructor(
             categories = (_homeState.value as HomeState.Success).categories,
             selectedCategoryId = id
         )
+    }
+
+    fun togglePlaying(ringtoneId: String) {
+        if (_currentPlayingId.value == ringtoneId) {
+            _isPlaying.value = !_isPlaying.value
+        } else {
+            _currentPlayingId.value = ringtoneId
+            _isPlaying.value = true
+        }
+    }
+
+    fun onPlaybackCompleted(){
+        _isPlaying.value = false
     }
 }
 class RingtonePagingSource(

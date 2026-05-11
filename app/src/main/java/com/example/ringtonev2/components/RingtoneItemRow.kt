@@ -23,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
@@ -51,8 +52,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun RingtoneItemRow(
     ringtone: Ringtone,
+    isPlaying: Boolean,
+    onPlayClick: () -> Unit,
     onSetClick: () -> Unit,
-    onSwipeRight: () -> Unit
+    onSwipeRight: () -> Unit,
+    onFavorite: () -> Unit
 ) {
     val offsetX = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
@@ -111,11 +115,17 @@ fun RingtoneItemRow(
                     contentAlignment = Alignment.Center
                 ) {
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_play),
+                    IconButton(
+                        onClick = onPlayClick,
+                        modifier = Modifier.size(24.dp),
+                        content = {
+                        Icon(
+                            painter = if (!isPlaying) painterResource(id = R.drawable.ic_play)
+                            else painterResource(id = R.drawable.ic_pause),
                         contentDescription = null,
                         tint = colorResource(id = R.color.content_brand),
-                        modifier = Modifier.size(18.dp)
+                        modifier = Modifier.size(18.dp))
+                        }
                     )
                 }
             }
@@ -167,12 +177,16 @@ fun RingtoneItemRow(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            Icon(
-                painter = painterResource(id = R.drawable.ic_favourite),
-                contentDescription = null,
-                tint = Color.Red,
-                modifier = Modifier.size(20.dp)
-            )
+            IconButton(
+                onClick = onFavorite
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_favourite),
+                    contentDescription = null,
+                    tint = Color.Red,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }
