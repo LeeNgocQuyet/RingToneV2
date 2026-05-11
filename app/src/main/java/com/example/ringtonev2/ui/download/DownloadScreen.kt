@@ -52,7 +52,7 @@ import com.example.ringtonev2.data.remote.dto.TikTokData
 @Composable
 fun DownloadScreen(
     viewModel: DownloadScreenViewModel = hiltViewModel<DownloadScreenViewModel>(),
-    onOpenPlayer: (String) -> Unit,
+    onOpenDownload: (String) -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
     onOpenErrorScreen: () -> Unit
 ) {

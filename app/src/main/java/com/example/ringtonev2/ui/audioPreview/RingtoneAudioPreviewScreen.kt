@@ -63,13 +63,13 @@ import com.example.ringtonev2.ui.theme.AppTypography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DownloadAudioPreviewScreen(
+fun RingtoneAudioPreviewScreen(
     ringtoneId: String,
     onBack: () -> Unit
 ) {
-    val viewModel: AudioPreviewScreenViewModel = hiltViewModel()
+    val viewModel: RingtoneAudioPreviewScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    
+
     val duration = uiState.duration
 
     var showAssignDialog by remember {
@@ -132,7 +132,7 @@ fun DownloadAudioPreviewScreen(
     LaunchedEffect(ringtoneId) {
         viewModel.load(ringtoneId)
     }
-    
+
     LaunchedEffect(uiState.audioPath) {
         if (uiState.audioPath.isNotEmpty()) {
             val uri = if (uiState.audioPath.startsWith("http")) {
@@ -140,13 +140,13 @@ fun DownloadAudioPreviewScreen(
             } else {
                 Uri.fromFile(File(uiState.audioPath))
             }
-            
+
             val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
             exoPlayer.prepare()
         }
     }
-    
+
     LaunchedEffect(exoPlayer) {
         while (true) {
             viewModel.seekTo(
@@ -155,7 +155,7 @@ fun DownloadAudioPreviewScreen(
             delay(300)
         }
     }
-    
+
     DisposableEffect(exoPlayer) {
         val listener =
             object : Player.Listener {
@@ -172,7 +172,7 @@ fun DownloadAudioPreviewScreen(
             exoPlayer.release()
         }
     }
-    
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -286,7 +286,7 @@ fun DownloadAudioPreviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        formatDurationSecond(uiState.currentPosition),
+                        formatDurationMilisecond(uiState.currentPosition),
                         style = AppTypography.bodySmall.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
@@ -295,7 +295,7 @@ fun DownloadAudioPreviewScreen(
                         color = colorResource(R.color.content_subtlest)
                     )
                     Text(
-                        formatDurationSecond(duration),
+                        formatDurationMilisecond(duration),
                         style = AppTypography.bodySmall.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
@@ -392,23 +392,13 @@ fun DownloadAudioPreviewScreen(
     }
 }
 
-fun formatDurationSecond(seconds: Long?): String {
-    if (seconds == null || seconds <= 0L) return "00:00"
+fun formatDurationMilisecond(miliseconds: Long?): String {
+    if (miliseconds == null || miliseconds <= 0L) return "00:00"
 
-    val minutes = seconds / 60
-    val secs = seconds % 60
+    val totalSeconds = miliseconds / 1000
+    val minutes = totalSeconds / 60
+    val secs = totalSeconds % 60
 
     return "%02d:%02d".format(minutes, secs)
 }
 
-fun canWriteSettings(context: Context): Boolean {
-    return Settings.System.canWrite(context)
-}
-
-fun requestWriteSettingsPermission(context: Context) {
-    val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-        data = Uri.parse("package:${context.packageName}")
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    context.startActivity(intent)
-}

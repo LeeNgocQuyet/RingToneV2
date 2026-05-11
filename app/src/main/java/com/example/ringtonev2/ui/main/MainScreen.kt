@@ -77,6 +77,7 @@ private enum class MainTab(val title: String, @DrawableRes val icon: Int) {
 @Composable
 fun MainScreen(
     onOpenPlayer: (String) -> Unit,
+    onOpenDownload: (String) -> Unit,
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
@@ -233,7 +234,7 @@ fun MainScreen(
                     onOpenPlayer = onOpenPlayer,
                 )
                 MainTab.Download -> DownloadScreen(
-                    onOpenPlayer = onOpenPlayer,
+                    onOpenDownload = onOpenDownload,
                     onOpenAudioInfo = onOpenAudioInfo,
                     onOpenErrorScreen = onOpenErrorInfo
                 )

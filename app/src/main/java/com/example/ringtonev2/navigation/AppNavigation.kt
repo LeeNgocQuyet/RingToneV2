@@ -9,7 +9,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.ringtonev2.navigation.Routes.SplashRoute
 import com.example.ringtonev2.navigation.Routes.OnboardingRoute
 import com.example.ringtonev2.navigation.Routes.MainRoute
-import com.example.ringtonev2.navigation.Routes.PlayerRoute
 import com.example.ringtonev2.navigation.Routes.ExtractRoute
 import com.example.ringtonev2.navigation.Routes.ExtractionHistoryRoute
 import com.example.ringtonev2.navigation.Routes.AudioInfoRoute
@@ -18,7 +17,8 @@ import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.audioInfo.AudioErrorScreen
 import com.example.ringtonev2.ui.audioInfo.AudioDownloadScreen
 import com.example.ringtonev2.ui.audioInfo.AudioInfoScreen
-import com.example.ringtonev2.ui.audioPreview.AudioPreviewScreen
+import com.example.ringtonev2.ui.audioPreview.DownloadAudioPreviewScreen
+import com.example.ringtonev2.ui.audioPreview.RingtoneAudioPreviewScreen
 import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
@@ -56,7 +56,8 @@ fun AppNavigation() {
 
             entry<MainRoute> {
                 MainScreen(
-                    onOpenPlayer = { id -> backStack.add(Routes.AudioPreviewRoute(id)) ; Log.d("AppNavigation", "onOpenPlayer: $id")},
+                    onOpenPlayer = { id -> backStack.add(Routes.RingtoneAudioPreviewRoute(id)) ; Log.d("AppNavigation", "RingtoneAudioPreviewRoute onOpenPlayer: $id")},
+                    onOpenDownload = {id -> backStack.add(Routes.AudioPreviewRoute(id)) ; Log.d("AppNavigation", "AudioPreviewRoute onOpenDownload: $id")},
                     onOpenExtract = { backStack.add(ExtractRoute) },
                     onOpenHistory = { backStack.add(ExtractionHistoryRoute) },
                     onOpenAudioInfo = { data ->
@@ -103,16 +104,25 @@ fun AppNavigation() {
             }
             entry<Routes.AudioPreviewRoute> {
                 route ->
-                Log.d("AppNavigation", "AudioPreviewRoute: ${route.ringtoneId}")
-                AudioPreviewScreen(
+                Log.d("AppNavigation", "DownloadAudioPreviewScreen: ${route.ringtoneId}")
+                DownloadAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()
+                        backStack.removeLastOrNull()
                         // màn audio download không có back nên remove 2 lần
                         // sẽ sửa logic sau để tái sử dụng lại
                     }
                 )
             }
-
+            entry<Routes.RingtoneAudioPreviewRoute> {
+                route ->
+                Log.d("AppNavigation", "RingtoneAudioPreviewScreen: ${route.ringtoneId}")
+                RingtoneAudioPreviewScreen(
+                    ringtoneId = route.ringtoneId,
+                    onBack = { backStack.removeLastOrNull()
+                    }
+                )
+            }
         },
     )
 }
