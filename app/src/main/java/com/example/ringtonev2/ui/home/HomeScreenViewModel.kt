@@ -11,6 +11,7 @@ import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.data.repository.RetrofitInstance
 import com.example.ringtonev2.domain.Ringtone
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -74,6 +75,10 @@ class HomeViewModel @Inject constructor(
 
     fun selectCategory(id: Int?) {
         selectedCategory.value = id
+        _homeState.value = HomeState.Success(
+            categories = (_homeState.value as HomeState.Success).categories,
+            selectedCategoryId = id
+        )
     }
 }
 class RingtonePagingSource(

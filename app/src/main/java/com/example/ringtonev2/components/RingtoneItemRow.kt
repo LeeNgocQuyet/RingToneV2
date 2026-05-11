@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -102,11 +103,21 @@ fun RingtoneItemRow(
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_play),
-                    contentDescription = null,
-                    tint = colorResource(id = R.color.content_brand)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.75f)),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_play),
+                        contentDescription = null,
+                        tint = colorResource(id = R.color.content_brand),
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
             }
 
             //name + duration
@@ -120,7 +131,7 @@ fun RingtoneItemRow(
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
-                        color = colorResource(id = R.color.content_secondary)
+                        color = colorResource(id = R.color.content_default)
                     )
                 )
                 Text(
@@ -150,7 +161,7 @@ fun RingtoneItemRow(
                     style = AppTypography.bodySmall.copy(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,
-                        color = colorResource(id = R.color.content_default))
+                        color = colorResource(id = R.color.content_onsecondary))
                 )
             }
 

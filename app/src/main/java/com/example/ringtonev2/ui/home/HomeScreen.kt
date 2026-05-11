@@ -235,9 +235,9 @@ fun CategoryTabsSection(
             Surface(
                 shape = RoundedCornerShape(50),
                 color = if (isSelected) {
-                    colorResource(id = R.color.content_secondary)
+                    colorResource(id = R.color.background_brand)
                 } else {
-                    colorResource(id = R.color.border_bold)
+                    colorResource(id = R.color.accent)
                 },
                 onClick = {
                     onCategoryClick(category.id)
@@ -252,9 +252,9 @@ fun CategoryTabsSection(
                     ),
                     style = AppTypography.labelMedium.copy(
                         color = if (isSelected) {
-                            Color.Black
+                            colorResource(id = R.color.content_onbrand)
                         } else {
-                            colorResource(id = R.color.content_disabled)
+                            colorResource(id = R.color.content_subtlest)
                         }
                     )
                 )
