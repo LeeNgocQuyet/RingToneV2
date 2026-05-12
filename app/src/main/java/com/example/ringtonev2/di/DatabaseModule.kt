@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.ringtonev2.data.local.AppDatabase
 import com.example.ringtonev2.data.local.dao.DownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
+import com.example.ringtonev2.data.local.dao.RingtoneDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,5 +40,12 @@ object DatabaseModule {
         database: AppDatabase
     ): FavoriteDao {
         return database.favoriteDao()
+    }
+
+    @Provides
+    fun provideRingtoneDao(
+        database: AppDatabase
+    ): RingtoneDao {
+        return database.ringtoneDao()
     }
 }

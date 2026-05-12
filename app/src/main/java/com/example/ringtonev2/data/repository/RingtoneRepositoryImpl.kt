@@ -4,13 +4,16 @@ import androidx.paging.ExperimentalPagingApi
 import com.example.ringtonev2.data.local.AppDatabase
 import com.example.ringtonev2.data.local.dao.DownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
+import com.example.ringtonev2.data.local.dao.RingtoneDao
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
 import com.example.ringtonev2.data.local.entity.FavoriteEntity
+import com.example.ringtonev2.data.local.entity.RingtoneEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.mapper.toFavoriteEntity
+import com.example.ringtonev2.data.mapper.toRingtoneEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -19,7 +22,8 @@ import javax.inject.Inject
 class RingtoneRepositoryImpl @Inject constructor(
     private val db: AppDatabase,
     private val downloadDao: DownloadDao,
-    private val favoriteDao: FavoriteDao
+    private val favoriteDao: FavoriteDao,
+    private val ringtoneDao: RingtoneDao
 
 ) : RingtoneRepository {
 
@@ -89,5 +93,17 @@ class RingtoneRepositoryImpl @Inject constructor(
                 ringtoneId
             )
         }
+    }
+
+    override suspend fun getRingtoneById(id: String): RingtoneEntity? {
+        return ringtoneDao.getRingtoneById(id)
+    }
+
+    override suspend fun updateFilePath(ringtoneId: String, filePath: String) {
+        ringtoneDao.updateFilePath(ringtoneId, filePath)
+    }
+
+    override suspend fun downloadRingtone(ringtone: Ringtone) {
+        ringtoneDao.insertRingtone(ringtone.toRingtoneEntity())
     }
 }
