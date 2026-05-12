@@ -238,7 +238,7 @@ fun MainScreen(
                     onOpenAudioInfo = onOpenAudioInfo,
                     onOpenErrorScreen = onOpenErrorInfo
                 )
-                MainTab.Category -> CategoryScreen(onOpenPlayer = onOpenPlayer)
+                MainTab.Category -> CategoryScreen(onOpenCategory = onOpenCategory)
                 MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
             }
         }
