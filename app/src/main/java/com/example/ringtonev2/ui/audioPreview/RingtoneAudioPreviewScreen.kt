@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -72,29 +73,62 @@ fun RingtoneAudioPreviewScreen(
     LaunchedEffect(ringtoneId) {
         viewModel.load(ringtoneId)
     }
-    when (val state = uiState) {
-        is RingtoneAudioPreviewState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = colorResource(R.color.background_brand))
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val state = uiState) {
+            is RingtoneAudioPreviewState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = colorResource(R.color.background_brand))
+                }
+            }
+
+            is RingtoneAudioPreviewState.Success -> {
+                AudioPreviewContent(
+                    state = state,
+                    viewModel = viewModel,
+                    onBack = onBack
+                )
+            }
+
+            is RingtoneAudioPreviewState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = state.message, color = Color.Red)
+                }
+            }
+
+            else -> Unit
+        }
+    }
+    val successState = uiState as? RingtoneAudioPreviewState.Success
+
+    if (successState?.isDownloading == true) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.6f)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                CircularProgressIndicator(
+                    progress = successState.downloadProgress / 100f,
+                    color = colorResource(R.color.background_brand)
+                )
+
+                Spacer(Modifier.height(8.dp))
+
+                Text(
+                    text = "Downloading ${successState.downloadProgress}%...",
+                    style = AppTypography.bodyMedium.copy(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W500
+                    ),
+                    color = Color.White
+                )
             }
         }
-
-        is RingtoneAudioPreviewState.Success -> {
-            AudioPreviewContent(
-                state = state,
-                viewModel = viewModel,
-                onBack = onBack
-            )
-        }
-
-        is RingtoneAudioPreviewState.Error -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = state.message, color = Color.Red)
-            }
-        }
-        else -> Unit
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioPreviewContent(
@@ -185,13 +219,22 @@ fun AudioPreviewContent(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(stringResource(R.string.audio_preview),
-                        style = AppTypography.titleLarge.copy(fontSize = 18.sp, fontWeight = FontWeight.W700),
-                        color = colorResource(R.color.content_default))
+                    Text(
+                        stringResource(R.string.audio_preview),
+                        style = AppTypography.titleLarge.copy(
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.W700
+                        ),
+                        color = colorResource(R.color.content_default)
+                    )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(painter = painterResource(R.drawable.arrow_left_02), contentDescription = null, tint = Color.White)
+                        Icon(
+                            painter = painterResource(R.drawable.arrow_left_02),
+                            contentDescription = null,
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Black)
@@ -200,9 +243,13 @@ fun AudioPreviewContent(
         containerColor = Color.Black
     ) { padding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.Center
         ) {
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(6.dp))
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Image(
@@ -210,31 +257,27 @@ fun AudioPreviewContent(
                     contentDescription = null,
                     modifier = Modifier.size(280.dp)
                 )
-
-                if (state.isDownloading) {
-                    Box(
-                        modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.6f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator(
-                                progress = state.downloadProgress / 100f,
-                                color = colorResource(R.color.background_brand)
-                            )
-                            Spacer(Modifier.height(8.dp))
-                            Text("Downloading ${state.downloadProgress}%", color = Color.White, fontSize = 12.sp)
-                        }
-                    }
-                }
             }
             Spacer(Modifier.height(32.dp))
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = state.title, color = colorResource(R.color.content_default),
-                        style = AppTypography.bodyMedium.copy(fontSize = 16.sp, fontWeight = FontWeight.W600))
+                    Text(
+                        text = state.title, color = colorResource(R.color.content_default),
+                        style = AppTypography.bodyMedium.copy(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W600
+                        )
+                    )
                 }
                 IconButton(onClick = { }) {
-                    Icon(painter = painterResource(R.drawable.ic_favorite), contentDescription = null, tint = Color.Red)
+                    Icon(
+                        painter = painterResource(R.drawable.ic_favorite),
+                        contentDescription = null,
+                        tint = Color.Red
+                    )
                 }
             }
             Spacer(Modifier.height(20.dp))
@@ -253,25 +296,70 @@ fun AudioPreviewContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(formatDurationMilisecond(state.currentPosition), color = colorResource(R.color.content_subtlest), style = AppTypography.bodySmall)
-                Text(formatDurationMilisecond(duration), color = colorResource(R.color.content_subtlest), style = AppTypography.bodySmall)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    formatDurationMilisecond(state.currentPosition),
+                    color = colorResource(R.color.content_subtlest),
+                    style = AppTypography.bodySmall
+                )
+                Text(
+                    formatDurationMilisecond(duration),
+                    color = colorResource(R.color.content_subtlest),
+                    style = AppTypography.bodySmall
+                )
             }
 
             Spacer(Modifier.height(30.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { exoPlayer.seekTo((exoPlayer.currentPosition - 10000).coerceAtLeast(0)) }) {
-                    Icon(painter = painterResource(R.drawable.go_backward_10sec), contentDescription = null, tint = Color.White)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    exoPlayer.seekTo(
+                        (exoPlayer.currentPosition - 10000).coerceAtLeast(
+                            0
+                        )
+                    )
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.go_backward_10sec),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
                 }
-                Box(modifier = Modifier.size(64.dp).clip(CircleShape).background(colorResource(R.color.background_brand)), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(colorResource(R.color.background_brand)),
+                    contentAlignment = Alignment.Center
+                ) {
                     val icon = if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
                     IconButton(onClick = { if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play() }) {
-                        Icon(painter = painterResource(icon), contentDescription = null, tint = Color.Black)
+                        Icon(
+                            painter = painterResource(icon),
+                            contentDescription = null,
+                            tint = Color.Black
+                        )
                     }
                 }
-                IconButton(onClick = { exoPlayer.seekTo((exoPlayer.currentPosition + 10000).coerceAtMost(duration)) }) {
-                    Icon(painter = painterResource(R.drawable.go_forward_10sec), contentDescription = null, tint = Color.White)
+                IconButton(onClick = {
+                    exoPlayer.seekTo(
+                        (exoPlayer.currentPosition + 10000).coerceAtMost(
+                            duration
+                        )
+                    )
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.go_forward_10sec),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
                 }
             }
 
@@ -289,7 +377,9 @@ fun AudioPreviewContent(
                 shape = RoundedCornerShape(28.dp),
                 enabled = !state.isDownloading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (state.isDownloaded) colorResource(R.color.background_secondary) else colorResource(R.color.background_brand)
+                    containerColor = if (state.isDownloaded) colorResource(R.color.background_secondary) else colorResource(
+                        R.color.background_brand
+                    )
                 )
             ) {
                 Text(
@@ -302,6 +392,7 @@ fun AudioPreviewContent(
         }
     }
 }
+
 fun formatDurationMilisecond(miliseconds: Long?): String {
     if (miliseconds == null || miliseconds <= 0L) return "00:00"
 
