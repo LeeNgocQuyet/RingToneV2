@@ -1,9 +1,6 @@
 package com.example.ringtonev2.data.repository
 
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.example.ringtonev2.data.local.AppDatabase
 import com.example.ringtonev2.data.local.dao.DownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
@@ -15,7 +12,6 @@ import com.example.ringtonev2.domain.RingtoneRepository
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.mapper.toFavoriteEntity
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
