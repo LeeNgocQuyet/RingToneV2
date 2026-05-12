@@ -66,9 +66,7 @@ fun AppNavigation() {
                     onOpenAudioInfo = { data ->
                         backStack.add(AudioInfoRoute(Gson().toJson(data)))
                     },
-                    onOpenErrorInfo = { backStack.add(Routes.AudioErrorRoute) },
-                    onSearchClick = { backStack.add(Routes.SearchRoute) },
-
+                    onOpenErrorInfo = { backStack.add(Routes.AudioErrorRoute) }
                 )
             }
 
@@ -132,12 +130,6 @@ fun AppNavigation() {
                 route ->
                 CategoryListScreen(
                     categoryId = route.categoryId,
-                    onBack = { backStack.removeLastOrNull() },
-                    onOpenPlayer = { backStack.add(Routes.RingtoneAudioPreviewRoute(it)) },
-                )
-            }
-            entry<Routes.SearchRoute>{
-                SearchScreen(
                     onBack = { backStack.removeLastOrNull() },
                     onOpenPlayer = { backStack.add(Routes.RingtoneAudioPreviewRoute(it)) },
                 )

@@ -82,7 +82,6 @@ fun MainScreen(
     onOpenHistory: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
     onOpenErrorInfo: () -> Unit,
-    onSearchClick: () -> Unit
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
@@ -173,7 +172,7 @@ fun MainScreen(
             MainTopBar(
                 isSearchIcon = (tab != MainTab.Home),
                 title = stringResource(id = R.string.app_name),
-                onSearchClick = onSearchClick,
+                onSearchClick = {},
                 onSettingsClick = { }
             )
         },
