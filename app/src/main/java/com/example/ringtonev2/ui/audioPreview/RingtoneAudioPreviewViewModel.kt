@@ -5,7 +5,6 @@ import android.content.Context
 import android.media.RingtoneManager
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.remote.api.ApiService
@@ -16,9 +15,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.net.URL
 import javax.inject.Inject
 
 
@@ -28,64 +29,145 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
     private val api: ApiService
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AudioPreviewUiState())
+    private val _uiState = MutableStateFlow<RingtoneAudioPreviewState>(RingtoneAudioPreviewState.Idle)
     val uiState = _uiState.asStateFlow()
 
+    fun resetState() {
+        _uiState.value = RingtoneAudioPreviewState.Idle
+    }
     fun load(audioId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = RingtoneAudioPreviewState.Loading
 
-            val localAudio = repository.getByRingtoneId(audioId)
+            val localAudio = repository.getRingtoneById(audioId)
 
-            if (localAudio != null) {
-                _uiState.value = _uiState.value.copy(
+            if (localAudio != null && !localAudio.filePath.isNullOrEmpty()) {
+                _uiState.value = RingtoneAudioPreviewState.Success(
+                    ringtoneId = audioId,
                     title = localAudio.title ?: "",
-                    duration = localAudio.duration ?: 0L,
+                    duration = localAudio.duration,
                     audioPath = localAudio.filePath ?: "",
-                    isLoading = false
+                    isDownloaded = true
                 )
             } else {
                 try {
                     val response = api.getRingtones(listIds = audioId)
                     if (response.status && response.data.isNotEmpty()) {
                         val remoteAudio = response.data.first()
-                        _uiState.value = _uiState.value.copy(
+                        _uiState.value = RingtoneAudioPreviewState.Success(
+                            ringtoneId = audioId,
                             title = remoteAudio.name ?: "",
-                            duration = (remoteAudio.duration?.toLong() ?: 0L) ,
+                            duration = remoteAudio.duration,
                             audioPath = remoteAudio.audioPath ?: "",
-                            isLoading = false
+                            isDownloaded = false
                         )
                     } else {
-                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _uiState.value = RingtoneAudioPreviewState.Error("Data not found")
                     }
                 } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(isLoading = false)
+                    _uiState.value = RingtoneAudioPreviewState.Error(e.message ?: "Unknown Error")
                 }
             }
         }
     }
 
-    fun togglePlay() {
-        _uiState.value = _uiState.value.copy(
-            isPlaying = !_uiState.value.isPlaying
-        )
-    }
 
     fun seekTo(position: Long) {
-        _uiState.value = _uiState.value.copy(
-            currentPosition = position
-        )
+        val currentState = _uiState.value
+        if (currentState is RingtoneAudioPreviewState.Success) {
+            _uiState.value = currentState.copy(currentPosition = position)
+        }
     }
 
     fun setPlaying(isPlaying: Boolean) {
-        _uiState.value = _uiState.value.copy(isPlaying = isPlaying)
+        val currentState = _uiState.value
+        if (currentState is RingtoneAudioPreviewState.Success) {
+            _uiState.value = currentState.copy(isPlaying = isPlaying)
+        }
+    }
+
+    fun downloadRingtone(context: Context) {
+        val currentState = _uiState.value
+        if (currentState !is RingtoneAudioPreviewState.Success) return
+
+        val url = currentState.audioPath
+        if (!url.startsWith("http")) return
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                _uiState.value = currentState.copy(isDownloading = true, downloadProgress = 0)
+
+                val fileName = "ringtone_${currentState.ringtoneId}.mp3"
+                val file = File(context.filesDir, fileName)
+
+                val connection = URL(url).openConnection()
+                connection.connect()
+                val fileLength = connection.contentLength
+                val input = BufferedInputStream(connection.getInputStream())
+                val output = FileOutputStream(file)
+
+                val data = ByteArray(1024)
+                var total: Long = 0
+                var count: Int
+                while (input.read(data).also { count = it } != -1) {
+                    total += count
+                    val progress = if (fileLength > 0) (total * 100 / fileLength).toInt() else 0
+
+                    // Cập nhật %
+                    val updatedState = _uiState.value
+                    if (updatedState is RingtoneAudioPreviewState.Success) {
+                        _uiState.value = updatedState.copy(downloadProgress = progress)
+                    }
+                    output.write(data, 0, count)
+                }
+
+                output.close()
+                input.close()
+
+                val ringtoneDomain = com.example.ringtonev2.domain.Ringtone(
+                    id = currentState.ringtoneId.toIntOrNull() ?: 0,
+                    name = currentState.title,
+                    duration = currentState.duration,
+                    audioPath = url,
+                    categoryId = null,
+                    image = null,
+                    watchCount = null
+                )
+
+                repository.downloadRingtone(ringtoneDomain)
+
+                repository.updateFilePath(
+                    currentState.ringtoneId,
+                    file.absolutePath
+                )
+
+                withContext(Dispatchers.Main) {
+                    val finalState = _uiState.value
+                    if (finalState is RingtoneAudioPreviewState.Success) {
+                        _uiState.value = finalState.copy(
+                            isDownloading = false,
+                            isDownloaded = true,
+                            audioPath = file.absolutePath
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                val errorState = _uiState.value
+                if (errorState is RingtoneAudioPreviewState.Success) {
+                    _uiState.value = errorState.copy(isDownloading = false)
+                }
+            }
+        }
     }
 
     fun setAsSystemSound(context: Context, type: RingtoneType, onSuccess: () -> Unit) {
+        val currentState = _uiState.value
+        if (currentState !is RingtoneAudioPreviewState.Success) return
         val appContext = context.applicationContext
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val path = _uiState.value.audioPath
+                val path = currentState.audioPath
                 if (path.isEmpty() || path.startsWith("http")) return@launch
 
                 val internalFile = File(path)
@@ -96,7 +178,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
 
                 val values = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, internalFile.name)
-                    put(MediaStore.MediaColumns.TITLE, _uiState.value.title)
+                    put(MediaStore.MediaColumns.TITLE, currentState.title)
                     put(MediaStore.MediaColumns.MIME_TYPE, "audio/mpeg")
                     val folder = when (type) {
                         RingtoneType.ALARM -> Environment.DIRECTORY_ALARMS
