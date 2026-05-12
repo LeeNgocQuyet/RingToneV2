@@ -81,7 +81,8 @@ fun MainScreen(
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
-    onOpenErrorInfo: () -> Unit
+    onOpenErrorInfo: () -> Unit,
+    onSearchClick: () -> Unit
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
@@ -170,9 +171,9 @@ fun MainScreen(
                     .height(56.dp)
             )
             MainTopBar(
-                isSearchIcon = (tab == MainTab.Download),
+                isSearchIcon = (tab != MainTab.Home),
                 title = stringResource(id = R.string.app_name),
-                onSearchClick = { },
+                onSearchClick = onSearchClick,
                 onSettingsClick = { }
             )
         },

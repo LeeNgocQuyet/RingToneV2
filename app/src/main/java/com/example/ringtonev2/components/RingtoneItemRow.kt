@@ -54,38 +54,14 @@ fun RingtoneItemRow(
     isPlaying: Boolean,
     onPlayClick: () -> Unit,
     onSetClick: () -> Unit,
-    onSwipeRight: () -> Unit,
     onFavorite: () -> Unit,
     isFavorite: Boolean
 ) {
     val offsetX = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .offset { IntOffset(offsetX.value.toInt(), 0) }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        Log.d("RingtoneItemRow", "SWIPE END ${offsetX.value}")
-                        if (offsetX.value > 200f) {
-                            onSwipeRight()
-                        }
-
-                        scope.launch {
-                            offsetX.animateTo(0f)
-                        }
-                    }
-                ) { _, dragAmount ->
-
-                    val newValue = (offsetX.value + dragAmount)
-                        .coerceAtLeast(0f)
-
-                    scope.launch {
-                        offsetX.snapTo(newValue)
-                    }
-                }
-            }
     ) {
 
         Row(

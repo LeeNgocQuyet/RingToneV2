@@ -211,9 +211,6 @@ fun CategoryListScreen(
                                 onSetClick = {
                                     onOpenPlayer(ringtone.id.toString())
                                 },
-                                onSwipeRight = {
-                                    onOpenPlayer(ringtone.id.toString())
-                                },
                                 onFavorite = {
                                     viewModel.toggleFavorite(
                                         ringtone)

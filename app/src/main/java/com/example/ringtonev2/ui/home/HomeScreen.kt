@@ -179,9 +179,6 @@ fun HomeScreen(
                                 Log.d("HomeScreen", "onSetClick: ${ringtone.name}")
                                 onOpenPlayer(ringtone.id.toString())
                             },
-                            onSwipeRight = {
-                                onOpenPlayer(ringtone.id.toString())
-                            },
                             onFavorite = {
                                 viewModel.toggleFavorite(
                                     ringtone)

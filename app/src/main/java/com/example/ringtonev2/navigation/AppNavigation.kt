@@ -23,6 +23,7 @@ import com.example.ringtonev2.ui.categorylist.CategoryListScreen
 import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
+import com.example.ringtonev2.ui.search.SearchScreen
 import com.example.ringtonev2.ui.splash.SplashScreen
 
 @Composable
@@ -65,7 +66,9 @@ fun AppNavigation() {
                     onOpenAudioInfo = { data ->
                         backStack.add(AudioInfoRoute(Gson().toJson(data)))
                     },
-                    onOpenErrorInfo = { backStack.add(Routes.AudioErrorRoute) }
+                    onOpenErrorInfo = { backStack.add(Routes.AudioErrorRoute) },
+                    onSearchClick = { backStack.add(Routes.SearchRoute) },
+
                 )
             }
 
@@ -129,6 +132,12 @@ fun AppNavigation() {
                 route ->
                 CategoryListScreen(
                     categoryId = route.categoryId,
+                    onBack = { backStack.removeLastOrNull() },
+                    onOpenPlayer = { backStack.add(Routes.RingtoneAudioPreviewRoute(it)) },
+                )
+            }
+            entry<Routes.SearchRoute>{
+                SearchScreen(
                     onBack = { backStack.removeLastOrNull() },
                     onOpenPlayer = { backStack.add(Routes.RingtoneAudioPreviewRoute(it)) },
                 )
