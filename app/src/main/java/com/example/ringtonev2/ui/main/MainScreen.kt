@@ -28,7 +28,6 @@ import androidx.core.content.ContextCompat
 import com.example.ringtonev2.components.EnableNotificationCard
 import com.example.ringtonev2.ui.category.CategoryScreen
 import com.example.ringtonev2.ui.download.DownloadScreen
-import com.example.ringtonev2.ui.playlist.PlayListScreen
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.R
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import android.provider.Settings
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
@@ -62,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.ui.home.HomeScreen
+import com.example.ringtonev2.ui.playlist.PlayListScreen
 import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
@@ -78,6 +77,7 @@ private enum class MainTab(val title: String, @DrawableRes val icon: Int) {
 fun MainScreen(
     onOpenPlayer: (String) -> Unit,
     onOpenDownload: (String) -> Unit,
+    onOpenCategory: (String) -> Unit,
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
@@ -85,7 +85,6 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableStateOf(MainTab.Home) }
-    var link by remember { mutableStateOf("") }
     var showPermissionDialog by remember { mutableStateOf(false) }
     val settingsManager = remember { DataStoreManager(context) }
     val cardShownCount by settingsManager.notificationCardCountFlow.collectAsState(initial = -1)
@@ -232,6 +231,7 @@ fun MainScreen(
             when (tab) {
                 MainTab.Home -> HomeScreen(
                     onOpenPlayer = onOpenPlayer,
+                    onOpenCategory = onOpenCategory
                 )
                 MainTab.Download -> DownloadScreen(
                     onOpenDownload = onOpenDownload,

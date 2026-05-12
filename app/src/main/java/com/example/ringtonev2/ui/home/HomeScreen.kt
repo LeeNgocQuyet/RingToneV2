@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,7 +21,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,7 +36,8 @@ import com.example.ringtonev2.ui.theme.AppTypography
 
 @Composable
 fun HomeScreen(
-    onOpenPlayer: (String) -> Unit
+    onOpenPlayer: (String) -> Unit,
+    onOpenCategory: (String) -> Unit
 ) {
 
     val viewModel: HomeViewModel = hiltViewModel()
@@ -135,7 +134,9 @@ fun HomeScreen(
                 ) {
 
                     item {
-                        FeaturedBannerSection()
+                        FeaturedBannerSection(
+                            onOpenCategory = onOpenCategory
+                        )
                     }
 
                     stickyHeader {
@@ -206,7 +207,9 @@ fun HomeScreen(
 }
 
 @Composable
-fun FeaturedBannerSection() {
+fun FeaturedBannerSection(
+    onOpenCategory: (String) -> Unit = {}
+) {
 
     Box(
         modifier = Modifier
@@ -261,7 +264,8 @@ fun FeaturedBannerSection() {
             }
 
             Button(
-                onClick = { },
+                onClick = {onOpenCategory("9")},
+                //9 là hot and trending category
                 modifier = Modifier.height(52.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(R.color.background_secondary)
@@ -336,13 +340,4 @@ fun CategoryTabsSection(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewHomeScreen() {
-
-    HomeScreen(
-        onOpenPlayer = {}
-    )
 }
