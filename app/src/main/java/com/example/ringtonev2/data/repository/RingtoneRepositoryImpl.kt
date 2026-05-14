@@ -28,8 +28,8 @@ class RingtoneRepositoryImpl @Inject constructor(
     override suspend fun deleteDownload(id: Long) {
         downloadDao.delete(id)
     }
-    override fun observeDownloads(): Flow<List<DownloadItem>> {
-        return downloadDao.observeAll()
+    override fun observeDownloads(): Flow<List<Ringtone>> {
+        return ringtoneDao.observeAll()
             .map { list ->
                 list.map { it.toDomain() }
             }

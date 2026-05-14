@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface RingtoneRepository {
     suspend fun getById(id: String): DownloadedRingtone?
     suspend fun getByRingtoneId(ringtoneId: String): DownloadedRingtone?
-    fun observeDownloads(): Flow<kotlin.collections.List<DownloadItem>>
+    fun observeDownloads(): Flow<kotlin.collections.List<Ringtone>>
     suspend fun deleteDownload(id: Long)
 
     fun observeFavorites(): Flow<kotlin.collections.List<Ringtone>>

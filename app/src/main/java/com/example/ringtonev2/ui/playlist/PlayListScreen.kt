@@ -99,10 +99,10 @@ fun PlaylistScreen(
                                 key = { it.id }
                             ) { download ->
 
-                                val ringtoneId = download.ringtoneId
+                                val ringtoneId = download.id
 
                                 RingtoneItemRow(
-                                    ringtone = download.toRingtone(),
+                                    ringtone = download,
                                     onPlayClick = {
                                         viewModel.togglePlaying(ringtoneId)
                                     },
@@ -111,7 +111,7 @@ fun PlaylistScreen(
 
                                     },
                                     onFavorite = {
-                                        viewModel.toggleFavorite(download.toRingtone())
+                                        viewModel.toggleFavorite(download)
                                     },
                                     isFavorite = ringtoneId in favoriteIds
                                 )

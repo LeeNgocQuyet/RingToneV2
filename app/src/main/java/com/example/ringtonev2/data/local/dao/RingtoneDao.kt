@@ -23,4 +23,7 @@ interface RingtoneDao {
     @Query("SELECT * FROM ringtones WHERE id = :id LIMIT 1")
     suspend fun getRingtoneById(id: String): RingtoneEntity?
 
+    @Query("SELECT * FROM ringtones ORDER BY cachedAt DESC")
+    fun observeAll(): kotlinx.coroutines.flow.Flow<List<RingtoneEntity>>
+
 }

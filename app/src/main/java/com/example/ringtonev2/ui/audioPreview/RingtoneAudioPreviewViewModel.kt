@@ -138,7 +138,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 input.close()
 
                 val ringtoneDomain = Ringtone(
-                    id = previewData.ringtoneId.toIntOrNull() ?: 0,
+                    id = previewData.ringtoneId,
                     name = previewData.title,
                     duration = previewData.duration,
                     audioPath = url,

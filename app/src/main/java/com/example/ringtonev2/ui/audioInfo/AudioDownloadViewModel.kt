@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.local.dao.DownloadDao
+import com.example.ringtonev2.data.local.dao.RingtoneDao
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
+import com.example.ringtonev2.data.mapper.toRingtone
+import com.example.ringtonev2.data.mapper.toRingtoneEntity
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,7 +34,8 @@ sealed interface AudioDownloadUiState {
 @HiltViewModel
 class AudioDownloadViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val downloadDao: DownloadDao
+    private val downloadDao: DownloadDao,
+    private val ringtoneDao: RingtoneDao
 
 ) : ViewModel() {
 
@@ -106,6 +110,7 @@ class AudioDownloadViewModel @Inject constructor(
                     )
 
                     downloadDao.insert(entity)
+                    ringtoneDao.insertRingtone(entity.toRingtone().toRingtoneEntity())
                     Log.d("AudioDownloadViewModel", "Saved to database: $entity")
                     _uiState.value = AudioDownloadUiState.Success(file.absolutePath)
                 } catch (e: Exception) {

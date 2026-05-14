@@ -18,7 +18,7 @@ fun DownloadedRingtone.toDomain(): DownloadItem = DownloadItem(
 )
 fun Ringtone.toFavoriteEntity(): FavoriteEntity {
     return FavoriteEntity(
-        ringtoneId = id.toString(),
+        ringtoneId = id,
         title = name ?: "",
         categoryId = categoryId ?: 0,
         duration = duration ?: 0,
@@ -27,7 +27,7 @@ fun Ringtone.toFavoriteEntity(): FavoriteEntity {
 }
 fun FavoriteEntity.toDomain(): Ringtone {
     return Ringtone(
-        id = ringtoneId.toInt(),
+        id = ringtoneId,
         name = title,
         duration = duration,
         audioPath = audioUrl,
@@ -38,7 +38,7 @@ fun FavoriteEntity.toDomain(): Ringtone {
 }
 fun RingtoneEntity.toDomain(): Ringtone {
     return Ringtone(
-        id = id.toIntOrNull() ?: 0,
+        id = id,
         name = title,
         duration = duration,
         audioPath = audioUrl,
@@ -52,7 +52,7 @@ fun Ringtone.toRingtoneEntity(
     position: Int = 0,
     filePath: String? = null): RingtoneEntity {
     return RingtoneEntity(
-        id = id.toString(),
+        id = id,
         position = position,
         title = name ?: "",
         artist = "",
@@ -71,7 +71,7 @@ fun Ringtone.toAudioPreview(
     audioPathOverride: String? = null
 ): RingtoneAudioPreview {
     return RingtoneAudioPreview(
-        ringtoneId = id.toString(),
+        ringtoneId = id,
         title = name ?: "",
         audioPath = audioPathOverride ?: audioPath.orEmpty(),
         duration = duration,
@@ -80,11 +80,23 @@ fun Ringtone.toAudioPreview(
 }
 fun DownloadItem.toRingtone(): Ringtone {
     return Ringtone(
-        id = ringtoneId.toInt(),
+        id = ringtoneId,
         name = title,
         duration = duration,
         audioPath = filePath,
         categoryId = null,
+        image = null,
+        watchCount = null
+    )
+}
+
+fun DownloadedRingtone.toRingtone(): Ringtone {
+    return Ringtone(
+        id = ringtoneId,
+        name = title,
+        duration = duration,
+        audioPath = filePath,
+        categoryId = -1,
         image = null,
         watchCount = null
     )
