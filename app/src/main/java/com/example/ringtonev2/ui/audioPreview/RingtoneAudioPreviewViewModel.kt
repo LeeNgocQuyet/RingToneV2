@@ -12,11 +12,15 @@ import com.example.ringtonev2.data.local.entity.RingtoneEntity
 import com.example.ringtonev2.data.mapper.toAudioPreview
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.remote.api.ApiService
+import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
@@ -35,6 +39,16 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<RingtoneAudioPreviewState>(RingtoneAudioPreviewState.Idle)
     val uiState = _uiState.asStateFlow()
+    val favoriteIds =
+        repository.observeFavorites()
+            .map { list ->
+                list.map { it.id }.toSet()
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptySet()
+            )
 
     fun resetState() {
         _uiState.value = RingtoneAudioPreviewState.Idle
@@ -76,6 +90,27 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         }
     }
 
+    fun toggleFavorite(ringtoneId: String) {
+        viewModelScope.launch {
+            val ringtoneEntity = repository.getRingtoneById(ringtoneId)
+
+            if (ringtoneEntity == null) {
+                return@launch
+            }
+
+            val ringtone = Ringtone(
+                id = ringtoneEntity.id,
+                categoryId = ringtoneEntity.category.toIntOrNull(),
+                name = ringtoneEntity.title,
+                duration = ringtoneEntity.duration,
+                audioPath = ringtoneEntity.audioUrl,
+                watchCount = ringtoneEntity.plays,
+                image = ringtoneEntity.coverUrl,
+            )
+
+            repository.toggleFavorite(ringtone)
+        }
+    }
 
     fun seekTo(position: Long) {
         val currentState = _uiState.value

@@ -96,6 +96,7 @@ fun RingtoneAudioPreviewScreen(
     }
     val successState = uiState as? RingtoneAudioPreviewState.Success
     val data = successState?.data
+
     if (data?.isDownloading ?: false) {
         Box(
             modifier = Modifier
@@ -134,6 +135,8 @@ fun AudioPreviewContent(
 ) {
     val context = LocalContext.current
     val data = state.data
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
+    val isFavorite = data.ringtoneId in favoriteIds
     val duration = data.duration
     var showAssignDialog by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
@@ -238,6 +241,7 @@ fun AudioPreviewContent(
         },
         containerColor = Color.Black
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -268,9 +272,12 @@ fun AudioPreviewContent(
                         )
                     )
                 }
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    viewModel.toggleFavorite(data.ringtoneId)
+                }) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_favorite),
+                        painter = painterResource(if (isFavorite) R.drawable.ic_favorite_fullfill
+                        else R.drawable.ic_favorite),
                         contentDescription = null,
                         tint = Color.Red
                     )
