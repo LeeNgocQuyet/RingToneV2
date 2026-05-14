@@ -99,8 +99,8 @@ fun RingtoneAudioPreviewScreen(
         }
     }
     val successState = uiState as? RingtoneAudioPreviewState.Success
-
-    if (successState?.isDownloading == true) {
+    val data = successState?.data
+    if (data?.isDownloading ?: false) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -110,14 +110,14 @@ fun RingtoneAudioPreviewScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                 CircularProgressIndicator(
-                    progress = successState.downloadProgress / 100f,
+                    progress = data.downloadProgress / 100f,
                     color = colorResource(R.color.background_brand)
                 )
 
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = "Downloading ${successState.downloadProgress}%...",
+                    text = "Downloading ${data.downloadProgress}%...",
                     style = AppTypography.bodyMedium.copy(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W500
@@ -137,14 +137,15 @@ fun AudioPreviewContent(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val duration = state.duration
+    val data = state.data
+    val duration = data.duration
     var showAssignDialog by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build()
     }
-    val progress = if (duration > 0) state.currentPosition.toFloat() / duration else 0f
+    val progress = if (duration > 0) data.currentPosition.toFloat() / duration else 0f
 
     if (showAssignDialog) {
         AssignUsageDialog(
@@ -185,10 +186,10 @@ fun AudioPreviewContent(
         SetRingtoneSuccessDialog(onDismiss = { showSuccessDialog = false })
     }
 
-    LaunchedEffect(state.audioPath) {
-        if (state.audioPath.isNotEmpty()) {
-            val uri = if (state.audioPath.startsWith("http")) Uri.parse(state.audioPath)
-            else Uri.fromFile(File(state.audioPath))
+    LaunchedEffect(data.audioPath) {
+        if (data.audioPath.isNotEmpty()) {
+            val uri = if (data.audioPath.startsWith("http")) Uri.parse(data.audioPath)
+            else Uri.fromFile(File(data.audioPath))
             val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
             exoPlayer.prepare()
@@ -265,7 +266,7 @@ fun AudioPreviewContent(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = state.title, color = colorResource(R.color.content_default),
+                        text = data.title, color = colorResource(R.color.content_default),
                         style = AppTypography.bodyMedium.copy(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W600
@@ -301,7 +302,7 @@ fun AudioPreviewContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    formatDurationMilisecond(state.currentPosition),
+                    formatDurationMilisecond(data.currentPosition),
                     color = colorResource(R.color.content_subtlest),
                     style = AppTypography.bodySmall
                 )
@@ -339,7 +340,7 @@ fun AudioPreviewContent(
                         .background(colorResource(R.color.background_brand)),
                     contentAlignment = Alignment.Center
                 ) {
-                    val icon = if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                    val icon = if (data.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
                     IconButton(onClick = { if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play() }) {
                         Icon(
                             painter = painterResource(icon),
@@ -367,7 +368,7 @@ fun AudioPreviewContent(
 
             Button(
                 onClick = {
-                    if (state.isDownloaded) {
+                    if (data.isDownloaded) {
                         showAssignDialog = true // Đã tải -> Hiện Dialog cài đặt
                     } else {
                         viewModel.downloadRingtone(context) // Chưa tải -> Bắt đầu tải
@@ -375,15 +376,15 @@ fun AudioPreviewContent(
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(28.dp),
-                enabled = !state.isDownloading,
+                enabled = !data.isDownloading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (state.isDownloaded) colorResource(R.color.background_secondary) else colorResource(
+                    containerColor = if (data.isDownloaded) colorResource(R.color.background_secondary) else colorResource(
                         R.color.background_brand
                     )
                 )
             ) {
                 Text(
-                    text = if (state.isDownloaded) stringResource(R.string.set_ring_tone) else "Download",
+                    text = if (data.isDownloaded) stringResource(R.string.set_ring_tone) else "Download",
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
