@@ -51,4 +51,9 @@
     <string name="favorite_tab_description">Discover new tones to build your collection.</string>
     <string name="favorite_tab_button">Explore Ringtones</string>
     <string name="download_tab_button">Download Audio</string>
+
+    <string name="delete_ringtone">Delete Ringtones?</string>"
+    <string name="delete_ringtone_description">This action cannot be undone and files will be permanently deleted.</string>
+    <string name="delete_confirm">Delete</string>
+    <string name="delete_cancel">Cancel</string>"
 </resources>
