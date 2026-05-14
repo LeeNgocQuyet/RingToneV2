@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.example.ringtonev2.data.local.entity.RingtoneEntity
 
 @Dao
-interface RingtoneDao {
+interface DownloadRingtoneDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(ringtone: RingtoneEntity)
 

@@ -8,7 +8,7 @@ import com.example.ringtonev2.data.local.entity.DownloadedRingtone
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface DownloadDao {
+interface DownloadTiktokDao {
 
     @Query("SELECT * FROM downloads ORDER BY downloadedAt DESC")
     fun observeAll(): Flow<List<DownloadedRingtone>>

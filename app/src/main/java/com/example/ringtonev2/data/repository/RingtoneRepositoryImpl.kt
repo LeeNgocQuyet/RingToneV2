@@ -1,13 +1,11 @@
 package com.example.ringtonev2.data.repository
 
 import androidx.paging.ExperimentalPagingApi
-import com.example.ringtonev2.data.local.AppDatabase
-import com.example.ringtonev2.data.local.dao.DownloadDao
+import com.example.ringtonev2.data.local.dao.DownloadTiktokDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
-import com.example.ringtonev2.data.local.dao.RingtoneDao
+import com.example.ringtonev2.data.local.dao.DownloadRingtoneDao
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
 import com.example.ringtonev2.data.local.entity.RingtoneEntity
-import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import com.example.ringtonev2.data.mapper.toDomain
@@ -19,28 +17,28 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class RingtoneRepositoryImpl @Inject constructor(
-    private val downloadDao: DownloadDao,
+    private val downloadTiktokDao: DownloadTiktokDao,
     private val favoriteDao: FavoriteDao,
-    private val ringtoneDao: RingtoneDao
+    private val downloadRingtoneDao: DownloadRingtoneDao
 
 ) : RingtoneRepository {
 
     override suspend fun deleteDownload(id: Long) {
-        downloadDao.delete(id)
+        downloadTiktokDao.delete(id)
     }
     override fun observeDownloads(): Flow<List<Ringtone>> {
-        return ringtoneDao.observeAll()
+        return downloadRingtoneDao.observeAll()
             .map { list ->
                 list.map { it.toDomain() }
             }
     }
 
     override suspend fun getById(id: String): DownloadedRingtone? {
-        return downloadDao.getByRingtoneId(id)
+        return downloadTiktokDao.getByRingtoneId(id)
     }
 
     override suspend fun getByRingtoneId(ringtoneId: String): DownloadedRingtone? {
-        return downloadDao.getByRingtoneId(ringtoneId)
+        return downloadTiktokDao.getByRingtoneId(ringtoneId)
     }
 
     override fun observeFavorites(): Flow<List<Ringtone>> {
@@ -94,14 +92,14 @@ class RingtoneRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getRingtoneById(id: String): RingtoneEntity? {
-        return ringtoneDao.getRingtoneById(id)
+        return downloadRingtoneDao.getRingtoneById(id)
     }
 
     override suspend fun updateFilePath(ringtoneId: String, filePath: String) {
-        ringtoneDao.updateFilePath(ringtoneId, filePath)
+        downloadRingtoneDao.updateFilePath(ringtoneId, filePath)
     }
 
     override suspend fun downloadRingtone(ringtone: Ringtone) {
-        ringtoneDao.insertRingtone(ringtone.toRingtoneEntity())
+        downloadRingtoneDao.insertRingtone(ringtone.toRingtoneEntity())
     }
 }

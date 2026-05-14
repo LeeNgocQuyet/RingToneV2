@@ -3,9 +3,9 @@ package com.example.ringtonev2.di
 import android.content.Context
 import androidx.room.Room
 import com.example.ringtonev2.data.local.AppDatabase
-import com.example.ringtonev2.data.local.dao.DownloadDao
+import com.example.ringtonev2.data.local.dao.DownloadTiktokDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
-import com.example.ringtonev2.data.local.dao.RingtoneDao
+import com.example.ringtonev2.data.local.dao.DownloadRingtoneDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,7 +30,7 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideDownloadDao(db: AppDatabase): DownloadDao {
+    fun provideDownloadDao(db: AppDatabase): DownloadTiktokDao {
         return db.downloadDao()
     }
 
@@ -45,7 +45,7 @@ object DatabaseModule {
     @Provides
     fun provideRingtoneDao(
         database: AppDatabase
-    ): RingtoneDao {
+    ): DownloadRingtoneDao {
         return database.ringtoneDao()
     }
 }
