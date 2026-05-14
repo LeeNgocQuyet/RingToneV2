@@ -98,7 +98,7 @@ fun DownloadedRingtone.toRingtoneEntity(): RingtoneEntity {
         title = title,
         artist = artist,
         category = "",
-        duration = duration,
+        duration = duration*1000,
         coverUrl = "",
         audioUrl = Uri.fromFile(File(filePath)).toString(),
         plays = 0,
