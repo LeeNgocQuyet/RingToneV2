@@ -2,6 +2,7 @@ package com.example.ringtonev2.domain;
 
 import androidx.paging.PagingData
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
+import com.example.ringtonev2.data.local.entity.RingtoneEntity
 
 import java.util.List;
 
@@ -30,4 +31,12 @@ interface RingtoneRepository {
     suspend fun toggleFavorite(
         ringtone: Ringtone
     )
+    suspend fun downloadRingtone(
+        ringtone: Ringtone
+    )
+    suspend fun updateFilePath(
+        ringtoneId: String, filePath: String
+    )
+    suspend fun getRingtoneById(
+        id: String): RingtoneEntity?
 }

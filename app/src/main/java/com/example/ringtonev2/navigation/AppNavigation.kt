@@ -19,9 +19,11 @@ import com.example.ringtonev2.ui.audioInfo.AudioDownloadScreen
 import com.example.ringtonev2.ui.audioInfo.AudioInfoScreen
 import com.example.ringtonev2.ui.audioPreview.DownloadAudioPreviewScreen
 import com.example.ringtonev2.ui.audioPreview.RingtoneAudioPreviewScreen
+import com.example.ringtonev2.ui.categorylist.CategoryListScreen
 import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
+import com.example.ringtonev2.ui.search.SearchScreen
 import com.example.ringtonev2.ui.splash.SplashScreen
 
 @Composable
@@ -58,6 +60,7 @@ fun AppNavigation() {
                 MainScreen(
                     onOpenPlayer = { id -> backStack.add(Routes.RingtoneAudioPreviewRoute(id)) ; Log.d("AppNavigation", "RingtoneAudioPreviewRoute onOpenPlayer: $id")},
                     onOpenDownload = {id -> backStack.add(Routes.AudioPreviewRoute(id)) ; Log.d("AppNavigation", "AudioPreviewRoute onOpenDownload: $id")},
+                    onOpenCategory = {id -> backStack.add(Routes.CategoryListRoute(id)) ; Log.d("AppNavigation", "CategoryListRoute onOpenCategory: $id")},
                     onOpenExtract = { backStack.add(ExtractRoute) },
                     onOpenHistory = { backStack.add(ExtractionHistoryRoute) },
                     onOpenAudioInfo = { data ->
@@ -121,6 +124,14 @@ fun AppNavigation() {
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()
                     }
+                )
+            }
+            entry<Routes.CategoryListRoute>{
+                route ->
+                CategoryListScreen(
+                    categoryId = route.categoryId,
+                    onBack = { backStack.removeLastOrNull() },
+                    onOpenPlayer = { backStack.add(Routes.RingtoneAudioPreviewRoute(it)) },
                 )
             }
         },

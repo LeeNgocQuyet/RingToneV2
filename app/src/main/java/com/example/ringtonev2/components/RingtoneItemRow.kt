@@ -43,9 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 import com.example.ringtonev2.domain.Ringtone
+import com.example.ringtonev2.ui.audioPreview.formatDurationMilisecond
 import com.example.ringtonev2.ui.theme.AppTypography
 import com.example.ringtonev2.ui.theme.White
 import kotlinx.coroutines.launch
+import okhttp3.internal.concurrent.formatDuration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,38 +56,14 @@ fun RingtoneItemRow(
     isPlaying: Boolean,
     onPlayClick: () -> Unit,
     onSetClick: () -> Unit,
-    onSwipeRight: () -> Unit,
     onFavorite: () -> Unit,
     isFavorite: Boolean
 ) {
     val offsetX = remember { Animatable(0f) }
-    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .offset { IntOffset(offsetX.value.toInt(), 0) }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(
-                    onDragEnd = {
-                        Log.d("RingtoneItemRow", "SWIPE END ${offsetX.value}")
-                        if (offsetX.value > 200f) {
-                            onSwipeRight()
-                        }
-
-                        scope.launch {
-                            offsetX.animateTo(0f)
-                        }
-                    }
-                ) { _, dragAmount ->
-
-                    val newValue = (offsetX.value + dragAmount)
-                        .coerceAtLeast(0f)
-
-                    scope.launch {
-                        offsetX.snapTo(newValue)
-                    }
-                }
-            }
     ) {
 
         Row(
@@ -146,7 +124,7 @@ fun RingtoneItemRow(
                     )
                 )
                 Text(
-                    text = formatDuration(ringtone.duration),
+                    text = formatDurationMilisecond(ringtone.duration),
                     style = AppTypography.bodySmall.copy(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,

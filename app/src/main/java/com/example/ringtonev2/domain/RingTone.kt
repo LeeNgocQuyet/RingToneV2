@@ -12,5 +12,5 @@ data class Ringtone(
     @SerializedName("audio_path")
     val audioPath: String?,
     val image: String?,
-    val duration: Int?
+    val duration: Long
 )
