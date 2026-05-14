@@ -5,6 +5,7 @@ import com.example.ringtonev2.data.local.entity.FavoriteEntity
 import com.example.ringtonev2.data.local.entity.RingtoneEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
+import com.example.ringtonev2.domain.RingtoneAudioPreview
 
 fun DownloadedRingtone.toDomain(): DownloadItem = DownloadItem(
     id = id,
@@ -62,5 +63,18 @@ fun Ringtone.toRingtoneEntity(
         plays = watchCount ?: 0,
         cachedAt = System.currentTimeMillis(),
         filePath = filePath
+    )
+}
+
+fun Ringtone.toAudioPreview(
+    isDownloaded: Boolean = false,
+    audioPathOverride: String? = null
+): RingtoneAudioPreview {
+    return RingtoneAudioPreview(
+        ringtoneId = id.toString(),
+        title = name ?: "",
+        audioPath = audioPathOverride ?: audioPath.orEmpty(),
+        duration = duration,
+        isDownloaded = isDownloaded
     )
 }
