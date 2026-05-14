@@ -108,7 +108,7 @@ fun PlaylistScreen(
                                     },
                                     isPlaying = currentPlayingId == ringtoneId && isPlaying,
                                     onSetClick = {
-
+                                        onOpenPlayer(ringtoneId)
                                     },
                                     onFavorite = {
                                         viewModel.toggleFavorite(download)

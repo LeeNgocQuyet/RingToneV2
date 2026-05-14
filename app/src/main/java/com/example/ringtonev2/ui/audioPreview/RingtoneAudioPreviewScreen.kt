@@ -1,10 +1,6 @@
 package com.example.ringtonev2.ui.audioPreview
 
-import android.content.Context
-import android.content.Intent
-import java.io.File
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -188,8 +184,7 @@ fun AudioPreviewContent(
 
     LaunchedEffect(data.audioPath) {
         if (data.audioPath.isNotEmpty()) {
-            val uri = if (data.audioPath.startsWith("http")) Uri.parse(data.audioPath)
-            else Uri.fromFile(File(data.audioPath))
+            val uri = Uri.parse(data.audioPath)
             val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
             exoPlayer.prepare()
