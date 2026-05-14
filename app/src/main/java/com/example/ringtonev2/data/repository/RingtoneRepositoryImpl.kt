@@ -102,4 +102,7 @@ class RingtoneRepositoryImpl @Inject constructor(
     override suspend fun downloadRingtoneEntity(ringtoneEntity: RingtoneEntity) {
         downloadRingtoneDao.insertRingtone(ringtoneEntity)
     }
+    override suspend fun deleteRingtoneById(ringtoneId: String) {
+        downloadRingtoneDao.deleteRingtoneById(ringtoneId)
+    }
 }

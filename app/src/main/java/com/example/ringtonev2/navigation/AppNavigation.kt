@@ -123,6 +123,9 @@ fun AppNavigation() {
                 RingtoneAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()
+                    },
+                    onDeleted = {
+                        backStack.removeLastOrNull()
                     }
                 )
             }

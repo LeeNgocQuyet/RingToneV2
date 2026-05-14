@@ -36,4 +36,7 @@ interface RingtoneRepository {
     )
     suspend fun getRingtoneById(
         id: String): RingtoneEntity?
+
+    suspend fun deleteRingtoneById(
+        ringtoneId: String)
 }

@@ -126,6 +126,34 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         }
     }
 
+    fun deleteRingtone(
+        onSuccess: () -> Unit
+    ) {
+        val currentState = _uiState.value
+        if (currentState !is RingtoneAudioPreviewState.Success) return
+
+        val ringtoneId = currentState.data.ringtoneId
+        val filePath = currentState.data.audioPath
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (filePath.isNotBlank() && !filePath.startsWith("http")) {
+                    val file = File(filePath)
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+                repository.deleteRingtoneById(ringtoneId)
+
+                withContext(Dispatchers.Main) {
+                    onSuccess()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun downloadRingtone(context: Context) {
         val currentState = _uiState.value
         if (currentState !is RingtoneAudioPreviewState.Success) return

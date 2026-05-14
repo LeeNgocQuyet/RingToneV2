@@ -26,4 +26,6 @@ interface DownloadRingtoneDao {
     @Query("SELECT * FROM ringtones ORDER BY cachedAt DESC")
     fun observeAll(): kotlinx.coroutines.flow.Flow<List<RingtoneEntity>>
 
+    @Query("DELETE FROM ringtones WHERE id = :ringtoneId")
+    suspend fun deleteRingtoneById(ringtoneId: String)
 }

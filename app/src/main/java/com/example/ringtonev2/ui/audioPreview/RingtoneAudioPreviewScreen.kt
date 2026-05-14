@@ -54,6 +54,7 @@ import kotlinx.coroutines.delay
 
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.AssignUsageDialog
+import com.example.ringtonev2.components.DeleteRingtoneDialog
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
 
@@ -62,7 +63,8 @@ import com.example.ringtonev2.ui.theme.AppTypography
 @Composable
 fun RingtoneAudioPreviewScreen(
     ringtoneId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onDeleted: () -> Unit
 ) {
     val viewModel: RingtoneAudioPreviewScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -81,7 +83,8 @@ fun RingtoneAudioPreviewScreen(
                 AudioPreviewContent(
                     state = state,
                     viewModel = viewModel,
-                    onBack = onBack
+                    onBack = onBack,
+                    onDeleted = onDeleted
                 )
             }
 
@@ -131,7 +134,8 @@ fun RingtoneAudioPreviewScreen(
 fun AudioPreviewContent(
     state: RingtoneAudioPreviewState.Success,
     viewModel: RingtoneAudioPreviewScreenViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onDeleted: () -> Unit
 ) {
     val context = LocalContext.current
     val data = state.data
@@ -140,7 +144,7 @@ fun AudioPreviewContent(
     val duration = data.duration
     var showAssignDialog by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
-
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build()
     }
@@ -183,6 +187,19 @@ fun AudioPreviewContent(
     }
     if (showSuccessDialog) {
         SetRingtoneSuccessDialog(onDismiss = { showSuccessDialog = false })
+    }
+    if (showDeleteDialog) {
+        DeleteRingtoneDialog(
+            onDismiss = {
+                showDeleteDialog = false
+            },
+            onDelete = {
+                showDeleteDialog = false
+                viewModel.deleteRingtone {
+                    onDeleted()
+                }
+            }
+        )
     }
 
     LaunchedEffect(data.audioPath) {
@@ -234,6 +251,19 @@ fun AudioPreviewContent(
                             contentDescription = null,
                             tint = Color.White
                         )
+                    }
+                },
+                actions = {
+                    if (data.isDownloaded) {
+                        IconButton(onClick = {
+                            showDeleteDialog = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_delete),
+                                contentDescription = "Delete ringtone",
+                                tint = Color.White
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Black)
