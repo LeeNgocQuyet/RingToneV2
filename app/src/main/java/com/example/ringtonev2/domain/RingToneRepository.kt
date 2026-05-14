@@ -1,10 +1,7 @@
 package com.example.ringtonev2.domain;
 
-import androidx.paging.PagingData
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
 import com.example.ringtonev2.data.local.entity.RingtoneEntity
-
-import java.util.List;
 
 import kotlinx.coroutines.flow.Flow
 
@@ -14,7 +11,7 @@ interface RingtoneRepository {
     fun observeDownloads(): Flow<kotlin.collections.List<DownloadItem>>
     suspend fun deleteDownload(id: Long)
 
-    fun getFavorites(): Flow<kotlin.collections.List<Ringtone>>
+    fun observeFavorites(): Flow<kotlin.collections.List<Ringtone>>
 
     fun isFavorite(
         ringtoneId: String

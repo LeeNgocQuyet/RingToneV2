@@ -6,7 +6,6 @@ import com.example.ringtonev2.data.local.dao.DownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
 import com.example.ringtonev2.data.local.dao.RingtoneDao
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
-import com.example.ringtonev2.data.local.entity.FavoriteEntity
 import com.example.ringtonev2.data.local.entity.RingtoneEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
@@ -20,7 +19,6 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class RingtoneRepositoryImpl @Inject constructor(
-    private val db: AppDatabase,
     private val downloadDao: DownloadDao,
     private val favoriteDao: FavoriteDao,
     private val ringtoneDao: RingtoneDao
@@ -45,7 +43,7 @@ class RingtoneRepositoryImpl @Inject constructor(
         return downloadDao.getByRingtoneId(ringtoneId)
     }
 
-    override fun getFavorites(): Flow<List<Ringtone>> {
+    override fun observeFavorites(): Flow<List<Ringtone>> {
         return favoriteDao.getFavorites()
             .map { entities ->
                 entities.map { entity ->
