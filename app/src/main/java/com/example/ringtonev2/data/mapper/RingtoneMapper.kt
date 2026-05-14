@@ -78,3 +78,14 @@ fun Ringtone.toAudioPreview(
         isDownloaded = isDownloaded
     )
 }
+fun DownloadItem.toRingtone(): Ringtone {
+    return Ringtone(
+        id = ringtoneId.toInt(),
+        name = title,
+        duration = duration,
+        audioPath = filePath,
+        categoryId = null,
+        image = null,
+        watchCount = null
+    )
+}
