@@ -34,6 +34,18 @@ class CategoryScreenViewModel @Inject constructor(
                 val categoryResponse =
                     api.getCategories()
 
+                if (!categoryResponse.status) {
+                    _categoryState.value =
+                        CategoryState.Error("Load category failed")
+                    return@launch
+                }
+
+                if (categoryResponse.data.isEmpty()) {
+                    _categoryState.value =
+                        CategoryState.Error("Category list is empty")
+                    return@launch
+                }
+
                 _categoryState.value =
                     CategoryState.Success(
                         categoryResponse.data
