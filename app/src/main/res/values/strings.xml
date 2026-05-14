@@ -43,4 +43,12 @@
     <string name="download_success_description">Your ringtone is ready.</string>
     <string name="continue_label">Continue</string>
     <string name="download_failed">Could not download audio</string>
+
+    <string name="downloads_tab">Downloads</string>
+    <string name="favorites_tab">Favorites</string>"
+    <string name="empty_title">Empty here</string>"
+    <string name="download_tab_description">Download audio from Tik to build your collection.</string>
+    <string name="favorite_tab_description">Discover new tones to build your collection.</string>
+    <string name="favorite_tab_button">Explore Ringtones</string>
+    <string name="download_tab_button">Download Audio</string>
 </resources>
