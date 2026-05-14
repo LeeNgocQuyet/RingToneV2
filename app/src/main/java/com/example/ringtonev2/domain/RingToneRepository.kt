@@ -28,8 +28,8 @@ interface RingtoneRepository {
     suspend fun toggleFavorite(
         ringtone: Ringtone
     )
-    suspend fun downloadRingtone(
-        ringtone: Ringtone
+    suspend fun downloadRingtoneEntity(
+        ringtoneEntity: RingtoneEntity
     )
     suspend fun updateFilePath(
         ringtoneId: String, filePath: String

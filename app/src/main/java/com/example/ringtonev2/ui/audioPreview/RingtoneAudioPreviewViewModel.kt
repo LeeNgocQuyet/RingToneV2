@@ -3,14 +3,15 @@ package com.example.ringtonev2.ui.audioPreview
 import android.content.ContentValues
 import android.content.Context
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ringtonev2.data.local.entity.RingtoneEntity
 import com.example.ringtonev2.data.mapper.toAudioPreview
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.remote.api.ApiService
-import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 _uiState.value = RingtoneAudioPreviewState.Success(
                     data = localAudio.toDomain().toAudioPreview(
                         isDownloaded = true,
-                        audioPathOverride = localAudio.filePath
+                        audioPathOverride = Uri.fromFile(File(localAudio.filePath)).toString()
                     )
                 )
             } else {
@@ -137,17 +138,21 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 output.close()
                 input.close()
 
-                val ringtoneDomain = Ringtone(
+                val ringtoneDomain = RingtoneEntity(
+                    position = 0,
                     id = previewData.ringtoneId,
-                    name = previewData.title,
+                    title = previewData.title,
+                    artist = "",
+                    category = "",
                     duration = previewData.duration,
-                    audioPath = url,
-                    categoryId = null,
-                    image = null,
-                    watchCount = null
-                )
+                    coverUrl = "",
+                    audioUrl = Uri.fromFile(File(file.absolutePath)).toString(),
+                    plays = 0,
+                    cachedAt = System.currentTimeMillis(),
+                    filePath = file.absolutePath
+                    )
 
-                repository.downloadRingtone(ringtoneDomain)
+                repository.downloadRingtoneEntity(ringtoneDomain)
 
                 repository.updateFilePath(
                     previewData.ringtoneId,

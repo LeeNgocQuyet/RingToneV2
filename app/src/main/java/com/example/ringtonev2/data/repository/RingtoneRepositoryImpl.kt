@@ -99,7 +99,7 @@ class RingtoneRepositoryImpl @Inject constructor(
         downloadRingtoneDao.updateFilePath(ringtoneId, filePath)
     }
 
-    override suspend fun downloadRingtone(ringtone: Ringtone) {
-        downloadRingtoneDao.insertRingtone(ringtone.toRingtoneEntity())
+    override suspend fun downloadRingtoneEntity(ringtoneEntity: RingtoneEntity) {
+        downloadRingtoneDao.insertRingtone(ringtoneEntity)
     }
 }

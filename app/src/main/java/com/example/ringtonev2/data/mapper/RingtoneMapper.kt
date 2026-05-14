@@ -1,11 +1,13 @@
 package com.example.ringtonev2.data.mapper
 
+import android.net.Uri
 import com.example.ringtonev2.data.local.entity.DownloadedRingtone
 import com.example.ringtonev2.data.local.entity.FavoriteEntity
 import com.example.ringtonev2.data.local.entity.RingtoneEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneAudioPreview
+import java.io.File
 
 fun DownloadedRingtone.toDomain(): DownloadItem = DownloadItem(
     id = id,
@@ -50,7 +52,7 @@ fun RingtoneEntity.toDomain(): Ringtone {
 
 fun Ringtone.toRingtoneEntity(
     position: Int = 0,
-    filePath: String? = null): RingtoneEntity {
+    filePath: String): RingtoneEntity {
     return RingtoneEntity(
         id = id,
         position = position,
@@ -90,14 +92,18 @@ fun DownloadItem.toRingtone(): Ringtone {
     )
 }
 
-fun DownloadedRingtone.toRingtone(): Ringtone {
-    return Ringtone(
+fun DownloadedRingtone.toRingtoneEntity(): RingtoneEntity {
+    return RingtoneEntity(
         id = ringtoneId,
-        name = title,
+        title = title,
+        artist = artist,
+        category = "",
         duration = duration,
-        audioPath = filePath,
-        categoryId = -1,
-        image = null,
-        watchCount = null
+        coverUrl = "",
+        audioUrl = Uri.fromFile(File(filePath)).toString(),
+        plays = 0,
+        cachedAt = downloadedAt,
+        filePath = filePath,
+        position = 0
     )
 }

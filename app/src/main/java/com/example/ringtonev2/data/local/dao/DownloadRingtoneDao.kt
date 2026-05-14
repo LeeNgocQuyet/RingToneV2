@@ -15,7 +15,7 @@ interface DownloadRingtoneDao {
     suspend fun insertAll(items: List<RingtoneEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRingtone(ringtone: RingtoneEntity)
+    suspend fun insertRingtone(ringtoneEntity: RingtoneEntity)
 
     @Query("""UPDATE ringtones SET filePath = :path WHERE id = :id""")
     suspend fun updateFilePath(id: String, path: String)

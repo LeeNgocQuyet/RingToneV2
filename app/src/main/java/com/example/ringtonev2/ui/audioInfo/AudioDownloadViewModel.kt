@@ -108,9 +108,8 @@ class AudioDownloadViewModel @Inject constructor(
                         downloadedAt = System.currentTimeMillis(),
                         duration = data.duration ?: 0L
                     )
-
                     downloadTiktokDao.insert(entity)
-                    downloadRingtoneDao.insertRingtone(entity.toRingtone().toRingtoneEntity())
+                    downloadRingtoneDao.insertRingtone(entity.toRingtoneEntity())
                     Log.d("AudioDownloadViewModel", "Saved to database: $entity")
                     _uiState.value = AudioDownloadUiState.Success(file.absolutePath)
                 } catch (e: Exception) {
