@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">RingTonev2</string>
+
+    <string name="download_screen">Tải xuống</string>
+    <string name="download_tik_audio">Tải âm thanh Tik</string>
+    <string name="paste_tik_link">Dán liên kết video Tik để tạo nhạc chuông chất lượng cao.</string>
+    <string name="paste_tik_link_here">Dán liên kết video Tik vào đây</string>
+    <string name="download_audio">Tải âm thanh</string>
+
+    <string name="link_unavailable">Liên kết không khả dụng</string>
+    <string name="try_another_link">Thử liên kết khác</string>
+    <string name="try_another_link_description">Liên kết này có thể đang ở chế độ riêng tư hoặc đã bị xóa. Vui lòng thử liên kết khác.</string>
+
+    <string name="audio_preview">Nghe thử âm thanh</string>
+    <string name="set_ring_tone">Đặt nhạc chuông</string>
+
+    <string name="alarm_title">Báo thức</string>
+    <string name="notify_title">Thông báo</string>
+    <string name="ringtone_title">Nhạc chuông</string>
+
+    <string name="success_title">Thành công</string>
+    <string name="success_description">Nhạc chuông đã được đặt thành công.</string>
+    <string name="assign_usage_type">Chọn kiểu sử dụng</string>
+    <string name="ok">OK</string>
+
+    <string name="slogan">Điện thoại của bạn, phong cách của bạn</string>
+    <string name="onboarding_text">Nhạc chuông mới mẻ, phù hợp với cá tính của bạn và được cập nhật hằng ngày.</string>
+    <string name="get_started">Bắt đầu</string>
+    <string name="This_action_may_contain_ads">Hành động này có thể chứa quảng cáo</string>
+
+    <string name="top_ringtones">Nhạc chuông thịnh hành</string>
+    <string name="home_description">Điện thoại của bạn, phong cách của bạn</string>
+    <string name="set_button">Đặt</string>
+    <string name="play">Phát</string>
+
+    <string name="enable_notifications">Bật thông báo</string>
+    <string name="enable_notifications_description">Ứng dụng cần quyền truy cập thông báo để hoạt động đúng cách.</string>
+
+    <string name="connection_timeout">Hết thời gian kết nối</string>
+    <string name="connection_timeout_description">Máy chủ phản hồi quá lâu. Vui lòng kiểm tra kết nối và thử lại.</string>
+
+    <string name="audio_info_title">Thông tin âm thanh</string>
+    <string name="audio_info_video_title">Tiêu đề video</string>
+    <string name="audio_info_author">Tác giả</string>
+    <string name="audio_info_music_title">Âm nhạc</string>
+    <string name="audio_info_duration_sec">Thời lượng</string>
+    <string name="audio_info_audio_url">URL âm thanh</string>
+
+    <string name="cd_back">Quay lại</string>
+
+    <string name="downloading_audio_title">Đang tải âm thanh</string>
+    <string name="downloading_audio_subtitle">Đang tải âm thanh…</string>
+    <string name="downloading_audio_description">Đang xử lý liên kết để tạo nhạc chuông</string>
+
+    <string name="download_success_title">Tải xuống thành công!</string>
+    <string name="download_success_description">Nhạc chuông của bạn đã sẵn sàng.</string>
+    <string name="continue_label">Tiếp tục</string>
+    <string name="download_failed">Không thể tải âm thanh</string>
+
+    <string name="downloads_tab">Tải xuống</string>
+    <string name="favorites_tab">Yêu thích</string>
+
+    <string name="empty_title">Chưa có nội dung</string>
+    <string name="download_tab_description">Tải âm thanh từ Tik để xây dựng bộ sưu tập của bạn.</string>
+    <string name="favorite_tab_description">Khám phá nhạc chuông mới để xây dựng bộ sưu tập của bạn.</string>
+    <string name="favorite_tab_button">Khám phá nhạc chuông</string>
+    <string name="download_tab_button">Tải âm thanh</string>
+
+    <string name="delete_ringtone">Xóa nhạc chuông?</string>
+    <string name="delete_ringtone_description">Hành động này không thể hoàn tác và tệp sẽ bị xóa vĩnh viễn.</string>
+    <string name="delete_confirm">Xóa</string>
+    <string name="delete_cancel">Hủy</string>
+
+    <string name="no_results">Không có kết quả</string>
+
+    <string name="download_history">Lịch sử tải xuống</string>
+
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_language">Ngôn ngữ</string>
+    <string name="settings_rating_us">Đánh giá ứng dụng</string>
+    <string name="settings_feedback">Phản hồi</string>
+    <string name="settings_share_app">Chia sẻ ứng dụng</string>
+    <string name="settings_term_of_use">Điều khoản sử dụng</string>
+    <string name="settings_privacy_policy">Chính sách bảo mật</string>
+    <string name="settings_select_language">Chọn ngôn ngữ</string>
+    <string name="settings_app_version">Phiên bản ứng dụng 1.0.0</string>
+    <string name="language_english">English</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="close">Đóng</string>
+</resources>
