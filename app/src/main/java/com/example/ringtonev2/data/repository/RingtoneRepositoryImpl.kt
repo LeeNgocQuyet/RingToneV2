@@ -1,44 +1,39 @@
 package com.example.ringtonev2.data.repository
 
 import androidx.paging.ExperimentalPagingApi
-import com.example.ringtonev2.data.local.dao.DownloadTiktokDao
+import com.example.ringtonev2.data.local.dao.TikTokDownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
-import com.example.ringtonev2.data.local.dao.DownloadRingtoneDao
-import com.example.ringtonev2.data.local.entity.DownloadedRingtone
-import com.example.ringtonev2.data.local.entity.RingtoneEntity
+import com.example.ringtonev2.data.local.dao.DownloadedRingtoneDao
+import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
+import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.mapper.toFavoriteEntity
-import com.example.ringtonev2.data.mapper.toRingtoneEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class RingtoneRepositoryImpl @Inject constructor(
-    private val downloadTiktokDao: DownloadTiktokDao,
+    private val tikTokDownloadDao: TikTokDownloadDao,
     private val favoriteDao: FavoriteDao,
-    private val downloadRingtoneDao: DownloadRingtoneDao
+    private val downloadedRingtoneDao: DownloadedRingtoneDao
 
 ) : RingtoneRepository {
 
-    override suspend fun deleteDownload(id: Long) {
-        downloadTiktokDao.delete(id)
+    override suspend fun deleteTikTokDownloadByLocalId(id: Long) {
+        tikTokDownloadDao.deleteTikTokDownloadByLocalId(id)
     }
-    override fun observeDownloads(): Flow<List<Ringtone>> {
-        return downloadRingtoneDao.observeAll()
+    override fun observeDownloadedRingtones(): Flow<List<Ringtone>> {
+        return downloadedRingtoneDao.observeDownloadedRingtones()
             .map { list ->
                 list.map { it.toDomain() }
             }
     }
 
-    override suspend fun getById(id: String): DownloadedRingtone? {
-        return downloadTiktokDao.getByRingtoneId(id)
-    }
-
-    override suspend fun getByRingtoneId(ringtoneId: String): DownloadedRingtone? {
-        return downloadTiktokDao.getByRingtoneId(ringtoneId)
+    override suspend fun getTikTokDownloadByRingtoneId(ringtoneId: String): TikTokDownloadEntity? {
+        return tikTokDownloadDao.getTikTokDownloadByRingtoneId(ringtoneId)
     }
 
     override fun observeFavorites(): Flow<List<Ringtone>> {
@@ -91,18 +86,18 @@ class RingtoneRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRingtoneById(id: String): RingtoneEntity? {
-        return downloadRingtoneDao.getRingtoneById(id)
+    override suspend fun getDownloadedRingtoneById(id: String): DownloadedRingtoneEntity? {
+        return downloadedRingtoneDao.getDownloadedRingtoneById(id)
     }
 
-    override suspend fun updateFilePath(ringtoneId: String, filePath: String) {
-        downloadRingtoneDao.updateFilePath(ringtoneId, filePath)
+    override suspend fun updateDownloadedRingtoneFilePath(ringtoneId: String, filePath: String) {
+        downloadedRingtoneDao.updateDownloadedRingtoneFilePath(ringtoneId, filePath)
     }
 
-    override suspend fun downloadRingtoneEntity(ringtoneEntity: RingtoneEntity) {
-        downloadRingtoneDao.insertRingtone(ringtoneEntity)
+    override suspend fun saveDownloadedRingtone(ringtoneEntity: DownloadedRingtoneEntity) {
+        downloadedRingtoneDao.saveDownloadedRingtone(ringtoneEntity)
     }
-    override suspend fun deleteRingtoneById(ringtoneId: String) {
-        downloadRingtoneDao.deleteRingtoneById(ringtoneId)
+    override suspend fun deleteDownloadedRingtoneById(ringtoneId: String) {
+        downloadedRingtoneDao.deleteDownloadedRingtoneById(ringtoneId)
     }
 }
