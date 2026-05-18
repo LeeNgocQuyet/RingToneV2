@@ -39,16 +39,4 @@ interface ApiService {
         @Query("order_by") orderBy: String = "id",
         @Query("order") order: String = "asc",
     ): CategoryResponse
-
-    @GET("api/ringtone/list")
-    suspend fun getSearch(
-        @Query("page") page: Int = 1,
-        @Query("limit") limit: Int = 24,
-        @Query("order_by") orderBy: String = "id",
-        @Query("order") order: String = "asc",
-        @Query("category_ids") categoryIds: String? = null,
-        @Query("search") search: String? = null,
-        @Query("list_ids") listIds: String? = null,
-        @Query("is_clone") isClone: Boolean? = null,
-    ): RingtoneResponse
 }
