@@ -252,7 +252,11 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 val path = currentState.data.audioPath
                 if (path.isEmpty() || path.startsWith("http")) return@launch
 
-                val internalFile = File(path)
+                val internalFile = if (path.startsWith("file://")) {
+                    File(Uri.parse(path).path ?: return@launch)
+                } else {
+                    File(path)
+                }
                 if (!internalFile.exists()) return@launch
 
                 val resolver = appContext.contentResolver

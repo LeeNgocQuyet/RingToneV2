@@ -409,9 +409,7 @@ fun AudioPreviewContent(
                 shape = RoundedCornerShape(28.dp),
                 enabled = !data.isDownloading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (data.isDownloaded) colorResource(R.color.background_secondary) else colorResource(
-                        R.color.background_brand
-                    )
+                    containerColor = colorResource(R.color.background_secondary)
                 )
             ) {
                 Text(
