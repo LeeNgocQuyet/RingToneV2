@@ -62,7 +62,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.until.keyboardAsState
+import com.example.ringtonev2.util.keyboardAsState
 
 @Composable
 fun SearchScreen(

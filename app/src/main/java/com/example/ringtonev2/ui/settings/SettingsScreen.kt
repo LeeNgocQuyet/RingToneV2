@@ -1,5 +1,6 @@
 package com.example.ringtonev2.ui.settings
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,10 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.LocaleListCompat
 import com.example.ringtonev2.R
 import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.ui.theme.RingtoneTheme
 import com.example.ringtonev2.ui.theme.SoftPurple
+import com.example.ringtonev2.util.LanguageUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -167,12 +170,18 @@ fun SettingsScreen(
                         scope.launch {
                             dataStoreManager.setLanguage("en")
                             showLanguageDialog = false
+                            AppCompatDelegate.setApplicationLocales(
+                                LocaleListCompat.forLanguageTags("en")
+                            )
                         }
                     }
                     LanguageOption(stringResource(R.string.language_vietnamese), currentLanguage == "vi") {
                         scope.launch {
                             dataStoreManager.setLanguage("vi")
                             showLanguageDialog = false
+                            AppCompatDelegate.setApplicationLocales(
+                                LocaleListCompat.forLanguageTags("vi")
+                            )
                         }
                     }
                 }
