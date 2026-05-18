@@ -144,6 +144,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                     }
                 }
                 repository.deleteDownloadedRingtoneById(ringtoneId)
+                repository.removeFavorite(ringtoneId)
 
                 withContext(Dispatchers.Main) {
                     onSuccess()

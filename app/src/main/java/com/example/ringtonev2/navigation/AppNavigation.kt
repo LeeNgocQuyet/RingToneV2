@@ -110,10 +110,9 @@ fun AppNavigation() {
                 Log.d("AppNavigation", "DownloadAudioPreviewScreen: ${route.ringtoneId}")
                 DownloadAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
-                    onBack = { backStack.removeLastOrNull()
-                        backStack.removeLastOrNull()
-                        // màn audio download không có back nên remove 2 lần
-                        // sẽ sửa logic sau để tái sử dụng lại
+                    onBack = {
+                    while (backStack.size > 1) {
+                        backStack.removeLastOrNull() }
                     }
                 )
             }

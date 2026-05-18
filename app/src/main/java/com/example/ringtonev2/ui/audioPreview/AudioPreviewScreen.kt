@@ -69,7 +69,9 @@ fun DownloadAudioPreviewScreen(
 ) {
     val viewModel: AudioPreviewScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
+    val isFavorite = ringtoneId in favoriteIds
+
     val duration = uiState.duration
 
     var showAssignDialog by remember {
@@ -248,9 +250,12 @@ fun DownloadAudioPreviewScreen(
                         )
                     }
 
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {
+                        viewModel.toggleFavorite(ringtoneId)
+                    }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_favorite),
+                            painter = painterResource(if (isFavorite) R.drawable.ic_favorite_fullfill
+                            else R.drawable.ic_favorite),
                             contentDescription = null,
                             tint = Color.Red
                         )

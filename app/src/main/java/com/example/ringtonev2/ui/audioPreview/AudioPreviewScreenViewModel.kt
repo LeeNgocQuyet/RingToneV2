@@ -9,11 +9,15 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.remote.api.ApiService
+import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -45,6 +49,17 @@ class AudioPreviewScreenViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AudioPreviewUiState())
     val uiState = _uiState.asStateFlow()
 
+    val favoriteIds =
+        repository.observeFavorites()
+            .map { list ->
+                list.map { it.id }.toSet()
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptySet()
+            )
+
     fun load(audioId: String) {
         viewModelScope.launch {
 
@@ -55,6 +70,28 @@ class AudioPreviewScreenViewModel @Inject constructor(
                 duration = audio?.duration ?: 0L,
                 audioPath = audio?.filePath ?: ""
             )
+        }
+    }
+
+    fun toggleFavorite(ringtoneId: String) {
+        viewModelScope.launch {
+            val ringtoneEntity = repository.getDownloadedRingtoneById(ringtoneId)
+
+            if (ringtoneEntity == null) {
+                return@launch
+            }
+
+            val ringtone = Ringtone(
+                id = ringtoneEntity.id,
+                categoryId = ringtoneEntity.category.toIntOrNull(),
+                name = ringtoneEntity.title,
+                duration = ringtoneEntity.duration,
+                audioPath = ringtoneEntity.audioUrl,
+                watchCount = ringtoneEntity.plays,
+                image = ringtoneEntity.coverUrl,
+            )
+
+            repository.toggleFavorite(ringtone)
         }
     }
 
