@@ -80,6 +80,7 @@ fun MainScreen(
     onOpenCategory: (String) -> Unit,
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
+    onOpenSearch: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
     onOpenErrorInfo: () -> Unit,
 ) {
@@ -172,7 +173,7 @@ fun MainScreen(
             MainTopBar(
                 isSearchIcon = (tab != MainTab.Home),
                 title = stringResource(id = R.string.app_name),
-                onSearchClick = {},
+                onSearchClick = onOpenSearch,
                 onSettingsClick = { }
             )
         },

@@ -8,6 +8,7 @@ object Routes {
     @Serializable data object OnboardingRoute : NavKey
     @Serializable data object LanguageRoute : NavKey
     @Serializable data object MainRoute : NavKey
+    @Serializable data object SearchRoute : NavKey
 
     @Serializable data class PlayerRoute(val ringtoneId: String) : NavKey
 
