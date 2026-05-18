@@ -4,23 +4,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
-import com.example.ringtonev2.ui.home.RingtonePagingSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val repository: RingtoneRepository,
@@ -29,8 +33,44 @@ class SearchScreenViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(SearchScreenState())
     val uiState = _uiState.asStateFlow()
+    private val _currentPlayingId = MutableStateFlow<String?>(null)
+    val currentPlayingId = _currentPlayingId.asStateFlow()
+    private val _isPlaying = MutableStateFlow(false)
+    val isPlaying = _isPlaying.asStateFlow()
 
-    private var searchJob: Job? = null
+    private val searchQuery = MutableStateFlow("")
+
+    val suggestions = Pager(
+        config = PagingConfig(
+            pageSize = 25,
+            enablePlaceholders = false
+        ),
+        pagingSourceFactory = {
+            SearchRingtonePagingSource(
+                api = api,
+                query = null
+            )
+        }
+    ).flow.cachedIn(viewModelScope)
+
+    val ringtones = searchQuery
+        .debounce(300)
+        .distinctUntilChanged()
+        .flatMapLatest { query ->
+            Pager(
+                config = PagingConfig(
+                    pageSize = 25,
+                    enablePlaceholders = false
+                ),
+                pagingSourceFactory = {
+                    SearchRingtonePagingSource(
+                        api = api,
+                        query = query.takeIf { it.isNotBlank() }
+                    )
+                }
+            ).flow
+        }
+        .cachedIn(viewModelScope)
 
     val favoriteIds =
         repository.observeFavorites()
@@ -41,50 +81,14 @@ class SearchScreenViewModel @Inject constructor(
                 emptySet()
             )
 
-
     fun onQueryChange(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
+        searchQuery.value = query.trim()
+    }
 
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(300)
-
-            if (query.isBlank()) {
-                _uiState.value = _uiState.value.copy(
-                    results = emptyList(),
-                    isLoading = false,
-                    errorMessage = null
-                )
-            } else {
-                val response = api.getSearch(
-                    search = query,
-                )
-                if (!response.status) {
-                    _uiState.value = _uiState.value.copy(
-                        results = emptyList(),
-                        isLoading = false,
-                        errorMessage = "Response error"
-                    )
-                    return@launch
-                }
-
-                val data = response.data
-                if (data.isEmpty()) {
-                    _uiState.value = _uiState.value.copy(
-                        results = emptyList(),
-                        isLoading = false,
-                        errorMessage = "Data not found"
-                    )
-                    return@launch
-                }
-                _uiState.value = _uiState.value.copy(
-                    results = data,
-                    isLoading = false,
-                    errorMessage = null
-                )
-
-            }
-        }
+    fun onClear(){
+        _uiState.value = _uiState.value.copy(query = "")
+        searchQuery.value = ""
     }
 
     fun removeHistoryItem(value: String) {
@@ -102,23 +106,52 @@ class SearchScreenViewModel @Inject constructor(
             repository.toggleFavorite(ringtone)
         }
     }
-
-    private fun loadSuggestions() {
-        viewModelScope.launch {
-            try {
-                val response = api.getRingtones(limit = 10)
-                if (response.status) {
-                    val data = response.data
-                    _uiState.value = _uiState.value.copy(
-                        suggestions = data
-                    )
-                }
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = e.message ?: "Unknown Error"
-                )
-            }
+    fun togglePlaying(ringtoneId: String) {
+        if (_currentPlayingId.value == ringtoneId) {
+            _isPlaying.value = !_isPlaying.value
+        } else {
+            _currentPlayingId.value = ringtoneId
+            _isPlaying.value = true
         }
+    }
+    fun onPlaybackCompleted(){
+        _isPlaying.value = false
     }
 }
 
+private class SearchRingtonePagingSource(
+    private val api: ApiService,
+    private val query: String?
+) : PagingSource<Int, Ringtone>() {
+
+    override fun getRefreshKey(state: PagingState<Int, Ringtone>): Int? {
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
+    }
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Ringtone> {
+        return try {
+            val page = params.key ?: 1
+            val response = api.getRingtones(
+                page = page,
+                limit = params.loadSize,
+                search = query
+            )
+
+            if (!response.status) {
+                return LoadResult.Error(Throwable("API error: status=false"))
+            }
+
+            val data = response.data
+            LoadResult.Page(
+                data = data,
+                prevKey = if (page == 1) null else page - 1,
+                nextKey = if (data.isEmpty()) null else page + 1
+            )
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
+    }
+}

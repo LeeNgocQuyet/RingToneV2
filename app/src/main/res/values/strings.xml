@@ -56,4 +56,6 @@
     <string name="delete_ringtone_description">This action cannot be undone and files will be permanently deleted.</string>
     <string name="delete_confirm">Delete</string>
     <string name="delete_cancel">Cancel</string>"
+
+    <string name="no_results">No results</string>
 </resources>
