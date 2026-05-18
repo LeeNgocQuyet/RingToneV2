@@ -6,7 +6,7 @@ import androidx.room.Entity
     tableName = "ringtones",
     primaryKeys = ["id"],
 )
-data class RingtoneEntity(
+data class DownloadedRingtoneEntity(
     val id: String,
     val position: Int,
     val title: String,
