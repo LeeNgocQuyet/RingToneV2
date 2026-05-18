@@ -2,7 +2,7 @@
 <resources>
     <color name="background_default">#fffbf8f9</color>
     <color name="content_default">#FFFFFF</color>
-    <color name="content_subtle">#99000000</color>
+    <color name="content_subtle">#E5E5E5</color>
     <color name="content_subtlest">#ff8c8c8c</color>
     <color name="content_disabled">#ffbfbfbf</color>
     <color name="content_inverse">#ffffffff</color>
@@ -57,5 +57,4 @@
     <color name="icon_bar_default">#8C8C8C</color>
     <color name="text_bar_selected">#D6FE74</color>
     <color name="text_bar_default">#8C8C8C</color>
-
 </resources>

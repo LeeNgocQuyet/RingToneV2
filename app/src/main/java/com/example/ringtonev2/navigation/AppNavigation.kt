@@ -23,7 +23,6 @@ import com.example.ringtonev2.ui.categorylist.CategoryListScreen
 import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
-import com.example.ringtonev2.ui.search.SearchScreen
 import com.example.ringtonev2.ui.splash.SplashScreen
 
 @Composable

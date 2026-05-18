@@ -34,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -261,7 +260,7 @@ fun AudioPreviewContent(
                             Icon(
                                 painter = painterResource(R.drawable.ic_delete),
                                 contentDescription = "Delete ringtone",
-                                tint = Color.White
+                                tint = Color.Red
                             )
                         }
                     }
@@ -309,7 +308,7 @@ fun AudioPreviewContent(
                         painter = painterResource(if (isFavorite) R.drawable.ic_favorite_fullfill
                         else R.drawable.ic_favorite),
                         contentDescription = null,
-                        tint = Color.Red
+                        tint = if (isFavorite) Color.Red else Color.White
                     )
                 }
             }

@@ -67,6 +67,7 @@ val BorderDisabled = Color(0xFFE5E5E5)
 // Other
 val Black = Color(0xFF000000)
 val White = Color(0xFFFFFFFF)
+val Delete_Color = Color(0xFFD24F4F)
 
 val Accent = Color(0xFF202322)
 val OnAccent = Color(0xFFF7F6FB)
