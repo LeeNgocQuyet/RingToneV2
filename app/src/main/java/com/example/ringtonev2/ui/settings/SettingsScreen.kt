@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onOpenPlayer: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -234,14 +233,5 @@ fun LanguageOption(
         RadioButton(selected = isSelected, onClick = onClick)
         Spacer(modifier = Modifier.width(8.dp))
         Text(text = name, color = if (isSelected) SoftPurple else Color.Black)
-    }
-}
-
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
-@Composable
-fun SettingsScreenPreview() {
-    RingtoneTheme {
-        SettingsScreen(
-            onOpenPlayer = {},onBack = {})
     }
 }

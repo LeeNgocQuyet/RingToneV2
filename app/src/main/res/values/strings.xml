@@ -58,4 +58,6 @@
     <string name="delete_cancel">Cancel</string>"
 
     <string name="no_results">No results</string>
+
+    <string name="download_history">"Download History"</string>
 </resources>
