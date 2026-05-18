@@ -53,7 +53,7 @@ class CategoryListScreenViewModel @Inject constructor(
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
     val favoriteIds =
-        repository.getFavorites()
+        repository.observeFavorites()
             .map { list ->
                 list.map { it.id.toString() }.toSet()
             }

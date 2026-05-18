@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.ui.home.HomeScreen
-import com.example.ringtonev2.ui.playlist.PlayListScreen
+import com.example.ringtonev2.ui.playlist.PlaylistScreen
 import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
@@ -239,7 +239,8 @@ fun MainScreen(
                     onOpenErrorScreen = onOpenErrorInfo
                 )
                 MainTab.Category -> CategoryScreen(onOpenCategory = onOpenCategory)
-                MainTab.Playlist -> PlayListScreen(onOpenPlayer = onOpenPlayer)
+                MainTab.Playlist -> PlaylistScreen(onOpenPlayer = onOpenPlayer
+                )
             }
         }
     }

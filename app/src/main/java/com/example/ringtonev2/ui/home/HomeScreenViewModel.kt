@@ -12,7 +12,6 @@ import com.example.ringtonev2.data.repository.RetrofitInstance
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -54,7 +53,7 @@ class HomeViewModel @Inject constructor(
     val isPlaying = _isPlaying.asStateFlow()
 
     val favoriteIds =
-        repository.getFavorites()
+        repository.observeFavorites()
             .map { list ->
                 list.map {
                     it.id.toString()

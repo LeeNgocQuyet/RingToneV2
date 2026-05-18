@@ -23,7 +23,6 @@ import com.example.ringtonev2.ui.categorylist.CategoryListScreen
 import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
-import com.example.ringtonev2.ui.search.SearchScreen
 import com.example.ringtonev2.ui.splash.SplashScreen
 
 @Composable
@@ -110,10 +109,9 @@ fun AppNavigation() {
                 Log.d("AppNavigation", "DownloadAudioPreviewScreen: ${route.ringtoneId}")
                 DownloadAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
-                    onBack = { backStack.removeLastOrNull()
-                        backStack.removeLastOrNull()
-                        // màn audio download không có back nên remove 2 lần
-                        // sẽ sửa logic sau để tái sử dụng lại
+                    onBack = {
+                    while (backStack.size > 1) {
+                        backStack.removeLastOrNull() }
                     }
                 )
             }
@@ -123,6 +121,9 @@ fun AppNavigation() {
                 RingtoneAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()
+                    },
+                    onDeleted = {
+                        backStack.removeLastOrNull()
                     }
                 )
             }

@@ -1,13 +1,15 @@
 package com.example.ringtonev2.data.mapper
 
-import com.example.ringtonev2.data.local.entity.DownloadedRingtone
+import android.net.Uri
+import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
 import com.example.ringtonev2.data.local.entity.FavoriteEntity
-import com.example.ringtonev2.data.local.entity.RingtoneEntity
+import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneAudioPreview
+import java.io.File
 
-fun DownloadedRingtone.toDomain(): DownloadItem = DownloadItem(
+fun TikTokDownloadEntity.toDomain(): DownloadItem = DownloadItem(
     id = id,
     ringtoneId = ringtoneId,
     title = title,
@@ -18,7 +20,7 @@ fun DownloadedRingtone.toDomain(): DownloadItem = DownloadItem(
 )
 fun Ringtone.toFavoriteEntity(): FavoriteEntity {
     return FavoriteEntity(
-        ringtoneId = id.toString(),
+        ringtoneId = id,
         title = name ?: "",
         categoryId = categoryId ?: 0,
         duration = duration ?: 0,
@@ -27,7 +29,7 @@ fun Ringtone.toFavoriteEntity(): FavoriteEntity {
 }
 fun FavoriteEntity.toDomain(): Ringtone {
     return Ringtone(
-        id = ringtoneId.toInt(),
+        id = ringtoneId,
         name = title,
         duration = duration,
         audioPath = audioUrl,
@@ -36,9 +38,9 @@ fun FavoriteEntity.toDomain(): Ringtone {
         watchCount = null
     )
 }
-fun RingtoneEntity.toDomain(): Ringtone {
+fun DownloadedRingtoneEntity.toDomain(): Ringtone {
     return Ringtone(
-        id = id.toIntOrNull() ?: 0,
+        id = id,
         name = title,
         duration = duration,
         audioPath = audioUrl,
@@ -48,11 +50,11 @@ fun RingtoneEntity.toDomain(): Ringtone {
     )
 }
 
-fun Ringtone.toRingtoneEntity(
+fun Ringtone.toDownloadedRingtoneEntity(
     position: Int = 0,
-    filePath: String? = null): RingtoneEntity {
-    return RingtoneEntity(
-        id = id.toString(),
+    filePath: String): DownloadedRingtoneEntity {
+    return DownloadedRingtoneEntity(
+        id = id,
         position = position,
         title = name ?: "",
         artist = "",
@@ -71,10 +73,37 @@ fun Ringtone.toAudioPreview(
     audioPathOverride: String? = null
 ): RingtoneAudioPreview {
     return RingtoneAudioPreview(
-        ringtoneId = id.toString(),
+        ringtoneId = id,
         title = name ?: "",
         audioPath = audioPathOverride ?: audioPath.orEmpty(),
         duration = duration,
         isDownloaded = isDownloaded
+    )
+}
+fun DownloadItem.toRingtone(): Ringtone {
+    return Ringtone(
+        id = ringtoneId,
+        name = title,
+        duration = duration,
+        audioPath = filePath,
+        categoryId = null,
+        image = null,
+        watchCount = null
+    )
+}
+
+fun TikTokDownloadEntity.toDownloadedRingtoneEntity(): DownloadedRingtoneEntity {
+    return DownloadedRingtoneEntity(
+        id = ringtoneId,
+        title = title,
+        artist = artist,
+        category = "",
+        duration = duration*1000,
+        coverUrl = "",
+        audioUrl = Uri.fromFile(File(filePath)).toString(),
+        plays = 0,
+        cachedAt = downloadedAt,
+        filePath = filePath,
+        position = 0
     )
 }

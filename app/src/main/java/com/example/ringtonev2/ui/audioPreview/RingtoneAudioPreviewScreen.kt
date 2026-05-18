@@ -1,10 +1,6 @@
 package com.example.ringtonev2.ui.audioPreview
 
-import android.content.Context
-import android.content.Intent
-import java.io.File
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,6 +53,7 @@ import kotlinx.coroutines.delay
 
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.AssignUsageDialog
+import com.example.ringtonev2.components.DeleteRingtoneDialog
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
 
@@ -66,7 +62,8 @@ import com.example.ringtonev2.ui.theme.AppTypography
 @Composable
 fun RingtoneAudioPreviewScreen(
     ringtoneId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onDeleted: () -> Unit
 ) {
     val viewModel: RingtoneAudioPreviewScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -85,7 +82,8 @@ fun RingtoneAudioPreviewScreen(
                 AudioPreviewContent(
                     state = state,
                     viewModel = viewModel,
-                    onBack = onBack
+                    onBack = onBack,
+                    onDeleted = onDeleted
                 )
             }
 
@@ -99,8 +97,9 @@ fun RingtoneAudioPreviewScreen(
         }
     }
     val successState = uiState as? RingtoneAudioPreviewState.Success
+    val data = successState?.data
 
-    if (successState?.isDownloading == true) {
+    if (data?.isDownloading ?: false) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -110,14 +109,14 @@ fun RingtoneAudioPreviewScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                 CircularProgressIndicator(
-                    progress = successState.downloadProgress / 100f,
+                    progress = data.downloadProgress / 100f,
                     color = colorResource(R.color.background_brand)
                 )
 
                 Spacer(Modifier.height(8.dp))
 
                 Text(
-                    text = "Downloading ${successState.downloadProgress}%...",
+                    text = "Downloading ${data.downloadProgress}%...",
                     style = AppTypography.bodyMedium.copy(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W500
@@ -134,17 +133,21 @@ fun RingtoneAudioPreviewScreen(
 fun AudioPreviewContent(
     state: RingtoneAudioPreviewState.Success,
     viewModel: RingtoneAudioPreviewScreenViewModel,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onDeleted: () -> Unit
 ) {
     val context = LocalContext.current
-    val duration = state.duration
+    val data = state.data
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
+    val isFavorite = data.ringtoneId in favoriteIds
+    val duration = data.duration
     var showAssignDialog by remember { mutableStateOf(false) }
     var showSuccessDialog by remember { mutableStateOf(false) }
-
+    var showDeleteDialog by remember { mutableStateOf(false) }
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build()
     }
-    val progress = if (duration > 0) state.currentPosition.toFloat() / duration else 0f
+    val progress = if (duration > 0) data.currentPosition.toFloat() / duration else 0f
 
     if (showAssignDialog) {
         AssignUsageDialog(
@@ -184,11 +187,23 @@ fun AudioPreviewContent(
     if (showSuccessDialog) {
         SetRingtoneSuccessDialog(onDismiss = { showSuccessDialog = false })
     }
+    if (showDeleteDialog) {
+        DeleteRingtoneDialog(
+            onDismiss = {
+                showDeleteDialog = false
+            },
+            onDelete = {
+                showDeleteDialog = false
+                viewModel.deleteRingtone {
+                    onDeleted()
+                }
+            }
+        )
+    }
 
-    LaunchedEffect(state.audioPath) {
-        if (state.audioPath.isNotEmpty()) {
-            val uri = if (state.audioPath.startsWith("http")) Uri.parse(state.audioPath)
-            else Uri.fromFile(File(state.audioPath))
+    LaunchedEffect(data.audioPath) {
+        if (data.audioPath.isNotEmpty()) {
+            val uri = Uri.parse(data.audioPath)
             val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
             exoPlayer.prepare()
@@ -237,11 +252,25 @@ fun AudioPreviewContent(
                         )
                     }
                 },
+                actions = {
+                    if (data.isDownloaded) {
+                        IconButton(onClick = {
+                            showDeleteDialog = true
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_delete),
+                                contentDescription = "Delete ringtone",
+                                tint = Color.Red
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Black)
             )
         },
         containerColor = Color.Black
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -265,18 +294,21 @@ fun AudioPreviewContent(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = state.title, color = colorResource(R.color.content_default),
+                        text = data.title, color = colorResource(R.color.content_default),
                         style = AppTypography.bodyMedium.copy(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W600
                         )
                     )
                 }
-                IconButton(onClick = { }) {
+                IconButton(onClick = {
+                    viewModel.toggleFavorite(data.ringtoneId)
+                }) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_favorite),
+                        painter = painterResource(if (isFavorite) R.drawable.ic_favorite_fullfill
+                        else R.drawable.ic_favorite),
                         contentDescription = null,
-                        tint = Color.Red
+                        tint = if (isFavorite) Color.Red else Color.White
                     )
                 }
             }
@@ -301,7 +333,7 @@ fun AudioPreviewContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    formatDurationMilisecond(state.currentPosition),
+                    formatDurationMilisecond(data.currentPosition),
                     color = colorResource(R.color.content_subtlest),
                     style = AppTypography.bodySmall
                 )
@@ -339,7 +371,7 @@ fun AudioPreviewContent(
                         .background(colorResource(R.color.background_brand)),
                     contentAlignment = Alignment.Center
                 ) {
-                    val icon = if (state.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
+                    val icon = if (data.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
                     IconButton(onClick = { if (exoPlayer.isPlaying) exoPlayer.pause() else exoPlayer.play() }) {
                         Icon(
                             painter = painterResource(icon),
@@ -367,7 +399,7 @@ fun AudioPreviewContent(
 
             Button(
                 onClick = {
-                    if (state.isDownloaded) {
+                    if (data.isDownloaded) {
                         showAssignDialog = true // Đã tải -> Hiện Dialog cài đặt
                     } else {
                         viewModel.downloadRingtone(context) // Chưa tải -> Bắt đầu tải
@@ -375,15 +407,13 @@ fun AudioPreviewContent(
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 shape = RoundedCornerShape(28.dp),
-                enabled = !state.isDownloading,
+                enabled = !data.isDownloading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (state.isDownloaded) colorResource(R.color.background_secondary) else colorResource(
-                        R.color.background_brand
-                    )
+                    containerColor = colorResource(R.color.background_secondary)
                 )
             ) {
                 Text(
-                    text = if (state.isDownloaded) stringResource(R.string.set_ring_tone) else "Download",
+                    text = if (data.isDownloaded) stringResource(R.string.set_ring_tone) else "Download",
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )

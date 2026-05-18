@@ -3,10 +3,12 @@ package com.example.ringtonev2.ui.audioPreview
 import android.content.ContentValues
 import android.content.Context
 import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import com.example.ringtonev2.data.mapper.toAudioPreview
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.remote.api.ApiService
@@ -15,7 +17,10 @@ import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
@@ -34,6 +39,16 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<RingtoneAudioPreviewState>(RingtoneAudioPreviewState.Idle)
     val uiState = _uiState.asStateFlow()
+    val favoriteIds =
+        repository.observeFavorites()
+            .map { list ->
+                list.map { it.id }.toSet()
+            }
+            .stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptySet()
+            )
 
     fun resetState() {
         _uiState.value = RingtoneAudioPreviewState.Idle
@@ -42,13 +57,13 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = RingtoneAudioPreviewState.Loading
 
-            val localAudio = repository.getRingtoneById(audioId)
+            val localAudio = repository.getDownloadedRingtoneById(audioId)
 
             if (localAudio != null && !localAudio.filePath.isNullOrEmpty()) {
                 _uiState.value = RingtoneAudioPreviewState.Success(
                     data = localAudio.toDomain().toAudioPreview(
                         isDownloaded = true,
-                        audioPathOverride = localAudio.filePath
+                        audioPathOverride = Uri.fromFile(File(localAudio.filePath)).toString()
                     )
                 )
             } else {
@@ -75,6 +90,27 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         }
     }
 
+    fun toggleFavorite(ringtoneId: String) {
+        viewModelScope.launch {
+            val ringtoneEntity = repository.getDownloadedRingtoneById(ringtoneId)
+
+            if (ringtoneEntity == null) {
+                return@launch
+            }
+
+            val ringtone = Ringtone(
+                id = ringtoneEntity.id,
+                categoryId = ringtoneEntity.category.toIntOrNull(),
+                name = ringtoneEntity.title,
+                duration = ringtoneEntity.duration,
+                audioPath = ringtoneEntity.audioUrl,
+                watchCount = ringtoneEntity.plays,
+                image = ringtoneEntity.coverUrl,
+            )
+
+            repository.toggleFavorite(ringtone)
+        }
+    }
 
     fun seekTo(position: Long) {
         val currentState = _uiState.value
@@ -87,6 +123,35 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState is RingtoneAudioPreviewState.Success) {
             _uiState.value = currentState.copy(data = currentState.data.copy(isPlaying = isPlaying))
+        }
+    }
+
+    fun deleteRingtone(
+        onSuccess: () -> Unit
+    ) {
+        val currentState = _uiState.value
+        if (currentState !is RingtoneAudioPreviewState.Success) return
+
+        val ringtoneId = currentState.data.ringtoneId
+        val filePath = currentState.data.audioPath
+
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (filePath.isNotBlank() && !filePath.startsWith("http")) {
+                    val file = File(filePath)
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+                repository.deleteDownloadedRingtoneById(ringtoneId)
+                repository.removeFavorite(ringtoneId)
+
+                withContext(Dispatchers.Main) {
+                    onSuccess()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -137,19 +202,23 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 output.close()
                 input.close()
 
-                val ringtoneDomain = Ringtone(
-                    id = previewData.ringtoneId.toIntOrNull() ?: 0,
-                    name = previewData.title,
+                val ringtoneDomain = DownloadedRingtoneEntity(
+                    position = 0,
+                    id = previewData.ringtoneId,
+                    title = previewData.title,
+                    artist = "",
+                    category = "",
                     duration = previewData.duration,
-                    audioPath = url,
-                    categoryId = null,
-                    image = null,
-                    watchCount = null
-                )
+                    coverUrl = "",
+                    audioUrl = Uri.fromFile(File(file.absolutePath)).toString(),
+                    plays = 0,
+                    cachedAt = System.currentTimeMillis(),
+                    filePath = file.absolutePath
+                    )
 
-                repository.downloadRingtone(ringtoneDomain)
+                repository.saveDownloadedRingtone(ringtoneDomain)
 
-                repository.updateFilePath(
+                repository.updateDownloadedRingtoneFilePath(
                     previewData.ringtoneId,
                     file.absolutePath
                 )
@@ -183,7 +252,11 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 val path = currentState.data.audioPath
                 if (path.isEmpty() || path.startsWith("http")) return@launch
 
-                val internalFile = File(path)
+                val internalFile = if (path.startsWith("file://")) {
+                    File(Uri.parse(path).path ?: return@launch)
+                } else {
+                    File(path)
+                }
                 if (!internalFile.exists()) return@launch
 
                 val resolver = appContext.contentResolver
