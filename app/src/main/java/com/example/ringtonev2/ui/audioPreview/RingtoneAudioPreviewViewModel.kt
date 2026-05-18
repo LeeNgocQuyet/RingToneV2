@@ -8,7 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ringtonev2.data.local.entity.RingtoneEntity
+import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import com.example.ringtonev2.data.mapper.toAudioPreview
 import com.example.ringtonev2.data.mapper.toDomain
 import com.example.ringtonev2.data.remote.api.ApiService
@@ -57,7 +57,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = RingtoneAudioPreviewState.Loading
 
-            val localAudio = repository.getRingtoneById(audioId)
+            val localAudio = repository.getDownloadedRingtoneById(audioId)
 
             if (localAudio != null && !localAudio.filePath.isNullOrEmpty()) {
                 _uiState.value = RingtoneAudioPreviewState.Success(
@@ -92,7 +92,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
 
     fun toggleFavorite(ringtoneId: String) {
         viewModelScope.launch {
-            val ringtoneEntity = repository.getRingtoneById(ringtoneId)
+            val ringtoneEntity = repository.getDownloadedRingtoneById(ringtoneId)
 
             if (ringtoneEntity == null) {
                 return@launch
@@ -143,7 +143,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                         file.delete()
                     }
                 }
-                repository.deleteRingtoneById(ringtoneId)
+                repository.deleteDownloadedRingtoneById(ringtoneId)
 
                 withContext(Dispatchers.Main) {
                     onSuccess()
@@ -201,7 +201,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 output.close()
                 input.close()
 
-                val ringtoneDomain = RingtoneEntity(
+                val ringtoneDomain = DownloadedRingtoneEntity(
                     position = 0,
                     id = previewData.ringtoneId,
                     title = previewData.title,
@@ -215,9 +215,9 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                     filePath = file.absolutePath
                     )
 
-                repository.downloadRingtoneEntity(ringtoneDomain)
+                repository.saveDownloadedRingtone(ringtoneDomain)
 
-                repository.updateFilePath(
+                repository.updateDownloadedRingtoneFilePath(
                     previewData.ringtoneId,
                     file.absolutePath
                 )

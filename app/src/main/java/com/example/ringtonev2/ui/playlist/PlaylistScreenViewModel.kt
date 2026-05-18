@@ -23,7 +23,7 @@ class PlaylistScreenViewModel @Inject constructor(
 
     private val selectedTab = MutableStateFlow<PlaylistTab>(PlaylistTab.Downloads)
 
-    private val downloads = repository.observeDownloads()
+    private val downloadedRingtones = repository.observeDownloadedRingtones()
         .catch {
             emit(emptyList())
         }
@@ -36,7 +36,7 @@ class PlaylistScreenViewModel @Inject constructor(
     val uiState: StateFlow<PlaylistState> =
         combine(
             selectedTab,
-            downloads,
+            downloadedRingtones,
             favorites
         ) { tab, downloads, favorites ->
             PlaylistState(
@@ -91,9 +91,9 @@ class PlaylistScreenViewModel @Inject constructor(
         }
     }
 
-    fun deleteDownload(ringtone: Ringtone) {
+    fun deleteDownloadedRingtone(ringtone: Ringtone) {
         viewModelScope.launch {
-            repository.deleteDownload(ringtone.id.toLong())
+            repository.deleteDownloadedRingtoneById(ringtone.id)
         }
     }
 }
