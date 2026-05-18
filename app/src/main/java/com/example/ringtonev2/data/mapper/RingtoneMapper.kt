@@ -1,15 +1,15 @@
 package com.example.ringtonev2.data.mapper
 
 import android.net.Uri
-import com.example.ringtonev2.data.local.entity.DownloadedRingtone
+import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
 import com.example.ringtonev2.data.local.entity.FavoriteEntity
-import com.example.ringtonev2.data.local.entity.RingtoneEntity
+import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneAudioPreview
 import java.io.File
 
-fun DownloadedRingtone.toDomain(): DownloadItem = DownloadItem(
+fun TikTokDownloadEntity.toDomain(): DownloadItem = DownloadItem(
     id = id,
     ringtoneId = ringtoneId,
     title = title,
@@ -38,7 +38,7 @@ fun FavoriteEntity.toDomain(): Ringtone {
         watchCount = null
     )
 }
-fun RingtoneEntity.toDomain(): Ringtone {
+fun DownloadedRingtoneEntity.toDomain(): Ringtone {
     return Ringtone(
         id = id,
         name = title,
@@ -50,10 +50,10 @@ fun RingtoneEntity.toDomain(): Ringtone {
     )
 }
 
-fun Ringtone.toRingtoneEntity(
+fun Ringtone.toDownloadedRingtoneEntity(
     position: Int = 0,
-    filePath: String): RingtoneEntity {
-    return RingtoneEntity(
+    filePath: String): DownloadedRingtoneEntity {
+    return DownloadedRingtoneEntity(
         id = id,
         position = position,
         title = name ?: "",
@@ -92,8 +92,8 @@ fun DownloadItem.toRingtone(): Ringtone {
     )
 }
 
-fun DownloadedRingtone.toRingtoneEntity(): RingtoneEntity {
-    return RingtoneEntity(
+fun TikTokDownloadEntity.toDownloadedRingtoneEntity(): DownloadedRingtoneEntity {
+    return DownloadedRingtoneEntity(
         id = ringtoneId,
         title = title,
         artist = artist,
