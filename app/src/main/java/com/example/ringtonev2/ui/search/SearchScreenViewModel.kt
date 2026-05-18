@@ -1,5 +1,6 @@
 package com.example.ringtonev2.ui.search
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -7,10 +8,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.cachedIn
+import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,9 +31,11 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val repository: RingtoneRepository,
-    private val api: ApiService
+    private val api: ApiService,
+    @ApplicationContext appContext: Context
 ) : ViewModel() {
 
+    private val dataStoreManager = DataStoreManager(appContext)
     private val _uiState = MutableStateFlow(SearchScreenState())
     val uiState = _uiState.asStateFlow()
     private val _currentPlayingId = MutableStateFlow<String?>(null)
@@ -81,6 +86,14 @@ class SearchScreenViewModel @Inject constructor(
                 emptySet()
             )
 
+    init {
+        viewModelScope.launch {
+            dataStoreManager.searchHistoryFlow.collect { history ->
+                _uiState.value = _uiState.value.copy(history = history)
+            }
+        }
+    }
+
     fun onQueryChange(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
         searchQuery.value = query.trim()
@@ -92,9 +105,11 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     fun removeHistoryItem(value: String) {
-        _uiState.value = _uiState.value.copy(
-            history = _uiState.value.history.filterNot { it == value }
-        )
+        val updatedHistory = _uiState.value.history.filterNot { it == value }
+        _uiState.value = _uiState.value.copy(history = updatedHistory)
+        viewModelScope.launch {
+            dataStoreManager.setSearchHistory(updatedHistory)
+        }
     }
 
     fun useHistoryItem(value: String) {
@@ -106,6 +121,22 @@ class SearchScreenViewModel @Inject constructor(
             repository.toggleFavorite(ringtone)
         }
     }
+
+    fun submitSearch() {
+        val query = _uiState.value.query.trim()
+        if (query.isBlank()) return
+
+        val updatedHistory = buildList {
+            add(query)
+            addAll(_uiState.value.history.filterNot { it.equals(query, ignoreCase = true) })
+        }.take(10)
+
+        _uiState.value = _uiState.value.copy(history = updatedHistory)
+        viewModelScope.launch {
+            dataStoreManager.setSearchHistory(updatedHistory)
+        }
+    }
+
     fun togglePlaying(ringtoneId: String) {
         if (_currentPlayingId.value == ringtoneId) {
             _isPlaying.value = !_isPlaying.value

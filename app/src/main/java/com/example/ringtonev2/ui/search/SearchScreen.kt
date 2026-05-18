@@ -148,7 +148,8 @@ fun SearchScreen(
             query = state.query,
             onQueryChange = viewModel::onQueryChange,
             onBack = onBack,
-            onClear = viewModel::onClear
+            onClear = viewModel::onClear,
+            onSearch = viewModel::submitSearch
         )
 
         Spacer(modifier = Modifier.height(14.dp))
@@ -270,7 +271,8 @@ private fun SearchTopBar(
     query: String,
     onQueryChange: (String) -> Unit,
     onBack: () -> Unit,
-    onClear: () -> Unit
+    onClear: () -> Unit,
+    onSearch: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -297,6 +299,7 @@ private fun SearchTopBar(
             query = query,
             onQueryChange = onQueryChange,
             onClear = onClear,
+            onSearch = onSearch,
             modifier = Modifier.weight(1f)
         )
     }
@@ -307,6 +310,7 @@ private fun SearchField(
     query: String,
     onQueryChange: (String) -> Unit,
     onClear: () -> Unit,
+    onSearch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -323,7 +327,7 @@ private fun SearchField(
             imeAction = ImeAction.Search
         ),
         keyboardActions = KeyboardActions(onSearch = {
-
+            onSearch()
         }),
         textStyle = TextStyle(
             color = colorResource(id = R.color.content_default),
