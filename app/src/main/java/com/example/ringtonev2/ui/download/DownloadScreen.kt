@@ -268,6 +268,7 @@ fun DownloadScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
+            if (!downloadHistory.isEmpty()){
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -281,15 +282,16 @@ fun DownloadScreen(
                         color = colorResource(R.color.content_default)
                     )
                 )
-                Text(
-                    text = "More  >",
-                    style = AppTypography.labelMedium.copy(
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.W600,
-                        color = colorResource(R.color.content_brand)
-                    )
-                )
+//                Text(
+//                    text = "More  >",
+//                    style = AppTypography.labelMedium.copy(
+//                        fontSize = 13.sp,
+//                        fontWeight = FontWeight.W600,
+//                        color = colorResource(R.color.content_brand)
+//                    )
+//                )
             }
+                }
 
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -320,26 +322,6 @@ fun DownloadScreen(
                 thickness = 0.5.dp,
                 color = colorResource(id = R.color.border_bold)
             )
-        }
-
-        if (downloadHistory.isEmpty()) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(96.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.empty_title),
-                        style = AppTypography.bodyMedium.copy(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W500,
-                            color = colorResource(R.color.content_subtlest)
-                        )
-                    )
-                }
-            }
         }
 
         item {

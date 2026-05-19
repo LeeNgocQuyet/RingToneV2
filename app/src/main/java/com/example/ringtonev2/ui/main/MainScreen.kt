@@ -286,9 +286,10 @@ fun MainTopBar(
                 IconButton(
                     onClick = onSearchClick,
                     modifier = Modifier
-                        .size(40.dp)
+                        .padding(start = 8.dp)
+                        .size(34.dp)
                         .clip(CircleShape)
-                        .background(colorResource(R.color.content_subtlest))
+                        .background(colorResource(id = R.color.accent))
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.search),
@@ -301,9 +302,10 @@ fun MainTopBar(
             IconButton(
                 onClick = onSettingsClick,
                 modifier = Modifier
-                    .size(40.dp)
+                    .padding(start = 8.dp)
+                    .size(34.dp)
                     .clip(CircleShape)
-                    .background(colorResource(R.color.content_subtlest))
+                    .background(colorResource(id = R.color.accent))
             ) {
                 Icon(
                     painter = painterResource(R.drawable.setting),
