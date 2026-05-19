@@ -1,6 +1,5 @@
 package com.example.ringtonev2.ui.home
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,6 +20,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -162,22 +163,20 @@ fun HomeScreen(
                         val ringtone = pagingItems[index] ?: return@items
                         val favoriteIds by viewModel.favoriteIds.collectAsState()
 
-                        val isFavorite = ringtone.id.toString() in favoriteIds
+                        val isFavorite = ringtone.id in favoriteIds
 
                         RingtoneItemRow(
                             ringtone = ringtone,
                             onPlayClick = {
                                 viewModel.togglePlaying(
-                                    ringtone.id.toString()
+                                    ringtone.id
                                 )
                             },
                             isPlaying =
-                                currentPlayingId == ringtone.id.toString()
+                                currentPlayingId == ringtone.id
                                         && isPlaying,
                             onSetClick = {
-                                Log.d("HomeScreen", "onSetClick: ${ringtone.id}")
-                                Log.d("HomeScreen", "onSetClick: ${ringtone.name}")
-                                onOpenPlayer(ringtone.id.toString())
+                                onOpenPlayer(ringtone.id)
                             },
                             onFavorite = {
                                 viewModel.toggleFavorite(
@@ -232,9 +231,14 @@ fun FeaturedBannerSection(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Column {
+            Column(modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.6f))
+                {
 
                 Text(
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
                     text = stringResource(R.string.top_ringtones),
                     style = AppTypography.displayLarge.copy(
                         fontSize = 30.sp,
@@ -251,6 +255,8 @@ fun FeaturedBannerSection(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     text = stringResource(R.string.home_description),
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
@@ -337,4 +343,9 @@ fun CategoryTabsSection(
             }
         }
     }
+}
+@Preview
+@Composable
+fun PreviewFeaturedBannerSection(){
+    FeaturedBannerSection()
 }
