@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 initial = LocalLocale.current.platformLocale.language
             )
             RingtoneTheme {
-                AppLocaleProvider("vi") {
+                AppLocaleProvider(lang) {
                     val isOnline by networkMonitor.isOnline.collectAsState(initial = true)
                     AppNavigation()
                     if (!isOnline) {

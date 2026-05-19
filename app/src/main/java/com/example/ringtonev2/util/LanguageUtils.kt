@@ -71,6 +71,25 @@ fun AppLocaleProvider(
         content()
     }
 }
+@Composable
+fun DialogLocaleProvider(content: @Composable () -> Unit) {
+    val lang = LocalAppLanguage.current
+    val context = LocalContext.current
+    val currentActivity = LocalActivity.current
+    if (lang != null) {
+        val localeContext = remember(lang, context) {
+            context.createLocaleContext(lang)
+        }
+        CompositionLocalProvider(
+            LocalContext provides localeContext,
+            LocalActivity provides currentActivity
+        ) {
+            content()
+        }
+    } else {
+        content()
+    }
+}
 
 fun Context.createLocaleContext(languageCode: String): Context {
     // "in" là code cũ của Indonesia trong Java; resource folder dùng "in".
