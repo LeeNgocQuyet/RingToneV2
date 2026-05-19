@@ -241,7 +241,14 @@ fun MainScreen(
                     onOpenErrorScreen = onOpenErrorInfo
                 )
                 MainTab.Category -> CategoryScreen(onOpenCategory = onOpenCategory)
-                MainTab.Playlist -> PlaylistScreen(onOpenPlayer = onOpenPlayer
+                MainTab.Playlist -> PlaylistScreen(
+                    onOpenPlayer = onOpenPlayer,
+                    onOpenDownloadScreen = {
+                        tab = MainTab.Download
+                    },
+                    onOpenCategoryScreen = {
+                        tab = MainTab.Category
+                    }
                 )
             }
         }

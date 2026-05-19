@@ -37,15 +37,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.RingtoneItemRow
-import com.example.ringtonev2.data.mapper.toAudioPreview
-import com.example.ringtonev2.data.mapper.toRingtone
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.ui.theme.Black
 import com.example.ringtonev2.ui.theme.White
 
 @Composable
 fun PlaylistScreen(
-    onOpenPlayer: (String) -> Unit
+    onOpenPlayer: (String) -> Unit,
+    onOpenDownloadScreen: () -> Unit,
+    onOpenCategoryScreen: () -> Unit
 ) {
     val viewModel: PlaylistScreenViewModel = hiltViewModel()
 
@@ -84,7 +83,11 @@ fun PlaylistScreen(
             isEmpty -> {
                 PlaylistEmptyState(
                     selectedTab = uiState.selectedTab,
-                    onDownloadAudioClick = {}
+                    onClick = if (uiState.selectedTab == PlaylistTab.Downloads) {
+                        onOpenDownloadScreen
+                    } else {
+                        onOpenCategoryScreen
+                    }
                 )
             }
 
@@ -238,7 +241,7 @@ private fun PlaylistTabButton(
 @Composable
 fun PlaylistEmptyState(
     selectedTab: PlaylistTab,
-    onDownloadAudioClick: () -> Unit
+    onClick: () -> Unit
 ) {
     val buttonEmpty = when (selectedTab) {
         PlaylistTab.Downloads -> stringResource(R.string.download_tab_button)
@@ -296,7 +299,7 @@ fun PlaylistEmptyState(
                     .width(232.dp)
                     .clip(RoundedCornerShape(50))
                     .background(colorResource(R.color.background_secondary))
-                    .clickable(onClick = onDownloadAudioClick),
+                    .clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
