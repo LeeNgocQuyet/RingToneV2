@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
@@ -167,15 +168,6 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
             }
             ?: return
 
-        val defaultUris = setOfNotNull(
-            RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneType.RINGTONE.value)
-                ?.toString(),
-            RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneType.NOTIFICATION.value)
-                ?.toString(),
-            RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneType.ALARM.value)
-                ?.toString()
-        )
-
         val resolver = context.contentResolver
         val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val projection = arrayOf(MediaStore.Audio.Media._ID)
@@ -203,11 +195,35 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
             while (cursor.moveToNext()) {
                 val uri = ContentUris.withAppendedId(collection, cursor.getLong(idColumn))
-                if (uri.toString() !in defaultUris) {
+                if (clearDefaultSoundIfNeeded(context, uri)) {
                     resolver.delete(uri, null, null)
                 }
             }
         }
+    }
+
+    private fun clearDefaultSoundIfNeeded(context: Context, uri: Uri): Boolean {
+        val types = listOf(
+            RingtoneType.RINGTONE,
+            RingtoneType.NOTIFICATION,
+            RingtoneType.ALARM
+        )
+
+        var canDelete = true
+        types.forEach { type ->
+            val currentDefaultUri =
+                RingtoneManager.getActualDefaultRingtoneUri(context, type.value)
+
+            if (currentDefaultUri?.toString() == uri.toString()) {
+                if (Settings.System.canWrite(context)) {
+                    RingtoneManager.setActualDefaultRingtoneUri(context, type.value, null)
+                } else {
+                    canDelete = false
+                }
+            }
+        }
+
+        return canDelete
     }
 
     fun downloadRingtone(context: Context) {
