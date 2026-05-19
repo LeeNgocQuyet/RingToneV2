@@ -6,8 +6,6 @@ import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import kotlinx.coroutines.flow.Flow
 
 interface RingtoneRepository {
-    suspend fun getTikTokDownloadByRingtoneId(ringtoneId: String): TikTokDownloadEntity?
-    suspend fun deleteTikTokDownloadByLocalId(id: Long)
     fun observeDownloadedRingtones(): Flow<kotlin.collections.List<Ringtone>>
 
     fun observeFavorites(): Flow<kotlin.collections.List<Ringtone>>

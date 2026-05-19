@@ -1,10 +1,8 @@
 package com.example.ringtonev2.data.repository
 
 import androidx.paging.ExperimentalPagingApi
-import com.example.ringtonev2.data.local.dao.TikTokDownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
 import com.example.ringtonev2.data.local.dao.DownloadedRingtoneDao
-import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
 import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
@@ -16,24 +14,16 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
 class RingtoneRepositoryImpl @Inject constructor(
-    private val tikTokDownloadDao: TikTokDownloadDao,
     private val favoriteDao: FavoriteDao,
     private val downloadedRingtoneDao: DownloadedRingtoneDao
 
 ) : RingtoneRepository {
 
-    override suspend fun deleteTikTokDownloadByLocalId(id: Long) {
-        tikTokDownloadDao.deleteTikTokDownloadByLocalId(id)
-    }
     override fun observeDownloadedRingtones(): Flow<List<Ringtone>> {
         return downloadedRingtoneDao.observeDownloadedRingtones()
             .map { list ->
                 list.map { it.toDomain() }
             }
-    }
-
-    override suspend fun getTikTokDownloadByRingtoneId(ringtoneId: String): TikTokDownloadEntity? {
-        return tikTokDownloadDao.getTikTokDownloadByRingtoneId(ringtoneId)
     }
 
     override fun observeFavorites(): Flow<List<Ringtone>> {

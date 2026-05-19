@@ -33,7 +33,6 @@ sealed interface AudioDownloadUiState {
 @HiltViewModel
 class AudioDownloadViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val tikTokDownloadDao: TikTokDownloadDao,
     private val downloadedRingtoneDao: DownloadedRingtoneDao
 
 ) : ViewModel() {
@@ -107,7 +106,7 @@ class AudioDownloadViewModel @Inject constructor(
                         downloadedAt = System.currentTimeMillis(),
                         duration = data.duration ?: 0L
                     )
-                    tikTokDownloadDao.insertTikTokDownload(entity)
+                    //tikTokDownloadDao.insertTikTokDownload(entity)
                     downloadedRingtoneDao.saveDownloadedRingtone(entity.toDownloadedRingtoneEntity())
                     Log.d("AudioDownloadViewModel", "Saved to database: $entity")
                     _uiState.value = AudioDownloadUiState.Success(file.absolutePath)

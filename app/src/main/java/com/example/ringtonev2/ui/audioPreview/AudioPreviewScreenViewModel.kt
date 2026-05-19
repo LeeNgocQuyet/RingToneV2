@@ -63,7 +63,7 @@ class AudioPreviewScreenViewModel @Inject constructor(
     fun load(audioId: String) {
         viewModelScope.launch {
 
-            val audio = repository.getTikTokDownloadByRingtoneId(audioId)
+            val audio = repository.getDownloadedRingtoneById(audioId)
 
             _uiState.value = _uiState.value.copy(
                 title = audio?.title ?: "",

@@ -30,12 +30,6 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideTikTokDownloadDao(db: AppDatabase): TikTokDownloadDao {
-        return db.tikTokDownloadDao()
-    }
-
-
-    @Provides
     fun provideFavoriteDao(
         database: AppDatabase
     ): FavoriteDao {

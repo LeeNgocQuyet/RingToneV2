@@ -14,7 +14,6 @@ import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 
 @Database(
     entities = [
-        TikTokDownloadEntity::class,
         FavoriteEntity::class,
         DownloadedRingtoneEntity::class
     ],
@@ -22,7 +21,6 @@ import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun tikTokDownloadDao(): TikTokDownloadDao
     abstract fun favoriteDao(): FavoriteDao
     abstract fun downloadedRingtoneDao(): DownloadedRingtoneDao
     companion object {
