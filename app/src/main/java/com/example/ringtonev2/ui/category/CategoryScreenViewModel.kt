@@ -1,6 +1,5 @@
 package com.example.ringtonev2.ui.category
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.remote.api.ApiService

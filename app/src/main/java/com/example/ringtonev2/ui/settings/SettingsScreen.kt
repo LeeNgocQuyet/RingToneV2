@@ -1,18 +1,17 @@
 package com.example.ringtonev2.ui.settings
 
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.outlined.TextSnippet
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.Policy
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material.icons.outlined.TextSnippet
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,16 +21,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.data.datastore.DataStoreManager
-import com.example.ringtonev2.ui.theme.RingtoneTheme
 import com.example.ringtonev2.ui.theme.SoftPurple
-import com.example.ringtonev2.util.LanguageUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,7 +115,7 @@ fun SettingsScreen(
                         onClick = { /* Handle Share */ }
                     )
                     SettingItem(
-                        icon = Icons.Outlined.TextSnippet,
+                        icon = Icons.AutoMirrored.Outlined.TextSnippet,
                         title = stringResource(R.string.settings_term_of_use),
                         onClick = {  }
                     )

@@ -134,7 +134,7 @@ fun PlaylistScreen(
                                 key = { it.id }
                             ) { ringtone ->
 
-                                val ringtoneId = ringtone.id.toString()
+                                val ringtoneId = ringtone.id
 
                                 RingtoneItemRow(
                                     ringtone = ringtone,

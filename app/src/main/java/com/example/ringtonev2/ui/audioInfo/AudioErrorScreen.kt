@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.ui.theme.AppTypography
@@ -39,7 +38,6 @@ import com.example.ringtonev2.ui.theme.AppTypography
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioErrorScreen(
-    viewModel: AudioInfoScreenViewModel = hiltViewModel<AudioInfoScreenViewModel>(),
     onBack: () -> Unit,
 ) {
     Scaffold(
@@ -58,7 +56,7 @@ fun AudioErrorScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black
                 )
             )

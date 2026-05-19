@@ -1,7 +1,6 @@
 package com.example.ringtonev2.ui.home
 
 import com.example.ringtonev2.domain.Category
-import com.example.ringtonev2.domain.Ringtone
 
 
 sealed interface HomeState {

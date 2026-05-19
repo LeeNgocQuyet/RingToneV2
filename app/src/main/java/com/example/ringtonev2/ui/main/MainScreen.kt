@@ -156,10 +156,6 @@ fun MainScreen(
                     }
                     context.startActivity(intent)
                     showPermissionDialog = false
-                },
-                onDismiss = {
-                    showPermissionDialog = false
-                    hasHandledThisState = false
                 }
             )
         }

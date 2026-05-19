@@ -1,4 +1,4 @@
-package com.example.ringtonev2.music.util
+package com.example.ringtonev2.util
 
 import android.content.Context
 import android.net.ConnectivityManager

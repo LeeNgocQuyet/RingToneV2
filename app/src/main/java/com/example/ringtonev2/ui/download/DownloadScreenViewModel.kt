@@ -54,7 +54,7 @@ class DownloadScreenViewModel @Inject constructor(
         _audioState.value = AudioState.Idle
     }
 
-    fun getInfoAudio(context: Context, link: String) {
+    fun getInfoAudio(link: String) {
         _audioState.value = AudioState.Loading
         viewModelScope.launch {
             try {

@@ -55,7 +55,7 @@ class CategoryListScreenViewModel @Inject constructor(
     val favoriteIds =
         repository.observeFavorites()
             .map { list ->
-                list.map { it.id.toString() }.toSet()
+                list.map { it.id }.toSet()
             }
             .stateIn(
                 viewModelScope,

@@ -8,7 +8,6 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.cachedIn
 import com.example.ringtonev2.data.remote.api.ApiService
-import com.example.ringtonev2.data.repository.RetrofitInstance
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,7 +55,7 @@ class HomeViewModel @Inject constructor(
         repository.observeFavorites()
             .map { list ->
                 list.map {
-                    it.id.toString()
+                    it.id
                 }.toSet()
             }
             .stateIn(
@@ -73,7 +72,7 @@ class HomeViewModel @Inject constructor(
             try {
                 _homeState.value = HomeState.Loading
 
-                val response = RetrofitInstance.api.getCategories()
+                val response = api.getCategories()
 
                 if (!response.status || response.data.isEmpty()) {
                     _homeState.value = HomeState.Error("Category not found")

@@ -14,7 +14,7 @@ fun Ringtone.toFavoriteEntity(): FavoriteEntity {
         ringtoneId = id,
         title = name ?: "",
         categoryId = categoryId ?: 0,
-        duration = duration ?: 0,
+        duration = duration,
         audioUrl = audioPath ?: "",
     )
 }

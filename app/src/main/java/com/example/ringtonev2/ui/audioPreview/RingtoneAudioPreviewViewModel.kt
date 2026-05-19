@@ -32,6 +32,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.net.URL
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 
 @HiltViewModel
@@ -53,9 +54,6 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 emptySet()
             )
 
-    fun resetState() {
-        _uiState.value = RingtoneAudioPreviewState.Idle
-    }
     fun load(audioId: String) {
         viewModelScope.launch {
             _uiState.value = RingtoneAudioPreviewState.Loading
@@ -161,7 +159,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
             ?.takeIf { it.isNotBlank() }
             ?.let { path ->
                 if (path.startsWith("file://")) {
-                    Uri.parse(path).lastPathSegment
+                    path.toUri().lastPathSegment
                 } else {
                     File(path).name
                 }
@@ -324,7 +322,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 if (path.isEmpty() || path.startsWith("http")) return@launch
 
                 val internalFile = if (path.startsWith("file://")) {
-                    File(Uri.parse(path).path ?: return@launch)
+                    File(path.toUri().path ?: return@launch)
                 } else {
                     File(path)
                 }

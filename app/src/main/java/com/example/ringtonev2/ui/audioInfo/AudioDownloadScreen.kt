@@ -85,9 +85,7 @@ fun AudioDownloadScreen(
                 actions = {
                     Box(Modifier.size(40.dp))
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Black,
-                ),
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
             )
         },
         containerColor = Color.Black,

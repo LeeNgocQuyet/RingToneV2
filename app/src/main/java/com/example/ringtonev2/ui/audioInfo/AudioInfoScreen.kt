@@ -76,7 +76,7 @@ fun AudioInfoScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black
                 )
             )

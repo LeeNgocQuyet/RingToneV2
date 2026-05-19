@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,12 +29,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,9 +43,6 @@ import com.example.ringtonev2.R
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.ui.audioPreview.formatDurationMilisecond
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.ui.theme.White
-import kotlinx.coroutines.launch
-import okhttp3.internal.concurrent.formatDuration
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -183,13 +177,4 @@ fun RingtoneItemRow(
             }
         }
     }
-}
-
-fun formatDuration(milisecond: Int?): String {
-    if (milisecond == null || milisecond <= 0L) return "00:00"
-    val seconds = milisecond / 1000L
-    val minutes = seconds / 60
-    val secs = seconds % 60
-
-    return "%02d:%02d".format(minutes, secs)
 }

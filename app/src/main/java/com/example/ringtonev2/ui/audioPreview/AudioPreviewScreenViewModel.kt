@@ -93,12 +93,6 @@ class AudioPreviewScreenViewModel @Inject constructor(
         }
     }
 
-    fun togglePlay() {
-        _uiState.value = _uiState.value.copy(
-            isPlaying = !_uiState.value.isPlaying
-        )
-    }
-
     fun seekTo(position: Long) {
         _uiState.value = _uiState.value.copy(
             currentPosition = position

@@ -2,7 +2,6 @@ package com.example.ringtonev2.ui.audioPreview
 
 import com.example.ringtonev2.ui.theme.*
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -58,6 +58,7 @@ import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.DeleteRingtoneDialog
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
+import androidx.core.net.toUri
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -111,8 +112,11 @@ fun RingtoneAudioPreviewScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
                 CircularProgressIndicator(
-                    progress = data.downloadProgress / 100f,
-                    color = BackgroundBrand
+                progress = { data.downloadProgress / 100f },
+                    color = BackgroundBrand,
+                strokeWidth = ProgressIndicatorDefaults.CircularStrokeWidth,
+                trackColor = ProgressIndicatorDefaults.circularIndeterminateTrackColor,
+                strokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap,
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -205,7 +209,7 @@ fun AudioPreviewContent(
 
     LaunchedEffect(data.audioPath) {
         if (data.audioPath.isNotEmpty()) {
-            val uri = Uri.parse(data.audioPath)
+            val uri = data.audioPath.toUri()
             val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
             exoPlayer.prepare()
@@ -261,7 +265,7 @@ fun AudioPreviewContent(
                         }
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Black)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
             )
         },
         containerColor = Color.Black

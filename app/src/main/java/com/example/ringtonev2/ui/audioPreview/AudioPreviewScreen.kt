@@ -61,6 +61,7 @@ import com.example.ringtonev2.components.AssignUsageDialog
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
+import androidx.core.net.toUri
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -140,7 +141,7 @@ fun DownloadAudioPreviewScreen(
     LaunchedEffect(uiState.audioPath) {
         if (uiState.audioPath.isNotEmpty()) {
             val uri = if (uiState.audioPath.startsWith("http")) {
-                Uri.parse(uiState.audioPath)
+                uiState.audioPath.toUri()
             } else {
                 Uri.fromFile(File(uiState.audioPath))
             }
@@ -193,7 +194,7 @@ fun DownloadAudioPreviewScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black
                 )
             )
@@ -408,7 +409,7 @@ fun canWriteSettings(context: Context): Boolean {
 
 fun requestWriteSettingsPermission(context: Context) {
     val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-        data = Uri.parse("package:${context.packageName}")
+        data = "package:${context.packageName}".toUri()
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     context.startActivity(intent)

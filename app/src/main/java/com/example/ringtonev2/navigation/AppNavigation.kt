@@ -124,7 +124,6 @@ fun AppNavigation() {
             }
             entry<Routes.AudioPreviewRoute> {
                 route ->
-                Log.d("AppNavigation", "DownloadAudioPreviewScreen: ${route.ringtoneId}")
                 DownloadAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = {
@@ -135,7 +134,6 @@ fun AppNavigation() {
             }
             entry<Routes.RingtoneAudioPreviewRoute> {
                 route ->
-                Log.d("AppNavigation", "RingtoneAudioPreviewScreen: ${route.ringtoneId}")
                 RingtoneAudioPreviewScreen(
                     ringtoneId = route.ringtoneId,
                     onBack = { backStack.removeLastOrNull()

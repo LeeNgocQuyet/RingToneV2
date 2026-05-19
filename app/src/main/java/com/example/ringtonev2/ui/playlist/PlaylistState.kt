@@ -1,7 +1,6 @@
 package com.example.ringtonev2.ui.playlist
 
 import com.example.ringtonev2.domain.Category
-import com.example.ringtonev2.domain.DownloadItem
 import com.example.ringtonev2.domain.Ringtone
 
 data class PlaylistState(

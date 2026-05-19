@@ -1,7 +1,6 @@
 package com.example.ringtonev2.data.remote.dto
 
 import com.example.ringtonev2.domain.Category
-import com.google.gson.annotations.SerializedName
 
 /*
 "status": true,

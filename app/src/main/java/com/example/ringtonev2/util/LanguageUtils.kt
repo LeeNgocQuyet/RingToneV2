@@ -15,19 +15,7 @@ import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import java.util.Locale
 
 val LocalAppLanguage = staticCompositionLocalOf<String?> { null }
-object LanguageUtils {
 
-    fun createLocalizedContext(context: Context, languageCode: String): Context {
-        val locale = Locale.forLanguageTag(languageCode.ifBlank { Locale.getDefault().language })
-        Locale.setDefault(locale)
-
-        val configuration = Configuration(context.resources.configuration)
-        configuration.setLocale(locale)
-        configuration.setLayoutDirection(locale)
-
-        return context.createConfigurationContext(configuration)
-    }
-}
 @Composable
 fun AppLocaleProvider(
     currentLang: String?,

@@ -86,4 +86,4 @@ data class Author(
 
 fun TikTokData.resolveAudioDownloadUrl(): String? =
     listOfNotNull(music, musicInfo?.play, hdPlay, play)
-        .firstOrNull { !it.isNullOrBlank() }
+        .firstOrNull { it.isNotBlank() }

@@ -21,8 +21,4 @@ class AudioInfoScreenViewModel @Inject constructor() : ViewModel() {
             _isPlaying.value = true
         }
     }
-
-    fun setPlaying(isPlaying: Boolean) {
-        _isPlaying.value = isPlaying
-    }
 }

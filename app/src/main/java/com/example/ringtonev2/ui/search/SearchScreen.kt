@@ -64,7 +64,6 @@ import com.example.ringtonev2.R
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.util.keyboardAsState
 
 @Composable
 fun SearchScreen(
@@ -85,7 +84,6 @@ fun SearchScreen(
     val context = LocalContext.current
     val currentPlayingId by viewModel.currentPlayingId.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
-    val keyboardState by keyboardAsState()
 
     val player = remember {
         ExoPlayer.Builder(context).build()

@@ -60,7 +60,7 @@ class PlaylistScreenViewModel @Inject constructor(
     val favoriteIds =
         repository.observeFavorites()
             .map { list ->
-                list.map { it.id.toString() }.toSet()
+                list.map { it.id }.toSet()
             }
             .stateIn(
                 viewModelScope,
@@ -81,19 +81,9 @@ class PlaylistScreenViewModel @Inject constructor(
         }
     }
 
-    fun onPlaybackCompleted() {
-        _isPlaying.value = false
-    }
-
     fun toggleFavorite(ringtone: Ringtone) {
         viewModelScope.launch {
             repository.toggleFavorite(ringtone)
-        }
-    }
-
-    fun deleteDownloadedRingtone(ringtone: Ringtone) {
-        viewModelScope.launch {
-            repository.deleteDownloadedRingtoneById(ringtone.id)
         }
     }
 }

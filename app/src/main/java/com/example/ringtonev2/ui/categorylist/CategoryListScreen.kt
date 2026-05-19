@@ -38,7 +38,6 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.example.ringtonev2.R
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.ui.theme.AppTypography
@@ -52,7 +51,7 @@ fun CategoryListScreen(
 ){
     val viewModel: CategoryListScreenViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
     val listState = rememberLazyListState()
     val pagingItems = viewModel.ringtones.collectAsLazyPagingItems()
 
@@ -90,7 +89,7 @@ fun CategoryListScreen(
     LaunchedEffect(currentPlayingId, isPlaying) {
 
         val ringtone = pagingItems.itemSnapshotList.items
-            .find { it.id.toString() == currentPlayingId }
+            .find { it.id == currentPlayingId }
 
         val url = ringtone?.audioPath ?: return@LaunchedEffect
 
@@ -127,7 +126,7 @@ fun CategoryListScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Black
                 )
             )
@@ -178,22 +177,20 @@ fun CategoryListScreen(
                             }
                         ) { index ->
                             val ringtone = pagingItems[index] ?: return@items
-                            val favoriteIds by viewModel.favoriteIds.collectAsState()
-
-                            val isFavorite = ringtone.id.toString() in favoriteIds
+                            val isFavorite = ringtone.id in favoriteIds
 
                             RingtoneItemRow(
                                 ringtone = ringtone,
                                 onPlayClick = {
                                     viewModel.togglePlaying(
-                                        ringtone.id.toString()
+                                        ringtone.id
                                     )
                                 },
                                 isPlaying =
-                                    currentPlayingId == ringtone.id.toString()
+                                    currentPlayingId == ringtone.id
                                             && isPlaying,
                                 onSetClick = {
-                                    onOpenPlayer(ringtone.id.toString())
+                                    onOpenPlayer(ringtone.id)
                                 },
                                 onFavorite = {
                                     viewModel.toggleFavorite(
