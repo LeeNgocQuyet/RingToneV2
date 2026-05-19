@@ -1,5 +1,7 @@
 package com.example.ringtonev2.components
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,7 +58,7 @@ fun SetRingtoneSuccessDialog(onDismiss: () -> Unit) {
                             fontSize = 18.sp,
                             fontWeight = FontWeight.W700
                         ),
-                        color = colorResource(R.color.content_default),
+                        color = ContentDefault,
 
                         )
 
@@ -69,7 +70,7 @@ fun SetRingtoneSuccessDialog(onDismiss: () -> Unit) {
                             fontSize = 14.sp,
                             fontWeight = FontWeight.W500
                         ),
-                        color = colorResource(R.color.content_subtlest)
+                        color = ContentSubtlest
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -91,7 +92,7 @@ fun SetRingtoneSuccessDialog(onDismiss: () -> Unit) {
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W600
                             ),
-                            color = colorResource(R.color.content_onsecondary)
+                            color = ContentOnSecondary
                         )
                     }
                 }

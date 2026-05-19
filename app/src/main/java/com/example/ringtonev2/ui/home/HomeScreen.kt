@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.home
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,7 +18,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -104,7 +105,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.Black))
+            .background(Black)
     ) {
         when (val state = uiState) {
             HomeState.Idle -> {}
@@ -188,7 +189,7 @@ fun HomeScreen(
                         HorizontalDivider(
                             modifier = Modifier.padding(vertical = 4.dp),
                             thickness = 0.5.dp,
-                            color = colorResource(id = R.color.border_subtlest)
+                            color = BorderSubtlest
                         )
                     }
                     if (pagingItems.loadState.append is LoadState.Loading) {
@@ -271,7 +272,7 @@ fun FeaturedBannerSection(
                 //9 là hot and trending category
                 modifier = Modifier.height(52.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_secondary)
+                    containerColor = BackgroundSecondary
                 ),
                 shape = RoundedCornerShape(100.dp),
                 contentPadding = PaddingValues(horizontal = 22.dp)
@@ -288,7 +289,7 @@ fun FeaturedBannerSection(
                 Text(
                     text = stringResource(R.string.play),
                     style = AppTypography.labelLarge.copy(
-                        color = colorResource(R.color.content_onbrand),
+                        color = ContentOnBrand,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600
                     )
@@ -317,9 +318,9 @@ fun CategoryTabsSection(
             Surface(
                 shape = RoundedCornerShape(50),
                 color = if (isSelected) {
-                    colorResource(id = R.color.background_brand)
+                    BackgroundBrand
                 } else {
-                    colorResource(id = R.color.accent)
+                    Accent
                 },
                 onClick = {
                     onCategoryClick(category.id)
@@ -334,9 +335,9 @@ fun CategoryTabsSection(
                     ),
                     style = AppTypography.labelMedium.copy(
                         color = if (isSelected) {
-                            colorResource(id = R.color.content_onbrand)
+                            ContentOnBrand
                         } else {
-                            colorResource(id = R.color.content_subtlest)
+                            ContentSubtlest
                         }
                     )
                 )

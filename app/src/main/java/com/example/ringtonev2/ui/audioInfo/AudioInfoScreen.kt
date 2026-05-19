@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.audioInfo
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -68,7 +70,7 @@ fun AudioInfoScreen(
                         style = AppTypography.titleMedium.copy(
                             fontSize = 18.sp
                         ),
-                        color = colorResource(R.color.content_default)
+                        color = ContentDefault
                     )
                 },
                 navigationIcon = {
@@ -152,7 +154,7 @@ fun AudioInfoScreen(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.content_default),
+                    color = ContentDefault,
                 )
             }
             data.title?.let {
@@ -162,7 +164,7 @@ fun AudioInfoScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -175,7 +177,7 @@ fun AudioInfoScreen(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -184,7 +186,7 @@ fun AudioInfoScreen(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -195,7 +197,7 @@ fun AudioInfoScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_secondary),
+                    containerColor = BackgroundSecondary,
                     contentColor = Color.Black
                 )
             ) {
@@ -205,7 +207,7 @@ fun AudioInfoScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.Black)
+                    color = Black
                 )
             }
         }

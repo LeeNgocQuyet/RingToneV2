@@ -1,5 +1,7 @@
 package com.example.ringtonev2.components
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +57,7 @@ fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
                             fontSize = 18.sp,
                             fontWeight = FontWeight.W700
                         ),
-                        color = colorResource(R.color.content_default),
+                        color = ContentDefault,
 
                         )
 
@@ -68,7 +69,7 @@ fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
                             fontSize = 14.sp,
                             fontWeight = FontWeight.W500
                         ),
-                        color = colorResource(R.color.content_subtle),
+                        color = ContentSubtle,
                         textAlign = TextAlign.Center
                     )
 
@@ -85,7 +86,7 @@ fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
                                 .height(60.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Delete_Color,
-                                contentColor = colorResource(R.color.content_subtlest)
+                                contentColor = ContentSubtlest
                             ),
                             shape = RoundedCornerShape(30.dp),
                             contentPadding = PaddingValues(0.dp)
@@ -96,7 +97,7 @@ fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.W600
                                 ),
-                                color = colorResource(R.color.content_subtle)
+                                color = ContentSubtle
                             )
                         }
 
@@ -118,7 +119,7 @@ fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.W600
                                 ),
-                                color = colorResource(R.color.content_subtle)
+                                color = ContentSubtle
                             )
                         }
                     }

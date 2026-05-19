@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.splash
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,7 +26,6 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -59,7 +60,7 @@ fun SplashScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.Black))
+            .background(Black)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ellipse_384),
@@ -86,7 +87,7 @@ fun SplashScreen(
                 modifier = Modifier
                     .size(120.dp)
                     .clip(RoundedCornerShape(32.dp))
-                    .background(colorResource(id = R.color.background_neutral_bolder))
+                    .background(BackgroundNeutralBolder)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -111,7 +112,7 @@ fun SplashScreen(
                     .fillMaxWidth()
                     .height(4.dp)
                     .clip(RoundedCornerShape(2.dp)),
-                color = colorResource(R.color.accent),
+                color = Accent,
                 trackColor = ContentBrand
             )
 

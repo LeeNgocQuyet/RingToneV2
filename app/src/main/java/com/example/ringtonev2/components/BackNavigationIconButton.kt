@@ -1,5 +1,7 @@
 package com.example.ringtonev2.components
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -12,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -42,7 +43,7 @@ fun BackNavigationIconButton(
             .padding(start = 8.dp)
             .size(34.dp)
             .clip(CircleShape)
-            .background(colorResource(id = R.color.accent))
+            .background(Accent)
     ) {
         Icon(
             painter = painterResource(R.drawable.arrow_left_02),

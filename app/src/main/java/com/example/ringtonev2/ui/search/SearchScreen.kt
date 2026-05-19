@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.search
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,7 +46,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -139,7 +140,7 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.Black))
+            .background(Black)
             .imePadding()
             .padding(horizontal = 10.dp)
     ) {
@@ -180,7 +181,7 @@ fun SearchScreen(
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W700,
-                        color = colorResource(id = R.color.content_default)
+                        color = ContentDefault
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -194,7 +195,7 @@ fun SearchScreen(
                             .height(120.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = colorResource(id = R.color.background_brand))
+                        CircularProgressIndicator(color = BackgroundBrand)
                     }
                 }
             } else if (visibleItems.loadState.refresh is LoadState.Error) {
@@ -203,7 +204,7 @@ fun SearchScreen(
                     Text(
                         text = error.error.message ?: "Unknown error",
                         modifier = Modifier.padding(top = 24.dp),
-                        style = AppTypography.bodyMedium.copy(color = colorResource(id = R.color.content_error))
+                        style = AppTypography.bodyMedium.copy(color = ContentError)
                     )
                 }
             } else if (visibleItems.itemCount == 0) {
@@ -211,7 +212,7 @@ fun SearchScreen(
                     Text(
                         text = "No ringtones found",
                         modifier = Modifier.padding(top = 24.dp),
-                        style = AppTypography.bodyMedium.copy(color = colorResource(id = R.color.content_subtlest))
+                        style = AppTypography.bodyMedium.copy(color = ContentSubtlest)
                     )
                 }
             } else {
@@ -243,7 +244,7 @@ fun SearchScreen(
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 4.dp),
                         thickness = 0.5.dp,
-                        color = colorResource(id = R.color.border_bold)
+                        color = BorderBold
                     )
                 }
 
@@ -257,7 +258,7 @@ fun SearchScreen(
                         ) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(28.dp),
-                                color = colorResource(id = R.color.background_brand)
+                                color = BackgroundBrand
                             )
                         }
                     }
@@ -318,14 +319,14 @@ private fun SearchField(
             onSearch()
         }),
         textStyle = TextStyle(
-            color = colorResource(id = R.color.content_default),
+            color = ContentDefault,
             fontSize = 14.sp,
             fontWeight = FontWeight.W500
         ),
         modifier = modifier
             .height(50.dp)
             .clip(RoundedCornerShape(50))
-            .background(colorResource(id = R.color.accent))
+            .background(Accent)
             .focusRequester(focusRequester),
         decorationBox = { innerTextField ->
             Row(
@@ -347,7 +348,7 @@ private fun SearchField(
                             text = "Search ringtones...",
                             style = AppTypography.bodySmall.copy(
                                 fontSize = 13.sp,
-                                color = colorResource(id = R.color.content_subtlest)
+                                color = ContentSubtlest
                             )
                         )
                     }
@@ -361,7 +362,7 @@ private fun SearchField(
                         modifier = Modifier
                             .size(34.dp)
                             .clip(CircleShape)
-                            .background(colorResource(id = R.color.accent))
+                            .background(Accent)
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.cancel_01),
@@ -389,7 +390,7 @@ private fun SearchHistorySection(
             style = AppTypography.labelLarge.copy(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W700,
-                color = colorResource(id = R.color.content_default)
+                color = ContentDefault
             )
         )
 
@@ -421,7 +422,7 @@ private fun HistoryChip(
         modifier = Modifier
             .height(30.dp)
             .clip(RoundedCornerShape(50))
-            .background(colorResource(id = R.color.accent))
+            .background(Accent)
             .clickable(onClick = onClick)
             .padding(start = 14.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -431,7 +432,7 @@ private fun HistoryChip(
             style = AppTypography.bodySmall.copy(
                 fontSize = 13.sp,
                 fontWeight = FontWeight.W600,
-                color = colorResource(id = R.color.content_subtle)
+                color = ContentSubtle
             )
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -441,7 +442,7 @@ private fun HistoryChip(
             modifier = Modifier
                 .size(16.dp)
                 .clickable(onClick = onRemove),
-            tint = colorResource(id = R.color.content_subtlest)
+            tint = ContentSubtlest
         )
     }
 }
@@ -470,7 +471,7 @@ fun NoResultSearch(){
             modifier = Modifier.padding(horizontal = 32.dp),
             textAlign = TextAlign.Center,
             style = AppTypography.bodyMedium.copy(
-                color = colorResource(R.color.content_disabled),
+                color = ContentDisabled,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500
             )

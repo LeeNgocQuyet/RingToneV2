@@ -1,5 +1,7 @@
 package com.example.ringtonev2.components
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -86,7 +87,7 @@ fun AssignUsageDialog(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W600
                             ),
-                            color = colorResource(R.color.content_default),
+                            color = ContentDefault,
                             modifier = Modifier.align(Alignment.Center)
                         )
 
@@ -98,8 +99,8 @@ fun AssignUsageDialog(
                     UsageTypeItem(
                         title = stringResource(R.string.ringtone_title),
                         icon = R.drawable.ic_calling,
-                        backgroundColor = colorResource(R.color.background_brand),
-                        borderColor = colorResource(R.color.background_brand),
+                        backgroundColor = BackgroundBrand,
+                        borderColor = BackgroundBrand,
                         onClick = onRingtoneClick
                     )
 
@@ -108,8 +109,8 @@ fun AssignUsageDialog(
                     UsageTypeItem(
                         title = stringResource(R.string.notify_title),
                         icon = R.drawable.ic_noti,
-                        backgroundColor = colorResource(R.color.background_secondary),
-                        borderColor = colorResource(R.color.background_secondary),
+                        backgroundColor = BackgroundSecondary,
+                        borderColor = BackgroundSecondary,
                         onClick = onNotifiClick
                     )
 
@@ -187,7 +188,7 @@ private fun UsageTypeItem(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600
             ),
-            color = colorResource(R.color.content_default),
+            color = ContentDefault,
         )
     }
 }

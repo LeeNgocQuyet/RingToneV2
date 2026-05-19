@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.main
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -53,7 +55,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -206,16 +207,16 @@ fun MainScreen(
                                             fontWeight = FontWeight.W600
                                         ),
                                         color = if (tab == entry)
-                                            colorResource(R.color.text_bar_selected)
+                                            TextBarSelected
                                         else
-                                            colorResource(R.color.text_bar_default)
+                                            TextBarDefault
                                     )
                                 },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = colorResource(R.color.icon_bar_selected),
-                                    unselectedIconColor = colorResource(R.color.icon_bar_default),
-                                    selectedTextColor = colorResource(R.color.text_bar_selected),
-                                    unselectedTextColor = colorResource(R.color.text_bar_default),
+                                    selectedIconColor = IconBarSelected,
+                                    unselectedIconColor = IconBarDefault,
+                                    selectedTextColor = TextBarSelected,
+                                    unselectedTextColor = TextBarDefault,
                                     indicatorColor = Color.Transparent
                                 )
                             )
@@ -277,7 +278,7 @@ fun MainTopBar(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.content_brand),
+                    color = ContentBrand,
                 )
             }
         },
@@ -289,7 +290,7 @@ fun MainTopBar(
                         .padding(start = 8.dp)
                         .size(34.dp)
                         .clip(CircleShape)
-                        .background(colorResource(id = R.color.accent))
+                        .background(Accent)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.search),
@@ -305,7 +306,7 @@ fun MainTopBar(
                     .padding(start = 8.dp)
                     .size(34.dp)
                     .clip(CircleShape)
-                    .background(colorResource(id = R.color.accent))
+                    .background(Accent)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.setting),

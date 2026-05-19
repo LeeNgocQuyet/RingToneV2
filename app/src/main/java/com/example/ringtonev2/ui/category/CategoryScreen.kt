@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.category
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -35,7 +37,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -84,7 +85,7 @@ fun CategoryScreen(
                 columns = Fixed(2),
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(colorResource(id = R.color.Black))
+                    .background(Black)
                     .padding(horizontal = 14.dp),
                 contentPadding = PaddingValues(
                     top = 12.dp,
@@ -132,8 +133,8 @@ fun CategoryItem(
                 width = 1.dp,
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        colorResource(R.color.content_secondary),
-                        colorResource(R.color.content_secondary)
+                        ContentSecondary,
+                        ContentSecondary
                             .copy(alpha = 0.4f)
                     )
                 ),
@@ -168,7 +169,7 @@ fun CategoryItem(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.content_default)
+                    color = ContentDefault
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -179,7 +180,7 @@ fun CategoryItem(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest)
+                    color = ContentSubtlest
                 )
             }
         }

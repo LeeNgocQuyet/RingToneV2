@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.categorylist
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -120,7 +121,7 @@ fun CategoryListScreen(
                         style = AppTypography.titleMedium.copy(
                             fontSize = 18.sp
                         ),
-                        color = colorResource(R.color.content_default)
+                        color = ContentDefault
                     )
                 },
                 navigationIcon = {
@@ -137,7 +138,7 @@ fun CategoryListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(colorResource(id = R.color.Black))
+                .background(Black)
         ) {
             when (val state = uiState) {
                 CategoryState.Idle -> {}
@@ -204,7 +205,7 @@ fun CategoryListScreen(
                             HorizontalDivider(
                                 modifier = Modifier.padding(vertical = 4.dp),
                                 thickness = 0.5.dp,
-                                color = colorResource(id = R.color.border_subtlest)
+                                color = BorderSubtlest
                             )
                         }
                         if (pagingItems.loadState.append is LoadState.Loading) {

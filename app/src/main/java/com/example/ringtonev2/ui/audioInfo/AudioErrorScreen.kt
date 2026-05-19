@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.audioInfo
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,7 +52,7 @@ fun AudioErrorScreen(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.W700
                         ),
-                        color = colorResource(R.color.content_default),
+                        color = ContentDefault,
                     )
                 },
                 navigationIcon = {
@@ -86,7 +87,7 @@ fun AudioErrorScreen(
                 Text(
                     text = stringResource(R.string.link_unavailable),
                     style = AppTypography.headlineMedium.copy(
-                        color = colorResource(R.color.content_error),
+                        color = ContentError,
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     ),
@@ -98,7 +99,7 @@ fun AudioErrorScreen(
                 Text(
                     text = stringResource(R.string.try_another_link_description),
                     style = AppTypography.bodyMedium.copy(
-                        color = colorResource(R.color.content_subtlest),
+                        color = ContentSubtlest,
                         fontSize = 16.sp,
                         lineHeight = 22.sp
                     ),
@@ -114,7 +115,7 @@ fun AudioErrorScreen(
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.background_secondary),
+                        containerColor = BackgroundSecondary,
                         contentColor = Color.Black
                     )
                 ) {
@@ -124,7 +125,7 @@ fun AudioErrorScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W600
                         ),
-                        color = colorResource(R.color.Black)
+                        color = Black
                     )
                 }
             }

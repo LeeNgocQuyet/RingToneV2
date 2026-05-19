@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.download
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -42,7 +44,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -169,7 +170,7 @@ fun DownloadScreen(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.W600
                         ),
-                        color = colorResource(R.color.content_secondary),
+                        color = ContentSecondary,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -178,7 +179,7 @@ fun DownloadScreen(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.W500
                         ),
-                        color = colorResource(R.color.content_subtlest),
+                        color = ContentSubtlest,
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     OutlinedTextField(
@@ -198,17 +199,17 @@ fun DownloadScreen(
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.W500
                                 ),
-                                color = colorResource(R.color.content_disabled),
+                                color = ContentDisabled,
                             )
                         },
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = colorResource(R.color.border_bold),
-                            unfocusedContainerColor = colorResource(R.color.border_bold),
-                            focusedIndicatorColor = colorResource(R.color.border_bold),
-                            unfocusedIndicatorColor = colorResource(R.color.border_bold),
-                            focusedTextColor = colorResource(R.color.content_default),
-                            unfocusedTextColor = colorResource(R.color.content_disabled),
-                            cursorColor = colorResource(R.color.White)
+                            focusedContainerColor = BorderBold,
+                            unfocusedContainerColor = BorderBold,
+                            focusedIndicatorColor = BorderBold,
+                            unfocusedIndicatorColor = BorderBold,
+                            focusedTextColor = ContentDefault,
+                            unfocusedTextColor = ContentDisabled,
+                            cursorColor = White
                         ),
                         singleLine = true,
                         shape = RoundedCornerShape(50),
@@ -233,8 +234,8 @@ fun DownloadScreen(
                             .height(52.dp),
                         shape = RoundedCornerShape(50),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(R.color.background_secondary),
-                            contentColor = colorResource(R.color.Black)
+                            containerColor = BackgroundSecondary,
+                            contentColor = Black
                         )
                     ) {
                         if (isLoading) {
@@ -253,7 +254,7 @@ fun DownloadScreen(
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.W600
                                 ),
-                                color = colorResource(R.color.Black)
+                                color = Black
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
@@ -279,7 +280,7 @@ fun DownloadScreen(
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W700,
-                        color = colorResource(R.color.content_default)
+                        color = ContentDefault
                     )
                 )
 //                Text(
@@ -287,7 +288,7 @@ fun DownloadScreen(
 //                    style = AppTypography.labelMedium.copy(
 //                        fontSize = 13.sp,
 //                        fontWeight = FontWeight.W600,
-//                        color = colorResource(R.color.content_brand)
+//                        color = ContentBrand
 //                    )
 //                )
             }
@@ -320,7 +321,7 @@ fun DownloadScreen(
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = 4.dp),
                 thickness = 0.5.dp,
-                color = colorResource(id = R.color.border_bold)
+                color = BorderBold
             )
         }
 

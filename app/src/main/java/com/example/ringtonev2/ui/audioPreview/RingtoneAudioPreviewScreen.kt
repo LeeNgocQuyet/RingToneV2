@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.audioPreview
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,7 +76,7 @@ fun RingtoneAudioPreviewScreen(
         when (val state = uiState) {
             is RingtoneAudioPreviewState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = colorResource(R.color.background_brand))
+                    CircularProgressIndicator(color = BackgroundBrand)
                 }
             }
 
@@ -111,7 +112,7 @@ fun RingtoneAudioPreviewScreen(
 
                 CircularProgressIndicator(
                     progress = data.downloadProgress / 100f,
-                    color = colorResource(R.color.background_brand)
+                    color = BackgroundBrand
                 )
 
                 Spacer(Modifier.height(8.dp))
@@ -241,7 +242,7 @@ fun AudioPreviewContent(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.W700
                         ),
-                        color = colorResource(R.color.content_default)
+                        color = ContentDefault
                     )
                 },
                 navigationIcon = {
@@ -289,7 +290,7 @@ fun AudioPreviewContent(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = data.title, color = colorResource(R.color.content_default),
+                        text = data.title, color = ContentDefault,
                         style = AppTypography.bodyMedium.copy(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.W600
@@ -311,9 +312,9 @@ fun AudioPreviewContent(
             Slider(
                 value = progress,
                 colors = androidx.compose.material3.SliderDefaults.colors(
-                    thumbColor = colorResource(R.color.background_brand),
-                    activeTrackColor = colorResource(R.color.background_brand),
-                    inactiveTrackColor = colorResource(R.color.background_neutral)
+                    thumbColor = BackgroundBrand,
+                    activeTrackColor = BackgroundBrand,
+                    inactiveTrackColor = BackgroundNeutral
                 ),
                 onValueChange = {
                     val newPosition = (it * duration).toLong()
@@ -329,12 +330,12 @@ fun AudioPreviewContent(
             ) {
                 Text(
                     formatDurationMilisecond(data.currentPosition),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                     style = AppTypography.bodySmall
                 )
                 Text(
                     formatDurationMilisecond(duration),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                     style = AppTypography.bodySmall
                 )
             }
@@ -363,7 +364,7 @@ fun AudioPreviewContent(
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)
-                        .background(colorResource(R.color.background_brand)),
+                        .background(BackgroundBrand),
                     contentAlignment = Alignment.Center
                 ) {
                     val icon = if (data.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
@@ -404,7 +405,7 @@ fun AudioPreviewContent(
                 shape = RoundedCornerShape(28.dp),
                 enabled = !data.isDownloading,
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_secondary)
+                    containerColor = BackgroundSecondary
                 )
             ) {
                 Text(
