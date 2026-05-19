@@ -3,10 +3,8 @@ package com.example.ringtonev2.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.ringtonev2.data.local.dao.TikTokDownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
 import com.example.ringtonev2.data.local.dao.DownloadedRingtoneDao
-import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
 import com.example.ringtonev2.data.local.entity.FavoriteEntity
 import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 

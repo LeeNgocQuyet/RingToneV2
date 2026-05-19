@@ -1,14 +1,13 @@
-package com.example.ringtonev2.domain;
+package com.example.ringtonev2.domain
 
-import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
 import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 
 import kotlinx.coroutines.flow.Flow
 
 interface RingtoneRepository {
-    fun observeDownloadedRingtones(): Flow<kotlin.collections.List<Ringtone>>
+    fun observeDownloadedRingtones(): Flow<List<Ringtone>>
 
-    fun observeFavorites(): Flow<kotlin.collections.List<Ringtone>>
+    fun observeFavorites(): Flow<List<Ringtone>>
 
     fun isFavorite(
         ringtoneId: String

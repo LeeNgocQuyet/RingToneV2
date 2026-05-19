@@ -3,7 +3,6 @@ package com.example.ringtonev2.di
 import android.content.Context
 import androidx.room.Room
 import com.example.ringtonev2.data.local.AppDatabase
-import com.example.ringtonev2.data.local.dao.TikTokDownloadDao
 import com.example.ringtonev2.data.local.dao.FavoriteDao
 import com.example.ringtonev2.data.local.dao.DownloadedRingtoneDao
 import dagger.Module
