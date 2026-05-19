@@ -185,6 +185,8 @@ fun RingtoneItemRow(
     }
 }
 
+// ToDo Không dùng thì xoá đi
+
 fun formatDuration(milisecond: Int?): String {
     if (milisecond == null || milisecond <= 0L) return "00:00"
     val seconds = milisecond / 1000L

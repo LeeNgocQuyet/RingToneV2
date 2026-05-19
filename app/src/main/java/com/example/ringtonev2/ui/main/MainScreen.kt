@@ -65,6 +65,7 @@ import com.example.ringtonev2.ui.playlist.PlaylistScreen
 import com.example.ringtonev2.ui.theme.AppTypography
 import kotlinx.coroutines.launch
 
+// Todo
 private enum class MainTab(val title: String, @DrawableRes val icon: Int) {
     Home("Home", R.drawable.home),
     Download("Download", R.drawable.download),
@@ -99,6 +100,7 @@ fun MainScreen(
     ) { isGranted ->
         if (!isGranted && activity != null) {
 
+            // Todo
             val shouldShow = ActivityCompat.shouldShowRequestPermissionRationale(
                 activity, Manifest.permission.POST_NOTIFICATIONS
             )

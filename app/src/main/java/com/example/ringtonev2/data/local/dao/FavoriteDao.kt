@@ -16,8 +16,12 @@ interface FavoriteDao {
     @Delete
     suspend fun deleteFavorite(favorite: FavoriteEntity)
 
+    // ToDo Tại sao lại dùng """ AI Code à
+
     @Query("""DELETE FROM favorites WHERE ringtoneId = :ringtoneId""")
     suspend fun deleteFavoriteById(ringtoneId: String)
+
+    // ToDo Tại sao lại dùng """ AI Code à
 
     @Query(""" SELECT * FROM favorites ORDER BY title ASC""")
     fun getFavorites(): Flow<List<FavoriteEntity>>

@@ -140,6 +140,7 @@ fun DownloadAudioPreviewScreen(
     LaunchedEffect(uiState.audioPath) {
         if (uiState.audioPath.isNotEmpty()) {
             val uri = if (uiState.audioPath.startsWith("http")) {
+                //Todo Để Về String.toUri
                 Uri.parse(uiState.audioPath)
             } else {
                 Uri.fromFile(File(uiState.audioPath))
@@ -193,6 +194,7 @@ fun DownloadAudioPreviewScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
+                // Todo Cái này Sửa lai centerAlignedTopAppBarColors
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black
                 )
@@ -221,6 +223,7 @@ fun DownloadAudioPreviewScreen(
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Todo Ảnh to quá
                     Image(
                         painter = painterResource(R.drawable.bg_removal),
                         contentDescription = null,
@@ -357,6 +360,7 @@ fun DownloadAudioPreviewScreen(
                                 .coerceAtMost(duration)
                         exoPlayer.seekTo(newPosition)
                     }) {
+                        // Todo ICon đặt sai tên
                         Icon(
                             painter = painterResource(R.drawable.go_forward_10sec),
                             contentDescription = null,
@@ -393,6 +397,8 @@ fun DownloadAudioPreviewScreen(
     }
 }
 
+// TODO Tạo Ra một hàm extend String để dùng Chung cái này (Tạo ra Floder Util)
+
 fun formatDurationSecond(seconds: Long?): String {
     if (seconds == null || seconds <= 0L) return "00:00"
 
@@ -402,12 +408,16 @@ fun formatDurationSecond(seconds: Long?): String {
     return "%02d:%02d".format(minutes, secs)
 }
 
+// TODO Viết thành một hàm chung
+
 fun canWriteSettings(context: Context): Boolean {
     return Settings.System.canWrite(context)
 }
 
+// TODO Viết thành một hàm chung
 fun requestWriteSettingsPermission(context: Context) {
     val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+        // Todo Để String.toUri
         data = Uri.parse("package:${context.packageName}")
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }

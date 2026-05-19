@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
 
+// ToDo Dùng chung Notification vs Mất mạng mà Đặt tên thế này à
+
 @Composable
 fun EnableNotificationCard(
     painter: Painter,

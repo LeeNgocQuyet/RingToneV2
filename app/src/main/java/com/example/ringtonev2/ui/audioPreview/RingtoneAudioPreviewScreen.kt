@@ -117,6 +117,7 @@ fun RingtoneAudioPreviewScreen(
 
                 Spacer(Modifier.height(8.dp))
 
+                //  Todo Dịch text đi
                 Text(
                     text = "Downloading ${data.downloadProgress}%...",
                     style = AppTypography.bodyMedium.copy(
@@ -205,6 +206,7 @@ fun AudioPreviewContent(
 
     LaunchedEffect(data.audioPath) {
         if (data.audioPath.isNotEmpty()) {
+            //  Todo Sửa lại nhé
             val uri = Uri.parse(data.audioPath)
             val mediaItem = MediaItem.fromUri(uri)
             exoPlayer.setMediaItem(mediaItem)
@@ -261,6 +263,7 @@ fun AudioPreviewContent(
                         }
                     }
                 },
+                //  Todo Sửa lại nhé
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.Black)
             )
         },
@@ -419,6 +422,7 @@ fun AudioPreviewContent(
     }
 }
 
+//  Todo Sửa lại nhé
 fun formatDurationMilisecond(miliseconds: Long?): String {
     if (miliseconds == null || miliseconds <= 0L) return "00:00"
 

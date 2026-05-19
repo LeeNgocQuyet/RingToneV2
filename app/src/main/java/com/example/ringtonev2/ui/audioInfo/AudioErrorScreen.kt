@@ -36,6 +36,7 @@ import com.example.ringtonev2.R
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.ui.theme.AppTypography
 
+// Todo viewModel Không dùng thì bỏ đi
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioErrorScreen(
@@ -58,6 +59,8 @@ fun AudioErrorScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
+                // Todo Không đọc document à centerAlignedTopAppBarColors Sửa lại theo cái Google Suggest
+
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black
                 )

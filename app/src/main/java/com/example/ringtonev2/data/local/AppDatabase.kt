@@ -9,6 +9,7 @@ import com.example.ringtonev2.data.local.entity.FavoriteEntity
 import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
 
 
+// ToDo Tại sao TikTokDownloadEntity Không dùng ở đây ???
 
 @Database(
     entities = [

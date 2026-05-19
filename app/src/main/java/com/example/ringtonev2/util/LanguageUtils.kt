@@ -14,6 +14,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import java.util.Locale
 
+
+// Todo
 val LocalAppLanguage = staticCompositionLocalOf<String?> { null }
 object LanguageUtils {
 
@@ -40,16 +42,11 @@ fun AppLocaleProvider(
     val currentActivity = LocalActivity.current
 
     if (currentLang != null) {
-        // SỬA Ở ĐÂY: Bọc localeContext bên trong một ContextWrapper
-        // để giữ lại các thuộc tính/Identity của Context gốc (Activity)
         val localeContext = remember(currentLang, context) {
             val baseLocaleContext = context.createLocaleContext(currentLang)
 
-            // Dùng ContextWrapper để làm "cầu nối" giữ Activity context gốc
             object : ContextWrapper(baseLocaleContext) {
                 override fun getBaseContext(): Context {
-                    // Khi Hilt hoặc hệ thống cần tìm gốc rễ,
-                    // nó có thể truy xuất ngược lại context ban đầu (Activity)
                     return context
                 }
             }

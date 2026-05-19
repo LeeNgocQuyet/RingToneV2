@@ -31,7 +31,6 @@ import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.theme.AppTypography
 import java.util.Locale
 
-@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioInfoScreen(
@@ -213,6 +212,8 @@ fun AudioInfoScreen(
         }
     }
 }
+
+// TODO Tạo Ra một hàm extend String để dùng Chung cái này (Tạo ra Floder Util)
 private fun formatDuration(seconds: Long?): String {
     if (seconds == null || seconds <= 0L) return "—"
     val s = seconds.toInt().coerceAtLeast(0)
@@ -220,6 +221,8 @@ private fun formatDuration(seconds: Long?): String {
     val rem = s % 60
     return "%d:%02d".format(m, rem)
 }
+
+// TODO Tạo Ra một hàm extend String để dùng Chung cái này (Tạo ra Floder Util)
 
 fun formatSize(size: Long?): String {
     if (size == null) return "—"
