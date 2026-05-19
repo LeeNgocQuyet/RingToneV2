@@ -53,6 +53,7 @@ import kotlinx.coroutines.delay
 
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.AssignUsageDialog
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.DeleteRingtoneDialog
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
@@ -244,13 +245,7 @@ fun AudioPreviewContent(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_left_02),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
+                    BackNavigationIconButton(onClick = onBack)
                 },
                 actions = {
                     if (data.isDownloaded) {

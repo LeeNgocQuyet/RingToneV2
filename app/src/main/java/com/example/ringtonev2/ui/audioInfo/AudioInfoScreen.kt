@@ -24,6 +24,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import com.example.ringtonev2.R
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.theme.AppTypography
 import java.util.Locale
@@ -71,19 +72,7 @@ fun AudioInfoScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF1F1F1F))
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_left_02),
-                            contentDescription = null
-                        )
-                    }
+                    BackNavigationIconButton(onClick = onBack)
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black

@@ -60,6 +60,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ringtonev2.R
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.ui.theme.AppTypography
 import com.example.ringtonev2.util.keyboardAsState
@@ -278,20 +279,7 @@ private fun SearchTopBar(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(
-            onClick = onBack,
-            modifier = Modifier
-                .size(34.dp)
-                .clip(CircleShape)
-                .background(colorResource(id = R.color.accent))
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.arrow_left_02),
-                contentDescription = "Back",
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-            )
-        }
+        BackNavigationIconButton(onClick = onBack)
 
         Spacer(modifier = Modifier.width(10.dp))
 
