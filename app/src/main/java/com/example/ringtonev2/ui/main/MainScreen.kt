@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.main
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
@@ -53,7 +55,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +81,8 @@ fun MainScreen(
     onOpenCategory: (String) -> Unit,
     onOpenExtract: () -> Unit,
     onOpenHistory: () -> Unit,
+    onOpenSearch: () -> Unit,
+    onOpenSetting: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
     onOpenErrorInfo: () -> Unit,
 ) {
@@ -172,8 +175,8 @@ fun MainScreen(
             MainTopBar(
                 isSearchIcon = (tab != MainTab.Home),
                 title = stringResource(id = R.string.app_name),
-                onSearchClick = {},
-                onSettingsClick = { }
+                onSearchClick = onOpenSearch,
+                onSettingsClick = onOpenSetting
             )
         },
         bottomBar = {
@@ -204,16 +207,16 @@ fun MainScreen(
                                             fontWeight = FontWeight.W600
                                         ),
                                         color = if (tab == entry)
-                                            colorResource(R.color.text_bar_selected)
+                                            TextBarSelected
                                         else
-                                            colorResource(R.color.text_bar_default)
+                                            TextBarDefault
                                     )
                                 },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = colorResource(R.color.icon_bar_selected),
-                                    unselectedIconColor = colorResource(R.color.icon_bar_default),
-                                    selectedTextColor = colorResource(R.color.text_bar_selected),
-                                    unselectedTextColor = colorResource(R.color.text_bar_default),
+                                    selectedIconColor = IconBarSelected,
+                                    unselectedIconColor = IconBarDefault,
+                                    selectedTextColor = TextBarSelected,
+                                    unselectedTextColor = TextBarDefault,
                                     indicatorColor = Color.Transparent
                                 )
                             )
@@ -239,7 +242,14 @@ fun MainScreen(
                     onOpenErrorScreen = onOpenErrorInfo
                 )
                 MainTab.Category -> CategoryScreen(onOpenCategory = onOpenCategory)
-                MainTab.Playlist -> PlaylistScreen(onOpenPlayer = onOpenPlayer
+                MainTab.Playlist -> PlaylistScreen(
+                    onOpenPlayer = onOpenPlayer,
+                    onOpenDownloadScreen = {
+                        tab = MainTab.Download
+                    },
+                    onOpenCategoryScreen = {
+                        tab = MainTab.Category
+                    }
                 )
             }
         }
@@ -252,7 +262,7 @@ fun MainTopBar(
     isSearchIcon: Boolean,
     title: String,
     onSearchClick: () -> Unit,
-    onSettingsClick: () -> Unit
+    onSettingsClick: () -> Unit,
 ) {
     TopAppBar(
         title = {
@@ -268,7 +278,7 @@ fun MainTopBar(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.content_brand),
+                    color = ContentBrand,
                 )
             }
         },
@@ -277,9 +287,10 @@ fun MainTopBar(
                 IconButton(
                     onClick = onSearchClick,
                     modifier = Modifier
-                        .size(40.dp)
+                        .padding(start = 8.dp)
+                        .size(34.dp)
                         .clip(CircleShape)
-                        .background(colorResource(R.color.content_subtlest))
+                        .background(Accent)
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.search),
@@ -292,9 +303,10 @@ fun MainTopBar(
             IconButton(
                 onClick = onSettingsClick,
                 modifier = Modifier
-                    .size(40.dp)
+                    .padding(start = 8.dp)
+                    .size(34.dp)
                     .clip(CircleShape)
-                    .background(colorResource(R.color.content_subtlest))
+                    .background(Accent)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.setting),

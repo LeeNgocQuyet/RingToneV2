@@ -39,5 +39,4 @@ interface ApiService {
         @Query("order_by") orderBy: String = "id",
         @Query("order") order: String = "asc",
     ): CategoryResponse
-
 }

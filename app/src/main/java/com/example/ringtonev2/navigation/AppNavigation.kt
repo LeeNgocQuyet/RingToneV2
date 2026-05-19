@@ -23,6 +23,8 @@ import com.example.ringtonev2.ui.categorylist.CategoryListScreen
 import com.example.ringtonev2.ui.main.MainScreen
 import com.google.gson.Gson
 import com.example.ringtonev2.ui.onboarding.OnboardingScreen
+import com.example.ringtonev2.ui.search.SearchScreen
+import com.example.ringtonev2.ui.settings.SettingsScreen
 import com.example.ringtonev2.ui.splash.SplashScreen
 
 @Composable
@@ -62,10 +64,26 @@ fun AppNavigation() {
                     onOpenCategory = {id -> backStack.add(Routes.CategoryListRoute(id)) ; Log.d("AppNavigation", "CategoryListRoute onOpenCategory: $id")},
                     onOpenExtract = { backStack.add(ExtractRoute) },
                     onOpenHistory = { backStack.add(ExtractionHistoryRoute) },
+                    onOpenSearch = { backStack.add(Routes.SearchRoute) },
+                    onOpenSetting = { backStack.add(Routes.SettingRoute)},
                     onOpenAudioInfo = { data ->
                         backStack.add(AudioInfoRoute(Gson().toJson(data)))
                     },
                     onOpenErrorInfo = { backStack.add(Routes.AudioErrorRoute) }
+                )
+            }
+
+            entry<Routes.SearchRoute> {
+                SearchScreen(
+                    onBack = { backStack.removeLastOrNull() },
+                    onOpenPlayer = { backStack.add(Routes.RingtoneAudioPreviewRoute(it)) }
+                )
+            }
+
+            entry<Routes.SettingRoute> {
+                SettingsScreen(
+
+                    onBack = { backStack.removeLastOrNull() }
                 )
             }
 

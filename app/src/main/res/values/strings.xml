@@ -56,4 +56,21 @@
     <string name="delete_ringtone_description">This action cannot be undone and files will be permanently deleted.</string>
     <string name="delete_confirm">Delete</string>
     <string name="delete_cancel">Cancel</string>"
+
+    <string name="no_results">No results</string>
+
+    <string name="download_history">"Download History"</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_rating_us">Rating Us</string>
+    <string name="settings_feedback">Feedback</string>
+    <string name="settings_share_app">Share App</string>
+    <string name="settings_term_of_use">Term Of Use</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_select_language">Select Language</string>
+    <string name="settings_app_version">App Version 1.0.0</string>
+    <string name="language_english">English</string>
+    <string name="language_vietnamese">Tiếng Việt</string>
+    <string name="close">Close</string>
 </resources>

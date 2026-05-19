@@ -1,5 +1,7 @@
 package com.example.ringtonev2.components
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,16 +27,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
+import com.example.ringtonev2.util.DialogLocaleProvider
 
 @Composable
 fun AssignUsageDialog(
@@ -47,80 +48,82 @@ fun AssignUsageDialog(
     Dialog(
         onDismissRequest = onDismiss
     ) {
+        DialogLocaleProvider {
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF1E1E1E)
-            )
-        ) {
-
-            Column(
-                modifier = Modifier.padding(20.dp)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF1E1E1E)
+                )
             ) {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
+
+                Column(
+                    modifier = Modifier.padding(20.dp)
                 ) {
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.align(Alignment.TopEnd)
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.cancel_01),
-                            contentDescription = null,
-                            tint = Color.Gray
-                        )
+                        IconButton(
+                            onClick = onDismiss,
+                            modifier = Modifier.align(Alignment.TopEnd)
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.cancel_01),
+                                contentDescription = null,
+                                tint = Color.Gray
+                            )
+                        }
                     }
-                }
 
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
 
-                    Text(
-                        text = stringResource(R.string.assign_usage_type),
+                        Text(
+                            text = stringResource(R.string.assign_usage_type),
 
-                        style = AppTypography.labelLarge.copy(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.W600
-                        ),
-                        color = colorResource(R.color.content_default),
-                        modifier = Modifier.align(Alignment.Center)
+                            style = AppTypography.labelLarge.copy(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.W600
+                            ),
+                            color = ContentDefault,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+
+
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    UsageTypeItem(
+                        title = stringResource(R.string.ringtone_title),
+                        icon = R.drawable.ic_calling,
+                        backgroundColor = BackgroundBrand,
+                        borderColor = BackgroundBrand,
+                        onClick = onRingtoneClick
                     )
 
+                    Spacer(modifier = Modifier.height(14.dp))
 
+                    UsageTypeItem(
+                        title = stringResource(R.string.notify_title),
+                        icon = R.drawable.ic_noti,
+                        backgroundColor = BackgroundSecondary,
+                        borderColor = BackgroundSecondary,
+                        onClick = onNotifiClick
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    UsageTypeItem(
+                        title = stringResource(R.string.alarm_title),
+                        icon = R.drawable.ic_alarm,
+                        backgroundColor = Color(0xFFFF9D66),
+                        borderColor = Color(0xFFFF9D66),
+                        onClick = onAlarmClick
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                UsageTypeItem(
-                    title = stringResource(R.string.ringtone_title),
-                    icon = R.drawable.ic_calling,
-                    backgroundColor = colorResource(R.color.background_brand),
-                    borderColor = colorResource(R.color.background_brand),
-                    onClick = onRingtoneClick
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                UsageTypeItem(
-                    title = stringResource(R.string.notify_title),
-                    icon = R.drawable.ic_noti,
-                    backgroundColor = colorResource(R.color.background_secondary),
-                    borderColor = colorResource(R.color.background_secondary),
-                    onClick = onNotifiClick
-                )
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                UsageTypeItem(
-                    title = stringResource(R.string.alarm_title),
-                    icon = R.drawable.ic_alarm,
-                    backgroundColor = Color(0xFFFF9D66),
-                    borderColor = Color(0xFFFF9D66),
-                    onClick = onAlarmClick
-                )
             }
         }
     }
@@ -185,17 +188,7 @@ private fun UsageTypeItem(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W600
             ),
-            color = colorResource(R.color.content_default),
+            color = ContentDefault,
         )
     }
-}
-
-@Preview
-@Composable
-fun PreviewAssignUsageDialog() {
-    AssignUsageDialog(
-        onDismiss = {},
-        onRingtoneClick = {},
-        onNotifiClick = {},
-        onAlarmClick = {})
 }

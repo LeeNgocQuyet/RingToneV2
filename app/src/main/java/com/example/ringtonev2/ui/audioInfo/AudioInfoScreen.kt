@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.audioInfo
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,6 +26,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.compose.PlayerSurface
 import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
 import com.example.ringtonev2.R
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.theme.AppTypography
 import java.util.Locale
@@ -67,23 +70,11 @@ fun AudioInfoScreen(
                         style = AppTypography.titleMedium.copy(
                             fontSize = 18.sp
                         ),
-                        color = colorResource(R.color.content_default)
+                        color = ContentDefault
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF1F1F1F))
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_left_02),
-                            contentDescription = null
-                        )
-                    }
+                    BackNavigationIconButton(onClick = onBack)
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black
@@ -163,7 +154,7 @@ fun AudioInfoScreen(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.content_default),
+                    color = ContentDefault,
                 )
             }
             data.title?.let {
@@ -173,7 +164,7 @@ fun AudioInfoScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -186,7 +177,7 @@ fun AudioInfoScreen(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -195,7 +186,7 @@ fun AudioInfoScreen(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500
                     ),
-                    color = colorResource(R.color.content_subtlest),
+                    color = ContentSubtlest,
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
@@ -206,7 +197,7 @@ fun AudioInfoScreen(
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_secondary),
+                    containerColor = BackgroundSecondary,
                     contentColor = Color.Black
                 )
             ) {
@@ -216,7 +207,7 @@ fun AudioInfoScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600
                     ),
-                    color = colorResource(R.color.Black)
+                    color = Black
                 )
             }
         }

@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.categorylist
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,16 +10,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,11 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,6 +39,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.ringtonev2.R
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.ui.theme.AppTypography
 
@@ -125,23 +121,11 @@ fun CategoryListScreen(
                         style = AppTypography.titleMedium.copy(
                             fontSize = 18.sp
                         ),
-                        color = colorResource(R.color.content_default)
+                        color = ContentDefault
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .padding(start = 16.dp)
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFF1F1F1F))
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_left_02),
-                            contentDescription = null
-                        )
-                    }
+                    BackNavigationIconButton(onClick = onBack)
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black
@@ -154,7 +138,7 @@ fun CategoryListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(colorResource(id = R.color.Black))
+                .background(Black)
         ) {
             when (val state = uiState) {
                 CategoryState.Idle -> {}
@@ -221,7 +205,7 @@ fun CategoryListScreen(
                             HorizontalDivider(
                                 modifier = Modifier.padding(vertical = 4.dp),
                                 thickness = 0.5.dp,
-                                color = colorResource(id = R.color.border_subtlest)
+                                color = BorderSubtlest
                             )
                         }
                         if (pagingItems.loadState.append is LoadState.Loading) {

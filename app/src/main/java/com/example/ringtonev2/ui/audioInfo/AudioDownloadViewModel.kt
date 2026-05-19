@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ringtonev2.data.local.dao.TikTokDownloadDao
 import com.example.ringtonev2.data.local.dao.DownloadedRingtoneDao
 import com.example.ringtonev2.data.local.entity.TikTokDownloadEntity
 import com.example.ringtonev2.data.mapper.toDownloadedRingtoneEntity
@@ -33,7 +32,6 @@ sealed interface AudioDownloadUiState {
 @HiltViewModel
 class AudioDownloadViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val tikTokDownloadDao: TikTokDownloadDao,
     private val downloadedRingtoneDao: DownloadedRingtoneDao
 
 ) : ViewModel() {
@@ -107,7 +105,7 @@ class AudioDownloadViewModel @Inject constructor(
                         downloadedAt = System.currentTimeMillis(),
                         duration = data.duration ?: 0L
                     )
-                    tikTokDownloadDao.insertTikTokDownload(entity)
+                    //tikTokDownloadDao.insertTikTokDownload(entity)
                     downloadedRingtoneDao.saveDownloadedRingtone(entity.toDownloadedRingtoneEntity())
                     Log.d("AudioDownloadViewModel", "Saved to database: $entity")
                     _uiState.value = AudioDownloadUiState.Success(file.absolutePath)

@@ -1,10 +1,11 @@
 package com.example.ringtonev2.ui.settings
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Language
@@ -19,19 +20,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.LocaleListCompat
+import com.example.ringtonev2.R
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.data.datastore.DataStoreManager
 import com.example.ringtonev2.ui.theme.RingtoneTheme
 import com.example.ringtonev2.ui.theme.SoftPurple
+import com.example.ringtonev2.util.LanguageUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onOpenPlayer: (String) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -47,13 +52,11 @@ fun SettingsScreen(
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
+                    BackNavigationIconButton(onClick = onBack)
                 },
                 title = {
                     Text(
-                        text = "Setting",
+                        text = stringResource(R.string.settings_title),
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp
@@ -80,18 +83,22 @@ fun SettingsScreen(
                 Column {
                     SettingItem(
                         icon = Icons.Outlined.Language,
-                        title = "Language",
-                        subtitle = if (currentLanguage == "vi") "Tiếng Việt" else "English",
+                        title = stringResource(R.string.settings_language),
+                        subtitle = if (currentLanguage == "vi") {
+                            stringResource(R.string.language_vietnamese)
+                        } else {
+                            stringResource(R.string.language_english)
+                        },
                         onClick = { showLanguageDialog = true }
                     )
                     SettingItem(
                         icon = Icons.Outlined.StarOutline,
-                        title = "Rating Us",
+                        title = stringResource(R.string.settings_rating_us),
                         onClick = {  }
                     )
                     SettingItem(
                         icon = Icons.Default.ChatBubbleOutline,
-                        title = "Feedback",
+                        title = stringResource(R.string.settings_feedback),
                         onClick = {  },
                         showDivider = false
                     )
@@ -108,17 +115,17 @@ fun SettingsScreen(
                 Column {
                     SettingItem(
                         icon = Icons.Outlined.Share,
-                        title = "Share App",
+                        title = stringResource(R.string.settings_share_app),
                         onClick = { /* Handle Share */ }
                     )
                     SettingItem(
                         icon = Icons.Outlined.TextSnippet,
-                        title = "Term Of Use",
+                        title = stringResource(R.string.settings_term_of_use),
                         onClick = {  }
                     )
                     SettingItem(
                         icon = Icons.Outlined.Policy,
-                        title = "Privacy Policy",
+                        title = stringResource(R.string.settings_privacy_policy),
                         onClick = {  },
                         showDivider = false
                     )
@@ -128,7 +135,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "App Version 1.0.0",
+                text = stringResource(R.string.settings_app_version),
                 color = Color.Gray,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -139,26 +146,32 @@ fun SettingsScreen(
     if (showLanguageDialog) {
         AlertDialog(
             onDismissRequest = { showLanguageDialog = false },
-            title = { Text("Select Language") },
+            title = { Text(stringResource(R.string.settings_select_language)) },
             text = {
                 Column {
-                    LanguageOption("English", currentLanguage == "en") {
+                    LanguageOption(stringResource(R.string.language_english), currentLanguage == "en") {
                         scope.launch {
                             dataStoreManager.setLanguage("en")
                             showLanguageDialog = false
+                            AppCompatDelegate.setApplicationLocales(
+                                LocaleListCompat.forLanguageTags("en")
+                            )
                         }
                     }
-                    LanguageOption("Tiếng Việt", currentLanguage == "vi") {
+                    LanguageOption(stringResource(R.string.language_vietnamese), currentLanguage == "vi") {
                         scope.launch {
                             dataStoreManager.setLanguage("vi")
                             showLanguageDialog = false
+                            AppCompatDelegate.setApplicationLocales(
+                                LocaleListCompat.forLanguageTags("vi")
+                            )
                         }
                     }
                 }
             },
             confirmButton = {
                 TextButton(onClick = { showLanguageDialog = false }) {
-                    Text("Close")
+                    Text(stringResource(R.string.close))
                 }
             }
         )
@@ -237,11 +250,3 @@ fun LanguageOption(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF000000)
-@Composable
-fun SettingsScreenPreview() {
-    RingtoneTheme {
-        SettingsScreen(
-            onOpenPlayer = {},onBack = {})
-    }
-}

@@ -1,5 +1,7 @@
 package com.example.ringtonev2.components
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
@@ -34,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +78,7 @@ fun RingtoneItemRow(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(colorResource(id = R.color.Black)),
+                    .background(Black),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -101,7 +102,7 @@ fun RingtoneItemRow(
                                 painter = if (!isPlaying) painterResource(id = R.drawable.ic_play)
                                 else painterResource(id = R.drawable.ic_pause),
                                 contentDescription = null,
-                                tint = colorResource(id = R.color.content_brand),
+                                tint = ContentBrand,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -120,7 +121,7 @@ fun RingtoneItemRow(
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
-                        color = colorResource(id = R.color.content_default)
+                        color = ContentDefault
                     )
                 )
                 Text(
@@ -128,7 +129,7 @@ fun RingtoneItemRow(
                     style = AppTypography.bodySmall.copy(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,
-                        color = colorResource(id = R.color.content_subtlest)
+                        color = ContentSubtlest
                     )
                 )
             }
@@ -142,7 +143,7 @@ fun RingtoneItemRow(
                 },
                 modifier = Modifier.height(32.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.background_secondary)),
+                colors = ButtonDefaults.buttonColors(containerColor = BackgroundSecondary),
                 shape = RoundedCornerShape(50)
             ) {
                 Text(
@@ -150,7 +151,7 @@ fun RingtoneItemRow(
                     style = AppTypography.bodySmall.copy(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,
-                        color = colorResource(id = R.color.content_onsecondary)
+                        color = ContentOnSecondary
                     )
                 )
             }

@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.audioPreview
 
+import com.example.ringtonev2.ui.theme.*
+
 import android.content.Context
 import android.content.Intent
 import java.io.File
@@ -43,7 +45,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,7 @@ import kotlinx.coroutines.delay
 
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.AssignUsageDialog
+import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
 
@@ -185,17 +187,11 @@ fun DownloadAudioPreviewScreen(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.W700
                         ),
-                        color = colorResource(R.color.content_default),
+                        color = ContentDefault,
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            painter = painterResource(R.drawable.arrow_left_02),
-                            contentDescription = null,
-                            tint = Color.White
-                        )
-                    }
+                    BackNavigationIconButton(onClick = onBack)
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black
@@ -207,7 +203,7 @@ fun DownloadAudioPreviewScreen(
 
         if (uiState.isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = colorResource(R.color.background_brand))
+                CircularProgressIndicator(color = BackgroundBrand)
             }
         } else {
             Column(
@@ -246,7 +242,7 @@ fun DownloadAudioPreviewScreen(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W600
                             ),
-                            color = colorResource(R.color.content_default)
+                            color = ContentDefault
                         )
                     }
 
@@ -268,13 +264,13 @@ fun DownloadAudioPreviewScreen(
                 Slider(
                     value = progress,
                     colors = androidx.compose.material3.SliderDefaults.colors(
-                        thumbColor = colorResource(R.color.background_brand),
-                        activeTrackColor = colorResource(R.color.background_brand),
-                        inactiveTrackColor = colorResource(R.color.background_neutral),
+                        thumbColor = BackgroundBrand,
+                        activeTrackColor = BackgroundBrand,
+                        inactiveTrackColor = BackgroundNeutral,
 
-                        disabledThumbColor = colorResource(R.color.background_brand),
-                        disabledActiveTrackColor = colorResource(R.color.background_brand),
-                        disabledInactiveTrackColor = colorResource(R.color.background_neutral),
+                        disabledThumbColor = BackgroundBrand,
+                        disabledActiveTrackColor = BackgroundBrand,
+                        disabledInactiveTrackColor = BackgroundNeutral,
                     ),
                     enabled = true,
                     onValueChange = {
@@ -297,7 +293,7 @@ fun DownloadAudioPreviewScreen(
                             fontWeight = FontWeight.Medium,
                             lineHeight = 16.sp,
                         ),
-                        color = colorResource(R.color.content_subtlest)
+                        color = ContentSubtlest
                     )
                     Text(
                         formatDurationSecond(duration),
@@ -306,7 +302,7 @@ fun DownloadAudioPreviewScreen(
                             fontWeight = FontWeight.Medium,
                             lineHeight = 16.sp,
                         ),
-                        color = colorResource(R.color.content_subtlest)
+                        color = ContentSubtlest
                     )
                 }
 
@@ -336,7 +332,7 @@ fun DownloadAudioPreviewScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .clip(CircleShape)
-                            .background(colorResource(R.color.background_brand)),
+                            .background(BackgroundBrand),
                         contentAlignment = Alignment.Center
                     ) {
                         val icon = if (uiState.isPlaying) R.drawable.ic_pause else R.drawable.ic_play
@@ -381,12 +377,12 @@ fun DownloadAudioPreviewScreen(
                         .height(56.dp),
                     shape = RoundedCornerShape(28.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(R.color.background_secondary),
+                        containerColor = BackgroundSecondary,
                     )
                 ) {
                     Text(
                         stringResource(R.string.set_ring_tone),
-                        color = colorResource(R.color.content_onsecondary),
+                        color = ContentOnSecondary,
                         fontWeight = FontWeight.Bold
                     )
                 }

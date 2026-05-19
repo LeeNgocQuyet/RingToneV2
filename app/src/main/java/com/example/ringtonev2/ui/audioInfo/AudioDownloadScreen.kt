@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.audioInfo
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,9 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -34,7 +34,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -77,7 +76,7 @@ fun AudioDownloadScreen(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                         ),
-                        color = colorResource(R.color.content_default),
+                        color = ContentDefault,
                     )
                 },
                 navigationIcon = {
@@ -106,14 +105,14 @@ fun AudioDownloadScreen(
                     Text(
                         text = stringResource(R.string.download_failed),
                         style = AppTypography.bodyLarge,
-                        color = colorResource(R.color.content_default),
+                        color = ContentDefault,
                         textAlign = TextAlign.Center,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     TextButton(onClick = onBack) {
                         Text(
                             text = stringResource(R.string.cd_back),
-                            color = colorResource(R.color.background_brand),
+                            color = BackgroundBrand,
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -136,7 +135,7 @@ fun AudioDownloadScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 lineHeight = 30.sp,
                             ),
-                            color = colorResource(R.color.content_default),
+                            color = ContentDefault,
                             textAlign = TextAlign.Center,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -147,7 +146,7 @@ fun AudioDownloadScreen(
                                 fontWeight = FontWeight.Medium,
                                 lineHeight = 20.sp,
                             ),
-                            color = colorResource(R.color.content_subtlest),
+                            color = ContentSubtlest,
                             textAlign = TextAlign.Center,
                         )
                     }
@@ -159,7 +158,7 @@ fun AudioDownloadScreen(
                             .height(44.dp),
                         shape = RoundedCornerShape(100.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(R.color.background_secondary),
+                            containerColor = BackgroundSecondary,
                             contentColor = Color.Black
                         ),
                     ) {
@@ -169,7 +168,7 @@ fun AudioDownloadScreen(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold,
                             ),
-                            color = colorResource(R.color.content_onsecondary),
+                            color = ContentOnSecondary,
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -192,7 +191,7 @@ fun AudioDownloadScreen(
                                 fontWeight = FontWeight.SemiBold,
                                 lineHeight = 30.sp,
                             ),
-                            color = colorResource(R.color.content_default),
+                            color = ContentDefault,
                             textAlign = TextAlign.Center,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
@@ -203,7 +202,7 @@ fun AudioDownloadScreen(
                                 fontWeight = FontWeight.Medium,
                                 lineHeight = 20.sp,
                             ),
-                            color = colorResource(R.color.content_subtlest),
+                            color = ContentSubtlest,
                             textAlign = TextAlign.Center,
                         )
                     }
@@ -223,7 +222,7 @@ private fun AudioDownloadRing(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
-    val brand = colorResource(R.color.background_brand)
+    val brand = BackgroundBrand
     val track = Color(0xFF2A2A2A)
     val p = progress.coerceIn(0f, 1f)
     Box(

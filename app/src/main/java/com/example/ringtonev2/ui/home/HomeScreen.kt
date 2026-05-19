@@ -1,6 +1,7 @@
 package com.example.ringtonev2.ui.home
 
-import android.util.Log
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,10 +18,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -37,10 +39,10 @@ import com.example.ringtonev2.ui.theme.AppTypography
 @Composable
 fun HomeScreen(
     onOpenPlayer: (String) -> Unit,
-    onOpenCategory: (String) -> Unit
+    onOpenCategory: (String) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.homeState.collectAsState()
 
     val listState = rememberLazyListState()
@@ -103,7 +105,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.Black))
+            .background(Black)
     ) {
         when (val state = uiState) {
             HomeState.Idle -> {}
@@ -162,22 +164,20 @@ fun HomeScreen(
                         val ringtone = pagingItems[index] ?: return@items
                         val favoriteIds by viewModel.favoriteIds.collectAsState()
 
-                        val isFavorite = ringtone.id.toString() in favoriteIds
+                        val isFavorite = ringtone.id in favoriteIds
 
                         RingtoneItemRow(
                             ringtone = ringtone,
                             onPlayClick = {
                                 viewModel.togglePlaying(
-                                    ringtone.id.toString()
+                                    ringtone.id
                                 )
                             },
                             isPlaying =
-                                currentPlayingId == ringtone.id.toString()
+                                currentPlayingId == ringtone.id
                                         && isPlaying,
                             onSetClick = {
-                                Log.d("HomeScreen", "onSetClick: ${ringtone.id}")
-                                Log.d("HomeScreen", "onSetClick: ${ringtone.name}")
-                                onOpenPlayer(ringtone.id.toString())
+                                onOpenPlayer(ringtone.id)
                             },
                             onFavorite = {
                                 viewModel.toggleFavorite(
@@ -189,7 +189,7 @@ fun HomeScreen(
                         HorizontalDivider(
                             modifier = Modifier.padding(vertical = 4.dp),
                             thickness = 0.5.dp,
-                            color = colorResource(id = R.color.border_subtlest)
+                            color = BorderSubtlest
                         )
                     }
                     if (pagingItems.loadState.append is LoadState.Loading) {
@@ -232,9 +232,14 @@ fun FeaturedBannerSection(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
 
-            Column {
+            Column(modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(0.6f))
+                {
 
                 Text(
+                    maxLines = 1,
+                    overflow = TextOverflow.Clip,
                     text = stringResource(R.string.top_ringtones),
                     style = AppTypography.displayLarge.copy(
                         fontSize = 30.sp,
@@ -251,6 +256,8 @@ fun FeaturedBannerSection(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     text = stringResource(R.string.home_description),
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
@@ -265,7 +272,7 @@ fun FeaturedBannerSection(
                 //9 là hot and trending category
                 modifier = Modifier.height(52.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(R.color.background_secondary)
+                    containerColor = BackgroundSecondary
                 ),
                 shape = RoundedCornerShape(100.dp),
                 contentPadding = PaddingValues(horizontal = 22.dp)
@@ -282,7 +289,7 @@ fun FeaturedBannerSection(
                 Text(
                     text = stringResource(R.string.play),
                     style = AppTypography.labelLarge.copy(
-                        color = colorResource(R.color.content_onbrand),
+                        color = ContentOnBrand,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600
                     )
@@ -311,9 +318,9 @@ fun CategoryTabsSection(
             Surface(
                 shape = RoundedCornerShape(50),
                 color = if (isSelected) {
-                    colorResource(id = R.color.background_brand)
+                    BackgroundBrand
                 } else {
-                    colorResource(id = R.color.accent)
+                    Accent
                 },
                 onClick = {
                     onCategoryClick(category.id)
@@ -328,13 +335,18 @@ fun CategoryTabsSection(
                     ),
                     style = AppTypography.labelMedium.copy(
                         color = if (isSelected) {
-                            colorResource(id = R.color.content_onbrand)
+                            ContentOnBrand
                         } else {
-                            colorResource(id = R.color.content_subtlest)
+                            ContentSubtlest
                         }
                     )
                 )
             }
         }
     }
+}
+@Preview
+@Composable
+fun PreviewFeaturedBannerSection(){
+    FeaturedBannerSection()
 }

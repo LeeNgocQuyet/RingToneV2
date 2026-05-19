@@ -1,5 +1,7 @@
 package com.example.ringtonev2.ui.playlist
 
+import com.example.ringtonev2.ui.theme.*
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,15 +38,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ringtonev2.R
 import com.example.ringtonev2.components.RingtoneItemRow
-import com.example.ringtonev2.data.mapper.toAudioPreview
-import com.example.ringtonev2.data.mapper.toRingtone
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.ui.theme.Black
 import com.example.ringtonev2.ui.theme.White
 
 @Composable
 fun PlaylistScreen(
-    onOpenPlayer: (String) -> Unit
+    onOpenPlayer: (String) -> Unit,
+    onOpenDownloadScreen: () -> Unit,
+    onOpenCategoryScreen: () -> Unit
 ) {
     val viewModel: PlaylistScreenViewModel = hiltViewModel()
 
@@ -61,7 +61,7 @@ fun PlaylistScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.Black))
+            .background(Black)
             .padding(horizontal = 16.dp)
     ) {
         PlaylistTabRow(
@@ -84,7 +84,11 @@ fun PlaylistScreen(
             isEmpty -> {
                 PlaylistEmptyState(
                     selectedTab = uiState.selectedTab,
-                    onDownloadAudioClick = {}
+                    onClick = if (uiState.selectedTab == PlaylistTab.Downloads) {
+                        onOpenDownloadScreen
+                    } else {
+                        onOpenCategoryScreen
+                    }
                 )
             }
 
@@ -119,7 +123,7 @@ fun PlaylistScreen(
                                 HorizontalDivider(
                                     modifier = Modifier.padding(vertical = 4.dp),
                                     thickness = 0.5.dp,
-                                    color = colorResource(id = R.color.border_subtlest)
+                                    color = BorderSubtlest
                                 )
                             }
                         }
@@ -150,7 +154,7 @@ fun PlaylistScreen(
                                 HorizontalDivider(
                                     modifier = Modifier.padding(vertical = 4.dp),
                                     thickness = 0.5.dp,
-                                    color = colorResource(id = R.color.border_subtlest)
+                                    color = BorderSubtlest
                                 )
                             }
                         }
@@ -198,15 +202,15 @@ private fun PlaylistTabButton(
     onClick: () -> Unit
 ) {
     val backgroundColor = if (selected) {
-        colorResource(R.color.content_brand)
+        ContentBrand
     } else {
         White.copy(0.12f)
     }
 
     val textColor = if (selected) {
-        colorResource(R.color.content_onbrand)
+        ContentOnBrand
     } else {
-        colorResource(R.color.content_subtlest)
+        ContentSubtlest
     }
 
     Surface(
@@ -238,7 +242,7 @@ private fun PlaylistTabButton(
 @Composable
 fun PlaylistEmptyState(
     selectedTab: PlaylistTab,
-    onDownloadAudioClick: () -> Unit
+    onClick: () -> Unit
 ) {
     val buttonEmpty = when (selectedTab) {
         PlaylistTab.Downloads -> stringResource(R.string.download_tab_button)
@@ -268,7 +272,7 @@ fun PlaylistEmptyState(
         Text(
             text = stringResource(R.string.empty_title),
             style = AppTypography.headlineMedium.copy(
-                color = colorResource(R.color.content_default),
+                color = ContentDefault,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.W600
             )
@@ -281,7 +285,7 @@ fun PlaylistEmptyState(
             modifier = Modifier.padding(horizontal = 32.dp),
             textAlign = TextAlign.Center,
             style = AppTypography.bodyLarge.copy(
-                color = colorResource(R.color.content_subtlest),
+                color = ContentSubtlest,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W500
             )
@@ -295,14 +299,14 @@ fun PlaylistEmptyState(
                     .height(48.dp)
                     .width(232.dp)
                     .clip(RoundedCornerShape(50))
-                    .background(colorResource(R.color.background_secondary))
-                    .clickable(onClick = onDownloadAudioClick),
+                    .background(BackgroundSecondary)
+                    .clickable(onClick = onClick),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = buttonEmpty,
                     style = AppTypography.labelLarge.copy(
-                        color = colorResource(R.color.content_onbrand),
+                        color = ContentOnBrand,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600
                     )

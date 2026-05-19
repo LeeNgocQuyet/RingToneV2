@@ -7,7 +7,9 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import org.json.JSONArray
 import java.util.Locale
 
 private val Context.dataStore by preferencesDataStore(name = "app_prefs")
@@ -17,6 +19,7 @@ class DataStoreManager(private val context: Context) {
         val ONBOARDING_SHOWN = booleanPreferencesKey("onboarding_shown")
         val LANGUAGE = stringPreferencesKey("language")
         val NOTIFICATION_CARD_COUNT = intPreferencesKey("notification_card_count")
+        val SEARCH_HISTORY = stringPreferencesKey("search_history")
     }
 
     val onboardingShownFlow: Flow<Boolean> =
@@ -38,6 +41,12 @@ class DataStoreManager(private val context: Context) {
             prefs[PrefKeys.LANGUAGE] = lang
         }
     }
+    suspend fun getLanguage(): String {
+        return context.dataStore.data.map {
+            prefs -> prefs[PrefKeys.LANGUAGE]
+            ?: Locale.getDefault().language
+        }.first()
+    }
     val notificationCardCountFlow: Flow<Int> = context.dataStore.data.map { prefs ->
         prefs[PrefKeys.NOTIFICATION_CARD_COUNT] ?: 0
     }
@@ -45,6 +54,21 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { prefs ->
             val current = prefs[PrefKeys.NOTIFICATION_CARD_COUNT] ?: 0
             prefs[PrefKeys.NOTIFICATION_CARD_COUNT] = current + 1
+        }
+    }
+    val searchHistoryFlow: Flow<List<String>> =
+        context.dataStore.data.map { prefs ->
+            prefs[PrefKeys.SEARCH_HISTORY]?.let { value ->
+                runCatching {
+                    val array = JSONArray(value)
+                    List(array.length()) { index -> array.getString(index) }
+                }.getOrDefault(emptyList())
+            } ?: emptyList()
+        }
+
+    suspend fun setSearchHistory(history: List<String>) {
+        context.dataStore.edit { prefs ->
+            prefs[PrefKeys.SEARCH_HISTORY] = JSONArray(history).toString()
         }
     }
 }
