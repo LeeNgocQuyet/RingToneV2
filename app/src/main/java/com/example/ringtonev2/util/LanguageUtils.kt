@@ -14,6 +14,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import java.util.Locale
 
+
+// Todo
 val LocalAppLanguage = staticCompositionLocalOf<String?> { null }
 object LanguageUtils {
 

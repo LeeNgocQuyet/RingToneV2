@@ -23,6 +23,7 @@ import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
 
+//TODO Tách ra làm Class riêng
 data class AudioPreviewUiState(
     val title: String = "",
     val audioPath: String = "",
@@ -31,6 +32,7 @@ data class AudioPreviewUiState(
     val isPlaying: Boolean = false,
     val isLoading: Boolean = false
 )
+//Todo Tách ra làm Class riêng
 
 enum class RingtoneType(val value: Int) {
     RINGTONE(RingtoneManager.TYPE_RINGTONE),
@@ -75,6 +77,7 @@ class AudioPreviewScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val ringtoneEntity = repository.getDownloadedRingtoneById(ringtoneId)
 
+            //Todo Lại If-Null return/break/... foldable to '?:'
             if (ringtoneEntity == null) {
                 return@launch
             }
@@ -93,6 +96,7 @@ class AudioPreviewScreenViewModel @Inject constructor(
         }
     }
 
+    //Todo Xoá đi
     fun togglePlay() {
         _uiState.value = _uiState.value.copy(
             isPlaying = !_uiState.value.isPlaying
@@ -111,6 +115,7 @@ class AudioPreviewScreenViewModel @Inject constructor(
 
     fun setAsSystemSound(context: Context, type: RingtoneType, onSuccess: () -> Unit) {
         val appContext = context.applicationContext
+        //  Todo Viết thành hàm dùng chung
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val path = _uiState.value.audioPath

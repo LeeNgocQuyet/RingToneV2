@@ -59,6 +59,7 @@ fun CategoryListScreen(
     val context = LocalContext.current
     val currentPlayingId by viewModel.currentPlayingId.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
+
     val player = remember {
         ExoPlayer.Builder(context).build()
     }
@@ -89,6 +90,7 @@ fun CategoryListScreen(
     }
     LaunchedEffect(currentPlayingId, isPlaying) {
 
+        //  Todo id là String rồi còn toString gì nữa ???
         val ringtone = pagingItems.itemSnapshotList.items
             .find { it.id.toString() == currentPlayingId }
 
@@ -127,6 +129,7 @@ fun CategoryListScreen(
                 navigationIcon = {
                     BackNavigationIconButton(onClick = onBack)
                 },
+                //  Todo
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Black
                 )
@@ -178,17 +181,20 @@ fun CategoryListScreen(
                             }
                         ) { index ->
                             val ringtone = pagingItems[index] ?: return@items
+                            //  Todo ????? đọc document Recomposition
                             val favoriteIds by viewModel.favoriteIds.collectAsState()
-
+                            //  Todo id là String rồi còn toString gì nữa ???
                             val isFavorite = ringtone.id.toString() in favoriteIds
 
                             RingtoneItemRow(
                                 ringtone = ringtone,
                                 onPlayClick = {
+                                    //  Todo id là String rồi còn toString gì nữa ???
                                     viewModel.togglePlaying(
                                         ringtone.id.toString()
                                     )
                                 },
+                                //  Todo id là String rồi còn toString gì nữa ???
                                 isPlaying =
                                     currentPlayingId == ringtone.id.toString()
                                             && isPlaying,

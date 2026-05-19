@@ -56,6 +56,8 @@ class DataStoreManager(private val context: Context) {
             prefs[PrefKeys.NOTIFICATION_CARD_COUNT] = current + 1
         }
     }
+    // ToDo Cái này không Lưu vào Room Database ??? Cái này không có giới hạn số lần lưu à
+
     val searchHistoryFlow: Flow<List<String>> =
         context.dataStore.data.map { prefs ->
             prefs[PrefKeys.SEARCH_HISTORY]?.let { value ->

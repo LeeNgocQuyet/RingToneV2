@@ -62,6 +62,7 @@ fun SplashScreen(
             .fillMaxSize()
             .background(Black)
     ) {
+        //Todo icon gì đây không đặt tên à
         Image(
             painter = painterResource(id = R.drawable.ellipse_384),
             contentDescription = "purple",
@@ -70,6 +71,7 @@ fun SplashScreen(
                 .alpha(0.3f)
                 .blur(radius = 100.dp),
         )
+        //Todo icon gì đây không đặt tên à
 
         Image(
             painter = painterResource(id = R.drawable.ellipse_385),

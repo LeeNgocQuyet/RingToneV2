@@ -53,6 +53,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 emptySet()
             )
 
+    //  Todo Sửa lại nhé
     fun resetState() {
         _uiState.value = RingtoneAudioPreviewState.Idle
     }
@@ -75,6 +76,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                     if (response.status && response.data.isNotEmpty()) {
                         val remoteAudio = response.data.first()
                         if (remoteAudio.audioPath.isNullOrBlank()) {
+                            //  Todo Thông báo lỗi chưa có dịch
                             _uiState.value = RingtoneAudioPreviewState.Error("Audio path not found")
                             return@launch
                         }
@@ -84,9 +86,11 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                             )
                         )
                     } else {
+                        //  Todo Thông báo lỗi chưa có dịch
                         _uiState.value = RingtoneAudioPreviewState.Error("Data not found")
                     }
                 } catch (e: Exception) {
+                    //  Todo Thông báo lỗi chưa có dịch
                     _uiState.value = RingtoneAudioPreviewState.Error(e.message ?: "Unknown Error")
                 }
             }
@@ -96,7 +100,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
     fun toggleFavorite(ringtoneId: String) {
         viewModelScope.launch {
             val ringtoneEntity = repository.getDownloadedRingtoneById(ringtoneId)
-
+         //  Todo Sửa lại nhé
             if (ringtoneEntity == null) {
                 return@launch
             }
@@ -157,10 +161,12 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
     }
 
     private fun deleteExternalCopies(context: Context, filePath: String?) {
+        //  Todo Tách ra thành hàm để có thể tái sử dụng
         val fileName = filePath
             ?.takeIf { it.isNotBlank() }
             ?.let { path ->
                 if (path.startsWith("file://")) {
+                    //  Todo Sửa lại nhé
                     Uri.parse(path).lastPathSegment
                 } else {
                     File(path).name
@@ -232,11 +238,13 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
 
         val previewData = currentState.data
         if (previewData.ringtoneId.isBlank()) {
+            //  Todo chưa dịch
             _uiState.value = RingtoneAudioPreviewState.Error("Invalid ringtone id")
             return
         }
         val url = previewData.audioPath
         if (url.isBlank() || !url.startsWith("http")) {
+            //  Todo chưa dịch
             _uiState.value = RingtoneAudioPreviewState.Error("Invalid audio url")
             return
         }
@@ -318,12 +326,14 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
         val currentState = _uiState.value
         if (currentState !is RingtoneAudioPreviewState.Success) return
         val appContext = context.applicationContext
+        //  Todo dùng chung
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val path = currentState.data.audioPath
                 if (path.isEmpty() || path.startsWith("http")) return@launch
 
                 val internalFile = if (path.startsWith("file://")) {
+                    //  Todo sửa lại nhé
                     File(Uri.parse(path).path ?: return@launch)
                 } else {
                     File(path)

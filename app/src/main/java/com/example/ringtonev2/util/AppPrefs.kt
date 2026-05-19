@@ -9,6 +9,7 @@ import javax.inject.Inject
 import kotlin.context
 
 class AppPrefs(context: Context) {
+    //Todo Xem lại
     val dataStoreManager = DataStoreManager(context.applicationContext)
     val languageFlow = dataStoreManager.languageFlow
     suspend fun getLanguage(): String {

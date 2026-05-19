@@ -29,6 +29,7 @@ import com.example.ringtonev2.util.DialogLocaleProvider
 @Composable
 fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
+        // ToDo DialogLocaleProvider Có phải cần cái này không ???
         DialogLocaleProvider {
             Card(
                 modifier = Modifier
@@ -43,6 +44,7 @@ fun DeleteRingtoneDialog(onDismiss: () -> Unit, onDelete: () -> Unit) {
                     modifier = Modifier.padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // ToDo đặt tên icon đã theo chuẩn chưa ic đâu ???
                     Image(
                         painter = painterResource(id = R.drawable.image_delete),
                         contentDescription = "Delete Image",

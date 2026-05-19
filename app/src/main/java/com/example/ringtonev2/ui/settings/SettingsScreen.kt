@@ -81,6 +81,7 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
+                    // Todo Icon Sai
                     SettingItem(
                         icon = Icons.Outlined.Language,
                         title = stringResource(R.string.settings_language),
@@ -91,11 +92,13 @@ fun SettingsScreen(
                         },
                         onClick = { showLanguageDialog = true }
                     )
+                    // Todo Icon Sai
                     SettingItem(
                         icon = Icons.Outlined.StarOutline,
                         title = stringResource(R.string.settings_rating_us),
                         onClick = {  }
                     )
+                    // Todo Icon Sai
                     SettingItem(
                         icon = Icons.Default.ChatBubbleOutline,
                         title = stringResource(R.string.settings_feedback),
@@ -113,16 +116,19 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
+                    // Todo Icon Sai
                     SettingItem(
                         icon = Icons.Outlined.Share,
                         title = stringResource(R.string.settings_share_app),
                         onClick = { /* Handle Share */ }
                     )
+                    // Todo Icon Sai
                     SettingItem(
                         icon = Icons.Outlined.TextSnippet,
                         title = stringResource(R.string.settings_term_of_use),
                         onClick = {  }
                     )
+                    // Todo Icon Sai
                     SettingItem(
                         icon = Icons.Outlined.Policy,
                         title = stringResource(R.string.settings_privacy_policy),
