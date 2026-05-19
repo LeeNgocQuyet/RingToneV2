@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.json.JSONArray
 import java.util.Locale
@@ -39,6 +40,12 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { prefs ->
             prefs[PrefKeys.LANGUAGE] = lang
         }
+    }
+    suspend fun getLanguage(): String {
+        return context.dataStore.data.map {
+            prefs -> prefs[PrefKeys.LANGUAGE]
+            ?: Locale.getDefault().language
+        }.first()
     }
     val notificationCardCountFlow: Flow<Int> = context.dataStore.data.map { prefs ->
         prefs[PrefKeys.NOTIFICATION_CARD_COUNT] ?: 0

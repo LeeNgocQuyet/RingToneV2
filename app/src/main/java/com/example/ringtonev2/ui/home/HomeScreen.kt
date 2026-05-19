@@ -37,10 +37,10 @@ import com.example.ringtonev2.ui.theme.AppTypography
 @Composable
 fun HomeScreen(
     onOpenPlayer: (String) -> Unit,
-    onOpenCategory: (String) -> Unit
+    onOpenCategory: (String) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    val viewModel: HomeViewModel = hiltViewModel()
     val uiState by viewModel.homeState.collectAsState()
 
     val listState = rememberLazyListState()
