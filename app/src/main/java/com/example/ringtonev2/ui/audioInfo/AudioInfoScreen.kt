@@ -31,6 +31,7 @@ import com.example.ringtonev2.data.remote.dto.TikTokData
 import com.example.ringtonev2.ui.theme.AppTypography
 import java.util.Locale
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AudioInfoScreen(

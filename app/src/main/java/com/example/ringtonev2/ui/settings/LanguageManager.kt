@@ -49,7 +49,7 @@ object LanguageManager {
         )
     )
 
-    fun getLanguageName(context: Context, code: String): String {
+    fun getLanguageName(code: String): String {
         return getAvailableLanguages().find { it.code == code }?.nativeName ?: "English"
     }
 }

@@ -2,7 +2,6 @@ package com.example.ringtonev2.ui.download
 
 import com.example.ringtonev2.ui.theme.*
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -221,7 +220,7 @@ fun DownloadScreen(
                                 return@Button
                             }
                             if (!link.isBlank())
-                                viewModel.getInfoAudio(context, link)
+                                viewModel.getInfoAudio(link)
                             else {
                                 error = "Please enter a link"
                                 Log.d("DOWNLOAD", "error = $error")

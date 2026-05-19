@@ -17,7 +17,6 @@ private val Context.dataStore by preferencesDataStore(name = "app_prefs")
 class DataStoreManager(private val context: Context) {
     object PrefKeys {
         val ONBOARDING_SHOWN = booleanPreferencesKey("onboarding_shown")
-        val LANGUAGE = stringPreferencesKey("language")
         val NOTIFICATION_CARD_COUNT = intPreferencesKey("notification_card_count")
         val SEARCH_HISTORY = stringPreferencesKey("search_history")
     }
@@ -30,22 +29,6 @@ class DataStoreManager(private val context: Context) {
         context.dataStore.edit { prefs ->
             prefs[PrefKeys.ONBOARDING_SHOWN] = true
         }
-    }
-    val languageFlow: Flow<String> =
-        context.dataStore.data.map { prefs ->
-            prefs[PrefKeys.LANGUAGE]
-                ?: Locale.getDefault().language
-        }
-    suspend fun setLanguage(lang: String) {
-        context.dataStore.edit { prefs ->
-            prefs[PrefKeys.LANGUAGE] = lang
-        }
-    }
-    suspend fun getLanguage(): String {
-        return context.dataStore.data.map {
-            prefs -> prefs[PrefKeys.LANGUAGE]
-            ?: Locale.getDefault().language
-        }.first()
     }
     val notificationCardCountFlow: Flow<Int> = context.dataStore.data.map { prefs ->
         prefs[PrefKeys.NOTIFICATION_CARD_COUNT] ?: 0
