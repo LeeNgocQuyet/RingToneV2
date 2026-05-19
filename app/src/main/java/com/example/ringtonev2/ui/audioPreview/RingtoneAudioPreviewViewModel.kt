@@ -1,9 +1,11 @@
 package com.example.ringtonev2.ui.audioPreview
 
 import android.content.ContentValues
+import android.content.ContentUris
 import android.content.Context
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.lifecycle.ViewModel
@@ -127,22 +129,20 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
     }
 
     fun deleteRingtone(
+        context: Context,
         onSuccess: () -> Unit
     ) {
         val currentState = _uiState.value
         if (currentState !is RingtoneAudioPreviewState.Success) return
 
+        val appContext = context.applicationContext
         val ringtoneId = currentState.data.ringtoneId
-        val filePath = currentState.data.audioPath
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                if (filePath.isNotBlank() && !filePath.startsWith("http")) {
-                    val file = File(filePath)
-                    if (file.exists()) {
-                        file.delete()
-                    }
-                }
+                val ringtoneEntity = repository.getDownloadedRingtoneById(ringtoneId)
+                deleteExternalCopies(appContext, ringtoneEntity?.filePath)
+
                 repository.deleteDownloadedRingtoneById(ringtoneId)
                 repository.removeFavorite(ringtoneId)
 
@@ -151,6 +151,61 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+
+    private fun deleteExternalCopies(context: Context, filePath: String?) {
+        val fileName = filePath
+            ?.takeIf { it.isNotBlank() }
+            ?.let { path ->
+                if (path.startsWith("file://")) {
+                    Uri.parse(path).lastPathSegment
+                } else {
+                    File(path).name
+                }
+            }
+            ?: return
+
+        val defaultUris = setOfNotNull(
+            RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneType.RINGTONE.value)
+                ?.toString(),
+            RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneType.NOTIFICATION.value)
+                ?.toString(),
+            RingtoneManager.getActualDefaultRingtoneUri(context, RingtoneType.ALARM.value)
+                ?.toString()
+        )
+
+        val resolver = context.contentResolver
+        val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val projection = arrayOf(MediaStore.Audio.Media._ID)
+
+        val relativePaths = arrayOf(
+            "${Environment.DIRECTORY_RINGTONES}/",
+            "${Environment.DIRECTORY_NOTIFICATIONS}/",
+            "${Environment.DIRECTORY_ALARMS}/"
+        )
+
+        val selection: String
+        val selectionArgs: Array<String>
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            selection = """
+                ${MediaStore.MediaColumns.DISPLAY_NAME} = ? AND
+                ${MediaStore.MediaColumns.RELATIVE_PATH} IN (?, ?, ?)
+            """.trimIndent()
+            selectionArgs = arrayOf(fileName, *relativePaths)
+        } else {
+            selection = "${MediaStore.MediaColumns.DISPLAY_NAME} = ?"
+            selectionArgs = arrayOf(fileName)
+        }
+
+        resolver.query(collection, projection, selection, selectionArgs, null)?.use { cursor ->
+            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
+            while (cursor.moveToNext()) {
+                val uri = ContentUris.withAppendedId(collection, cursor.getLong(idColumn))
+                if (uri.toString() !in defaultUris) {
+                    resolver.delete(uri, null, null)
+                }
             }
         }
     }

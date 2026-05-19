@@ -196,7 +196,7 @@ fun AudioPreviewContent(
             },
             onDelete = {
                 showDeleteDialog = false
-                viewModel.deleteRingtone {
+                viewModel.deleteRingtone(context) {
                     onDeleted()
                 }
             }
