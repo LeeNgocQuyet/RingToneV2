@@ -80,7 +80,7 @@ fun HomeScreen(
         }
     }
     LaunchedEffect(currentPlayingId, isPlaying) {
-
+        //Todo
         val ringtone = pagingItems.itemSnapshotList.items
             .find { it.id == currentPlayingId }
 
@@ -161,6 +161,7 @@ fun HomeScreen(
                         }
                     ) { index ->
                         val ringtone = pagingItems[index] ?: return@items
+                        //Todo Lại đây nữa
                         val favoriteIds by viewModel.favoriteIds.collectAsState()
 
                         val isFavorite = ringtone.id in favoriteIds

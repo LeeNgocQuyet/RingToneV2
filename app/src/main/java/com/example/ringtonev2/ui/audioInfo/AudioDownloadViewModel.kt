@@ -22,6 +22,8 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
+// TODO Tách Ra Class riêng
+
 sealed interface AudioDownloadUiState {
     data object Idle : AudioDownloadUiState
     data class Downloading(val progress: Float) : AudioDownloadUiState
@@ -56,6 +58,7 @@ class AudioDownloadViewModel @Inject constructor(
     fun downloadFileInternal(audioUrl: String,data: TikTokData) {
         val fileName = "tiktok_${System.currentTimeMillis()}.mp3"
         val file = File(appContext.filesDir, fileName)
+        //  Todo Viết thành hàm dùng chung
         viewModelScope.launch {
             _uiState.value = AudioDownloadUiState.Downloading(0f)
             withContext(Dispatchers.IO) {

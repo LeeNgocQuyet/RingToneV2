@@ -2,6 +2,7 @@ package com.example.ringtonev2.ui.audioPreview
 
 import com.example.ringtonev2.ui.theme.*
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -121,6 +122,7 @@ fun RingtoneAudioPreviewScreen(
 
                 Spacer(Modifier.height(8.dp))
 
+                //  Todo Dịch text đi
                 Text(
                     text = "Downloading ${data.downloadProgress}%...",
                     style = AppTypography.bodyMedium.copy(
@@ -423,6 +425,7 @@ fun AudioPreviewContent(
     }
 }
 
+//  Todo Sửa lại nhé
 fun formatDurationMilisecond(miliseconds: Long?): String {
     if (miliseconds == null || miliseconds <= 0L) return "00:00"
 

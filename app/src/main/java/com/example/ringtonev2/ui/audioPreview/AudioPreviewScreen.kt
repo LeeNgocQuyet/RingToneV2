@@ -50,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -61,7 +62,6 @@ import com.example.ringtonev2.components.AssignUsageDialog
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
-import androidx.core.net.toUri
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -222,6 +222,7 @@ fun DownloadAudioPreviewScreen(
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
+                    // Todo Ảnh to quá
                     Image(
                         painter = painterResource(R.drawable.bg_removal),
                         contentDescription = null,
@@ -358,6 +359,7 @@ fun DownloadAudioPreviewScreen(
                                 .coerceAtMost(duration)
                         exoPlayer.seekTo(newPosition)
                     }) {
+                        // Todo ICon đặt sai tên
                         Icon(
                             painter = painterResource(R.drawable.go_forward_10sec),
                             contentDescription = null,
@@ -394,6 +396,8 @@ fun DownloadAudioPreviewScreen(
     }
 }
 
+// TODO Tạo Ra một hàm extend String để dùng Chung cái này (Tạo ra Floder Util)
+
 fun formatDurationSecond(seconds: Long?): String {
     if (seconds == null || seconds <= 0L) return "00:00"
 
@@ -403,10 +407,13 @@ fun formatDurationSecond(seconds: Long?): String {
     return "%02d:%02d".format(minutes, secs)
 }
 
+// TODO Viết thành một hàm chung
+
 fun canWriteSettings(context: Context): Boolean {
     return Settings.System.canWrite(context)
 }
 
+// TODO Viết thành một hàm chung
 fun requestWriteSettingsPermission(context: Context) {
     val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
         data = "package:${context.packageName}".toUri()

@@ -174,6 +174,7 @@ fun SearchScreen(
 
             item {
                 Spacer(modifier = Modifier.height(if (state.query.isBlank()) 18.dp else 4.dp))
+                // Todo Chưa dịch
                 Text(
                     text = if (shouldShowSuggestions) "You might like these" else "Search results",
                     style = AppTypography.labelLarge.copy(
@@ -199,6 +200,7 @@ fun SearchScreen(
             } else if (visibleItems.loadState.refresh is LoadState.Error) {
                 val error = visibleItems.loadState.refresh as LoadState.Error
                 item {
+                    // Todo Chưa dịch
                     Text(
                         text = error.error.message ?: "Unknown error",
                         modifier = Modifier.padding(top = 24.dp),
@@ -207,6 +209,7 @@ fun SearchScreen(
                 }
             } else if (visibleItems.itemCount == 0) {
                 item {
+                    // Todo Chưa dịch
                     Text(
                         text = "No ringtones found",
                         modifier = Modifier.padding(top = 24.dp),
@@ -220,7 +223,7 @@ fun SearchScreen(
                 ) { index ->
                     val ringtone = visibleItems[index] ?: return@items
                     val isFavorite = ringtone.id in favoriteIds
-
+                    // Todo Chưa dịch
                     RingtoneItemRow(
                         ringtone = ringtone,
                         isPlaying = isPlaying && currentPlayingId == ringtone.id,

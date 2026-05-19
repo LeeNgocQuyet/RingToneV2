@@ -54,6 +54,7 @@ class HomeViewModel @Inject constructor(
     val favoriteIds =
         repository.observeFavorites()
             .map { list ->
+                //Todo
                 list.map {
                     it.id
                 }.toSet()
@@ -75,6 +76,7 @@ class HomeViewModel @Inject constructor(
                 val response = api.getCategories()
 
                 if (!response.status || response.data.isEmpty()) {
+                    //Todo
                     _homeState.value = HomeState.Error("Category not found")
                     return@launch
                 }
@@ -90,6 +92,7 @@ class HomeViewModel @Inject constructor(
                 )
 
             } catch (e: Exception) {
+                //Todo
                 _homeState.value = HomeState.Error(e.message ?: "Unknown error")
             }
         }
@@ -135,6 +138,7 @@ class HomeViewModel @Inject constructor(
             .isFavorite(ringtoneId)
     }
 }
+//Todo Tách ra đi và sử lý trong repository
 class RingtonePagingSource(
     private val api: ApiService,
     private val categoryId: Int?

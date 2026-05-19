@@ -63,10 +63,12 @@ class DownloadScreenViewModel @Inject constructor(
                 if (infoAudio != null) {
                     _audioState.value = AudioState.Success(infoAudio)
                 } else {
+                    //Todo
                     _audioState.value = AudioState.Error("Data null")
                 }
 
             } catch (e: Exception) {
+                //Todo
                 _audioState.value = AudioState.Error(e.message ?: "Unknown error")
             }
         }

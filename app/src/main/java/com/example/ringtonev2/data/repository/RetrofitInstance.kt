@@ -12,6 +12,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import dagger.hilt.components.SingletonComponent
+// ToDo Code Cái gì ở đây thế RetrofitInstance Có dùng nữa không
+
 object RetrofitInstance {
 
     private const val BASE_URL = "https://api-project2.h5cdn.com/"
@@ -47,6 +49,8 @@ object RetrofitInstance {
         retrofit.create(ApiService::class.java)
     }
 }
+
+// ToDo NetworkModule Sao không Bỏ Di
 
 @Module
 @InstallIn(SingletonComponent::class)

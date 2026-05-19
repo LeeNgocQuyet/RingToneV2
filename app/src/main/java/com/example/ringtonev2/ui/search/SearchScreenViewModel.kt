@@ -60,6 +60,7 @@ class SearchScreenViewModel @Inject constructor(
 
     val ringtones = searchQuery
         .debounce(300)
+        //Khi List được thay đổi thì mới Update
         .distinctUntilChanged()
         .flatMapLatest { query ->
             Pager(

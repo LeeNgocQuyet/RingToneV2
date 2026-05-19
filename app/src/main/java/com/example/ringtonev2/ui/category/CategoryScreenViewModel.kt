@@ -34,12 +34,14 @@ class CategoryScreenViewModel @Inject constructor(
                     api.getCategories()
 
                 if (!categoryResponse.status) {
+                    //  Todo
                     _categoryState.value =
                         CategoryState.Error("Load category failed")
                     return@launch
                 }
 
                 if (categoryResponse.data.isEmpty()) {
+                    //  Todo
                     _categoryState.value =
                         CategoryState.Error("Category list is empty")
                     return@launch
@@ -50,6 +52,7 @@ class CategoryScreenViewModel @Inject constructor(
                         categoryResponse.data
                     )
             } catch (e: Exception) {
+                //  Todo
                 _categoryState.value =
                     CategoryState.Error(
                         e.message ?: "Unknown error"

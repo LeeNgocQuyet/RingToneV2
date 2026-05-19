@@ -13,6 +13,7 @@ enum class Keyboard {
     Opened, Closed
 }
 
+// Todo Cái này để làm gì
 @Composable
 fun keyboardAsState(): State<Keyboard> {
     val keyboardState = remember { mutableStateOf(Keyboard.Closed) }

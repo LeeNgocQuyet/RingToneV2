@@ -14,7 +14,8 @@ interface DownloadedRingtoneDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveDownloadedRingtones(items: List<DownloadedRingtoneEntity>)
 
-    @Query("""UPDATE ringtones SET filePath = :path WHERE id = :id""")
+    // ToDo Tại sao lại dùng """ AI Code à
+    @Query("UPDATE ringtones SET filePath = :path WHERE id = :id")
     suspend fun updateDownloadedRingtoneFilePath(id: String, path: String)
 
     @Query("SELECT * FROM ringtones WHERE id = :id LIMIT 1")

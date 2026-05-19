@@ -24,6 +24,8 @@ import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
 import com.example.ringtonev2.util.DialogLocaleProvider
 
+
+// ToDo Lại một cái Dialog Không dùng
 @Composable
 fun SetRingtoneSuccessDialog(onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {

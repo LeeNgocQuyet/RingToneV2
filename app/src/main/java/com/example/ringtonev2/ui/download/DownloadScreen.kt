@@ -58,7 +58,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.example.ringtonev2.components.RingtoneItemRow
 import com.example.ringtonev2.data.remote.dto.TikTokData
 
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun DownloadScreen(
     viewModel: DownloadScreenViewModel = hiltViewModel<DownloadScreenViewModel>(),
@@ -283,6 +282,7 @@ fun DownloadScreen(
                         color = ContentDefault
                     )
                 )
+                //Todo Xoá đi
 //                Text(
 //                    text = "More  >",
 //                    style = AppTypography.labelMedium.copy(

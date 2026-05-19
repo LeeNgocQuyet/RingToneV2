@@ -80,6 +80,7 @@ class CategoryListScreenViewModel @Inject constructor(
                 val response = api.getCategories()
 
                 if (!response.status || response.data.isEmpty()) {
+                    // Todo
                     _uiState.value = CategoryState.Error("Category not found")
                     return@launch
                 }
@@ -97,6 +98,7 @@ class CategoryListScreenViewModel @Inject constructor(
 
 
             } catch (e: Exception) {
+                // Todo
                 _uiState.value = CategoryState.Error(
                     e.message ?: "Unknown error"
                 )
