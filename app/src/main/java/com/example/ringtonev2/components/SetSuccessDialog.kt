@@ -22,81 +22,76 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.util.DialogLocaleProvider
 
-
-// ToDo Lại một cái Dialog Không dùng
 @Composable
 fun SetRingtoneSuccessDialog(onDismiss: () -> Unit) {
     Dialog(onDismissRequest = onDismiss) {
-        DialogLocaleProvider {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1E1E1E)
-                )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF1E1E1E)
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+
+                // Nội dung chính
+                Image(
+                    painter = painterResource(id = R.drawable.image_success),
+                    contentDescription = "Success Icon",
+                    modifier = Modifier.size(100.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = stringResource(R.string.success_title),
+                    style = AppTypography.titleLarge.copy(
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.W700
+                    ),
+                    color = ContentDefault,
+
+                    )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = stringResource(R.string.success_description),
+                    style = AppTypography.bodyMedium.copy(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.W500
+                    ),
+                    color = ContentSubtlest
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(54.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFD4FF71),
+                        contentColor = Color.Black
+                    ),
+                    shape = RoundedCornerShape(27.dp)
                 ) {
-
-
-                    // Nội dung chính
-                    Image(
-                        painter = painterResource(id = R.drawable.image_success),
-                        contentDescription = "Success Icon",
-                        modifier = Modifier.size(100.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
                     Text(
-                        text = stringResource(R.string.success_title),
-                        style = AppTypography.titleLarge.copy(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.W700
+                        text = stringResource(R.string.ok),
+                        style = AppTypography.labelLarge.copy(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W600
                         ),
-                        color = ContentDefault,
-
-                        )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = stringResource(R.string.success_description),
-                        style = AppTypography.bodyMedium.copy(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.W500
-                        ),
-                        color = ContentSubtlest
+                        color = ContentOnSecondary
                     )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    Button(
-                        onClick = onDismiss,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(54.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFD4FF71),
-                            contentColor = Color.Black
-                        ),
-                        shape = RoundedCornerShape(27.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.ok),
-                            style = AppTypography.labelLarge.copy(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.W600
-                            ),
-                            color = ContentOnSecondary
-                        )
-                    }
                 }
             }
         }

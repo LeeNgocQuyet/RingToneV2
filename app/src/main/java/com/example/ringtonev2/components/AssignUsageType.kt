@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.ringtonev2.R
 import com.example.ringtonev2.ui.theme.AppTypography
-import com.example.ringtonev2.util.DialogLocaleProvider
 
 @Composable
 fun AssignUsageDialog(
@@ -48,82 +47,79 @@ fun AssignUsageDialog(
     Dialog(
         onDismissRequest = onDismiss
     ) {
-        DialogLocaleProvider {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF1E1E1E)
+            )
+        ) {
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1E1E1E)
-                )
+            Column(
+                modifier = Modifier.padding(20.dp)
             ) {
-
-                Column(
-                    modifier = Modifier.padding(20.dp)
+                Box(
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
+                    IconButton(
+                        onClick = onDismiss,
+                        modifier = Modifier.align(Alignment.TopEnd)
                     ) {
-                        IconButton(
-                            onClick = onDismiss,
-                            modifier = Modifier.align(Alignment.TopEnd)
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.cancel_01),
-                                contentDescription = null,
-                                tint = Color.Gray
-                            )
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-
-                        Text(
-                            text = stringResource(R.string.assign_usage_type),
-
-                            style = AppTypography.labelLarge.copy(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.W600
-                            ),
-                            color = ContentDefault,
-                            modifier = Modifier.align(Alignment.Center)
+                        Icon(
+                            painter = painterResource(R.drawable.cancel_01),
+                            contentDescription = null,
+                            tint = Color.Gray
                         )
-
-
                     }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    UsageTypeItem(
-                        title = stringResource(R.string.ringtone_title),
-                        icon = R.drawable.ic_calling,
-                        backgroundColor = BackgroundBrand,
-                        borderColor = BackgroundBrand,
-                        onClick = onRingtoneClick
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    UsageTypeItem(
-                        title = stringResource(R.string.notify_title),
-                        icon = R.drawable.ic_noti,
-                        backgroundColor = BackgroundSecondary,
-                        borderColor = BackgroundSecondary,
-                        onClick = onNotifiClick
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    UsageTypeItem(
-                        title = stringResource(R.string.alarm_title),
-                        icon = R.drawable.ic_alarm,
-                        backgroundColor = Color(0xFFFF9D66),
-                        borderColor = Color(0xFFFF9D66),
-                        onClick = onAlarmClick
-                    )
                 }
+
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    Text(
+                        text = stringResource(R.string.assign_usage_type),
+
+                        style = AppTypography.labelLarge.copy(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.W600
+                        ),
+                        color = ContentDefault,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+
+
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                UsageTypeItem(
+                    title = stringResource(R.string.ringtone_title),
+                    icon = R.drawable.ic_calling,
+                    backgroundColor = BackgroundBrand,
+                    borderColor = BackgroundBrand,
+                    onClick = onRingtoneClick
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                UsageTypeItem(
+                    title = stringResource(R.string.notify_title),
+                    icon = R.drawable.ic_noti,
+                    backgroundColor = BackgroundSecondary,
+                    borderColor = BackgroundSecondary,
+                    onClick = onNotifiClick
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                UsageTypeItem(
+                    title = stringResource(R.string.alarm_title),
+                    icon = R.drawable.ic_alarm,
+                    backgroundColor = Color(0xFFFF9D66),
+                    borderColor = Color(0xFFFF9D66),
+                    onClick = onAlarmClick
+                )
             }
         }
     }

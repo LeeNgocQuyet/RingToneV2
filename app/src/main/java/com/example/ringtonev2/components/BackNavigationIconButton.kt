@@ -21,7 +21,6 @@ import com.example.ringtonev2.R
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
-// ToDo Không dùng sao không xoá đi
 @Composable
 fun BackNavigationIconButton(
     onClick: () -> Unit,
@@ -46,10 +45,9 @@ fun BackNavigationIconButton(
             .clip(CircleShape)
             .background(Accent)
     ) {
-        // ToDo đặt tên icon đã theo chuẩn chưa ic đâu ???
 
         Icon(
-            painter = painterResource(R.drawable.arrow_left_02),
+            painter = painterResource(R.drawable.ic_back),
             contentDescription = contentDescription,
             tint = Color.White,
             modifier = Modifier.size(20.dp)
