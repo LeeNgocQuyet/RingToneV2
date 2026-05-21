@@ -12,7 +12,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.ringtonev2.util.NetworkMonitor
 import com.example.ringtonev2.navigation.AppNavigation
 import com.example.ringtonev2.ui.theme.RingtoneTheme
-import com.example.ringtonev2.components.EnableNotificationCard
+import com.example.ringtonev2.components.NoticeCard
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 val isOnline by networkMonitor.isOnline.collectAsState(initial = true)
                 AppNavigation()
                 if (!isOnline) {
-                    EnableNotificationCard(
+                    NoticeCard(
                         title = stringResource(R.string.connection_timeout),
                         description = stringResource(R.string.connection_timeout_description),
                         buttonTitle = "OK",

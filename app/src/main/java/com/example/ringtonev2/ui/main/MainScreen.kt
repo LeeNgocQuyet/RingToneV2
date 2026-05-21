@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
-import com.example.ringtonev2.components.EnableNotificationCard
+import com.example.ringtonev2.components.NoticeCard
 import com.example.ringtonev2.ui.category.CategoryScreen
 import com.example.ringtonev2.ui.download.DownloadScreen
 import com.example.ringtonev2.data.remote.dto.TikTokData
@@ -147,7 +147,7 @@ fun MainScreen(
                 settingsManager.incrementNotificationCardCount()
             }
         }) {
-            EnableNotificationCard(
+            NoticeCard(
                 painter = painterResource(id = R.drawable.enable_notification),
                 title = stringResource(id = R.string.enable_notifications),
                 description = stringResource(id = R.string.enable_notifications_description),
