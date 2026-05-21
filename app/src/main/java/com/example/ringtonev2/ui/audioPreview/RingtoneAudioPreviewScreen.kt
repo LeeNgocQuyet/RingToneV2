@@ -95,7 +95,12 @@ fun RingtoneAudioPreviewScreen(
 
             is RingtoneAudioPreviewState.Error -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = state.message, color = Color.Red)
+                    val displayMessage = when (val msg = state.message) {
+                        is Int -> stringResource(id = msg)
+                        is String -> msg
+                        else -> msg.toString()
+                    }
+                    Text(text = displayMessage, color = Color.Red)
                 }
             }
 

@@ -74,6 +74,7 @@
     <string name="no_results">Không có kết quả</string>
 
     <string name="download_history">Lịch sử tải xuống</string>
+    <string name="downloading">Đang tải</string>
 
     <string name="settings_title">Cài đặt</string>
     <string name="settings_language">Ngôn ngữ</string>
@@ -87,4 +88,20 @@
     <string name="language_english">English</string>
     <string name="language_vietnamese">Tiếng Việt</string>
     <string name="close">Đóng</string>
+
+    <string name="audio_not_found">không tìm thấy âm thanh</string>
+    <string name="data_not_found">không tìm thấy dữ liệu</string>
+    <string name="unknown_error">Lỗi không xác định</string>
+    <string name="invalid_ringtone_id">ringtone id không hợp lệ</string>
+    <string name="invalid_audio_url">url âm thanh không hợp lệ</string>
+    <string name="load_category_failed">tải danh mục thất bại</string>
+    <string name="category_list_is_empty">danh sách danh mục rỗng</string>
+    <string name="category_not_found">không tìm thấy danh mục</string>
+    <string name="data_null">dữ liệu rỗng</string>
+
+    <string name="search_recommend">bạn có thể thích</string>
+    <string name="search_result">Kết quả tìm kiếm</string>
+    <string name="no_ringtones_found">không tìm thấy nhạc chuông</string>
+    <string name="search_ringtone">tìm nhạc chuông</string>
+    <string name="history">Lịch sử</string>
 </resources>

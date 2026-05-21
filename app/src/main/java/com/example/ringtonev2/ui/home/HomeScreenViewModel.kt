@@ -7,10 +7,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.cachedIn
+import com.example.ringtonev2.R
 import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +34,7 @@ class HomeViewModel @Inject constructor(
 
     private val selectedCategory = MutableStateFlow<Int?>(null)
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val ringtones = selectedCategory.flatMapLatest { categoryId ->
 
         Pager(
@@ -76,8 +79,7 @@ class HomeViewModel @Inject constructor(
                 val response = api.getCategories()
 
                 if (!response.status || response.data.isEmpty()) {
-                    //Todo
-                    _homeState.value = HomeState.Error("Category not found")
+                    _homeState.value = HomeState.Error(R.string.category_not_found)
                     return@launch
                 }
 
@@ -92,8 +94,7 @@ class HomeViewModel @Inject constructor(
                 )
 
             } catch (e: Exception) {
-                //Todo
-                _homeState.value = HomeState.Error(e.message ?: "Unknown error")
+                _homeState.value = HomeState.Error(e.message ?: R.string.unknown_error)
             }
         }
     }

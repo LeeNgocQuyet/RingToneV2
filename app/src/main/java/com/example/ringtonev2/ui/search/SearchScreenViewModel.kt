@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val repository: RingtoneRepository,
@@ -58,6 +57,7 @@ class SearchScreenViewModel @Inject constructor(
         }
     ).flow.cachedIn(viewModelScope)
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     val ringtones = searchQuery
         .debounce(300)
         //Khi List được thay đổi thì mới Update

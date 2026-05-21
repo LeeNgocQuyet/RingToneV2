@@ -15,6 +15,6 @@ sealed interface HomeState {
     ) : HomeState
 
     data class Error(
-        val message: String
+        val message: Any
     ) : HomeState
 }

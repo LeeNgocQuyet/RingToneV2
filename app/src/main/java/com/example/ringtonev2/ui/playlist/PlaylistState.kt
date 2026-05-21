@@ -1,5 +1,4 @@
 package com.example.ringtonev2.ui.playlist
-//Todo
 import com.example.ringtonev2.domain.Ringtone
 
 data class PlaylistState(
@@ -8,7 +7,3 @@ data class PlaylistState(
     val downloads: List<Ringtone> = emptyList(),
     val favorites: List<Ringtone> = emptyList()
 )
-sealed class PlaylistTab {
-    data object Downloads : PlaylistTab()
-    data object Favorites : PlaylistTab()
-}

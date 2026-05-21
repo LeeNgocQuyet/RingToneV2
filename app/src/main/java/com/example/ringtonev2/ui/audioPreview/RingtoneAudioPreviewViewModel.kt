@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.data.local.entity.DownloadedRingtoneEntity
@@ -33,6 +34,7 @@ import java.io.FileOutputStream
 import java.net.URL
 import javax.inject.Inject
 import androidx.core.net.toUri
+import com.example.ringtonev2.R
 
 
 @HiltViewModel
@@ -73,8 +75,7 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                     if (response.status && response.data.isNotEmpty()) {
                         val remoteAudio = response.data.first()
                         if (remoteAudio.audioPath.isNullOrBlank()) {
-                            //  Todo Thông báo lỗi chưa có dịch
-                            _uiState.value = RingtoneAudioPreviewState.Error("Audio path not found")
+                            _uiState.value = RingtoneAudioPreviewState.Error(R.string.audio_not_found)
                             return@launch
                         }
                         _uiState.value = RingtoneAudioPreviewState.Success(
@@ -83,12 +84,10 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
                             )
                         )
                     } else {
-                        //  Todo Thông báo lỗi chưa có dịch
-                        _uiState.value = RingtoneAudioPreviewState.Error("Data not found")
+                        _uiState.value = RingtoneAudioPreviewState.Error(R.string.data_not_found)
                     }
                 } catch (e: Exception) {
-                    //  Todo Thông báo lỗi chưa có dịch
-                    _uiState.value = RingtoneAudioPreviewState.Error(e.message ?: "Unknown Error")
+                    _uiState.value = RingtoneAudioPreviewState.Error(e.message ?: R.string.unknown_error)
                 }
             }
         }
@@ -234,14 +233,12 @@ class RingtoneAudioPreviewScreenViewModel @Inject constructor(
 
         val previewData = currentState.data
         if (previewData.ringtoneId.isBlank()) {
-            //  Todo chưa dịch
-            _uiState.value = RingtoneAudioPreviewState.Error("Invalid ringtone id")
+            _uiState.value = RingtoneAudioPreviewState.Error(R.string.invalid_ringtone_id)
             return
         }
         val url = previewData.audioPath
         if (url.isBlank() || !url.startsWith("http")) {
-            //  Todo chưa dịch
-            _uiState.value = RingtoneAudioPreviewState.Error("Invalid audio url")
+            _uiState.value = RingtoneAudioPreviewState.Error(R.string.invalid_audio_url)
             return
         }
 

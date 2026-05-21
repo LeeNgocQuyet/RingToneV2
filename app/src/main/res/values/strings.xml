@@ -39,7 +39,7 @@
     <string name="downloading_audio_title">Downloading Audio</string>
     <string name="downloading_audio_subtitle">Downloading audio…</string>
     <string name="downloading_audio_description">Processing link to generate ringtone</string>
-    <string name="download_success_title">Download Successfull!</string>
+    <string name="download_success_title">Download Successful!</string>
     <string name="download_success_description">Your ringtone is ready.</string>
     <string name="continue_label">Continue</string>
     <string name="download_failed">Could not download audio</string>
@@ -60,6 +60,7 @@
     <string name="no_results">No results</string>
 
     <string name="download_history">"Download History"</string>
+    <string name="downloading">Downloading</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_language">Language</string>
@@ -73,4 +74,20 @@
     <string name="language_english">English</string>
     <string name="language_vietnamese">Tiếng Việt</string>
     <string name="close">Close</string>
+
+    <string name="audio_not_found">Audio not found</string>
+    <string name="data_not_found">Data not found</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="invalid_ringtone_id">Invalid ringtone id</string>
+    <string name="invalid_audio_url">Invalid audio url</string>
+    <string name="load_category_failed">Load category failed</string>
+    <string name="category_list_is_empty">Category list is empty</string>
+    <string name="category_not_found">Category not found</string>
+    <string name="data_null">Data null</string>
+
+    <string name="search_recommend">You might like these</string>
+    <string name="search_result">Search Result</string>
+    <string name="no_ringtones_found">No ringtones found</string>
+    <string name="search_ringtone">Search ringtones</string>
+    <string name="history">History</string>
 </resources>

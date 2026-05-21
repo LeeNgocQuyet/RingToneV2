@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -152,8 +153,13 @@ fun CategoryListScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
+                        val displayMessage = when (val msg = state.message) {
+                            is Int -> stringResource(id = msg)
+                            is String -> msg
+                            else -> msg.toString()
+                        }
                         Text(
-                            text = state.message,
+                            text = displayMessage,
                             color = Color.White
                         )
                     }

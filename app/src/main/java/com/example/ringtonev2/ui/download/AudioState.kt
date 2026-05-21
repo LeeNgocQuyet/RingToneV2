@@ -6,5 +6,5 @@ sealed class AudioState {
     object Idle : AudioState()
     object Loading : AudioState()
     data class Success(val data: TikTokData) : AudioState()
-    data class Error(val message: String) : AudioState()
+    data class Error(val message: Any) : AudioState()
 }

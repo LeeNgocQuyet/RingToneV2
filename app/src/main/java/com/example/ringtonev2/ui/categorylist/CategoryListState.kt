@@ -10,5 +10,5 @@ sealed class CategoryState {
         val selectedCategoryId: Int?,
         val categoryName: String?
     ) : CategoryState()
-    data class Error(val message: String) : CategoryState()
+    data class Error(val message: Any) : CategoryState()
 }

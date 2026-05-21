@@ -43,7 +43,7 @@ fun HomeScreen(
 ) {
 
     val uiState by viewModel.homeState.collectAsState()
-
+    val favoriteIds by viewModel.favoriteIds.collectAsState()
     val listState = rememberLazyListState()
     val pagingItems = viewModel.ringtones.collectAsLazyPagingItems()
 
@@ -53,6 +53,7 @@ fun HomeScreen(
     val player = remember {
         ExoPlayer.Builder(context).build()
     }
+
 
     DisposableEffect(Unit) {
         onDispose {
@@ -80,7 +81,6 @@ fun HomeScreen(
         }
     }
     LaunchedEffect(currentPlayingId, isPlaying) {
-        //Todo
         val ringtone = pagingItems.itemSnapshotList.items
             .find { it.id == currentPlayingId }
 
@@ -119,8 +119,13 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
+                    val displayMessage = when (val msg = state.message) {
+                        is Int -> stringResource(id = msg)
+                        is String -> msg
+                        else -> msg.toString()
+                    }
                     Text(
-                        text = state.message,
+                        text = displayMessage,
                         color = Color.White
                     )
                 }
@@ -161,9 +166,6 @@ fun HomeScreen(
                         }
                     ) { index ->
                         val ringtone = pagingItems[index] ?: return@items
-                        //Todo Lại đây nữa
-                        val favoriteIds by viewModel.favoriteIds.collectAsState()
-
                         val isFavorite = ringtone.id in favoriteIds
 
                         RingtoneItemRow(

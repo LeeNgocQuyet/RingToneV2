@@ -2,7 +2,6 @@ package com.example.ringtonev2.ui.download
 
 import com.example.ringtonev2.ui.theme.*
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +63,6 @@ fun DownloadScreen(
     onOpenAudioInfo: (TikTokData) -> Unit,
     onOpenErrorScreen: () -> Unit
 ) {
-    var error by remember { mutableStateOf<String?>(null) }
     var link by remember { mutableStateOf("") }
     val context = LocalContext.current
     val state by viewModel.audioState.collectAsState()
@@ -221,11 +219,6 @@ fun DownloadScreen(
                             }
                             if (!link.isBlank())
                                 viewModel.getInfoAudio(link)
-                            else {
-                                error = "Please enter a link"
-                                Log.d("DOWNLOAD", "error = $error")
-                            }
-
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -281,15 +274,6 @@ fun DownloadScreen(
                         color = ContentDefault
                     )
                 )
-                //Todo Xoá đi
-//                Text(
-//                    text = "More  >",
-//                    style = AppTypography.labelMedium.copy(
-//                        fontSize = 13.sp,
-//                        fontWeight = FontWeight.W600,
-//                        color = ContentBrand
-//                    )
-//                )
             }
                 }
 

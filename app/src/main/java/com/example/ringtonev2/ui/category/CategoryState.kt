@@ -6,5 +6,5 @@ sealed class CategoryState {
     object Idle : CategoryState()
     object Loading : CategoryState()
     data class Success(val list: List<Category>) : CategoryState()
-    data class Error(val message: String) : CategoryState()
+    data class Error(val message: Any) : CategoryState()
 }

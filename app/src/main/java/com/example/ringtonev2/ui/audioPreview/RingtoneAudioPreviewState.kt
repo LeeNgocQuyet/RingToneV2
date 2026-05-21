@@ -10,5 +10,5 @@ sealed class RingtoneAudioPreviewState {
         val data: RingtoneAudioPreview
     ) : RingtoneAudioPreviewState()
 
-    data class Error(val message: String) : RingtoneAudioPreviewState()
+    data class Error(val message: Any) : RingtoneAudioPreviewState()
 }

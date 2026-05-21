@@ -2,7 +2,6 @@ package com.example.ringtonev2.ui.search
 
 import com.example.ringtonev2.ui.theme.*
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -174,9 +173,9 @@ fun SearchScreen(
 
             item {
                 Spacer(modifier = Modifier.height(if (state.query.isBlank()) 18.dp else 4.dp))
-                // Todo Chưa dịch
                 Text(
-                    text = if (shouldShowSuggestions) "You might like these" else "Search results",
+                    text = if (shouldShowSuggestions) stringResource(R.string.search_recommend)
+                    else stringResource(R.string.search_recommend),
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W700,
@@ -200,18 +199,16 @@ fun SearchScreen(
             } else if (visibleItems.loadState.refresh is LoadState.Error) {
                 val error = visibleItems.loadState.refresh as LoadState.Error
                 item {
-                    // Todo Chưa dịch
                     Text(
-                        text = error.error.message ?: "Unknown error",
+                        text = error.error.message ?: stringResource(R.string.unknown_error),
                         modifier = Modifier.padding(top = 24.dp),
                         style = AppTypography.bodyMedium.copy(color = ContentError)
                     )
                 }
             } else if (visibleItems.itemCount == 0) {
                 item {
-                    // Todo Chưa dịch
                     Text(
-                        text = "No ringtones found",
+                        text = stringResource(R.string.no_ringtones_found),
                         modifier = Modifier.padding(top = 24.dp),
                         style = AppTypography.bodyMedium.copy(color = ContentSubtlest)
                     )
@@ -223,12 +220,10 @@ fun SearchScreen(
                 ) { index ->
                     val ringtone = visibleItems[index] ?: return@items
                     val isFavorite = ringtone.id in favoriteIds
-                    // Todo Chưa dịch
                     RingtoneItemRow(
                         ringtone = ringtone,
                         isPlaying = isPlaying && currentPlayingId == ringtone.id,
                         onPlayClick = {
-                            Log.d("SearchScreen", "preview play requested: ${ringtone.id}")
                             viewModel.togglePlaying(
                                 ringtone.id
                             )
@@ -346,7 +341,7 @@ private fun SearchField(
                 Box(modifier = Modifier.weight(1f)) {
                     if (query.isEmpty()) {
                         Text(
-                            text = "Search ringtones...",
+                            text = stringResource(R.string.search_ringtone),
                             style = AppTypography.bodySmall.copy(
                                 fontSize = 13.sp,
                                 color = ContentSubtlest
@@ -387,7 +382,7 @@ private fun SearchHistorySection(
 ) {
     Column {
         Text(
-            text = "History",
+            text = stringResource(R.string.history),
             style = AppTypography.labelLarge.copy(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W700,

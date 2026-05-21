@@ -2,6 +2,7 @@ package com.example.ringtonev2.ui.download
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ringtonev2.R
 import com.example.ringtonev2.data.repository.RetrofitInstance
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
@@ -62,13 +63,11 @@ class DownloadScreenViewModel @Inject constructor(
                 if (infoAudio != null) {
                     _audioState.value = AudioState.Success(infoAudio)
                 } else {
-                    //Todo
-                    _audioState.value = AudioState.Error("Data null")
+                    _audioState.value = AudioState.Error(R.string.data_null)
                 }
 
             } catch (e: Exception) {
-                //Todo
-                _audioState.value = AudioState.Error(e.message ?: "Unknown error")
+                _audioState.value = AudioState.Error(e.message ?: R.string.unknown_error)
             }
         }
     }

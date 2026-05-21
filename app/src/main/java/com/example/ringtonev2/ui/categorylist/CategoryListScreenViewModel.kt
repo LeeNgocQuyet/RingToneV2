@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
+import com.example.ringtonev2.R
 import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class CategoryListScreenViewModel @Inject constructor(
     private val api: ApiService,
@@ -80,8 +81,7 @@ class CategoryListScreenViewModel @Inject constructor(
                 val response = api.getCategories()
 
                 if (!response.status || response.data.isEmpty()) {
-                    // Todo
-                    _uiState.value = CategoryState.Error("Category not found")
+                    _uiState.value = CategoryState.Error(R.string.category_not_found)
                     return@launch
                 }
 
@@ -98,9 +98,8 @@ class CategoryListScreenViewModel @Inject constructor(
 
 
             } catch (e: Exception) {
-                // Todo
                 _uiState.value = CategoryState.Error(
-                    e.message ?: "Unknown error"
+                    e.message ?: R.string.unknown_error
                 )
             }
         }

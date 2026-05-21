@@ -2,6 +2,7 @@ package com.example.ringtonev2.ui.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ringtonev2.R
 import com.example.ringtonev2.data.remote.api.ApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,16 +35,14 @@ class CategoryScreenViewModel @Inject constructor(
                     api.getCategories()
 
                 if (!categoryResponse.status) {
-                    //  Todo
                     _categoryState.value =
-                        CategoryState.Error("Load category failed")
+                        CategoryState.Error(R.string.load_category_failed)
                     return@launch
                 }
 
                 if (categoryResponse.data.isEmpty()) {
-                    //  Todo
                     _categoryState.value =
-                        CategoryState.Error("Category list is empty")
+                        CategoryState.Error(R.string.category_list_is_empty)
                     return@launch
                 }
 
@@ -52,10 +51,9 @@ class CategoryScreenViewModel @Inject constructor(
                         categoryResponse.data
                     )
             } catch (e: Exception) {
-                //  Todo
                 _categoryState.value =
                     CategoryState.Error(
-                        e.message ?: "Unknown error"
+                        e.message ?: R.string.unknown_error
                     )
             }
         }
