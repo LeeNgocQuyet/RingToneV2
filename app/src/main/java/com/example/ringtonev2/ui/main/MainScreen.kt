@@ -38,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import android.provider.Settings
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,8 +71,6 @@ fun MainScreen(
     onOpenPlayer: (String) -> Unit,
     onOpenDownload: (String) -> Unit,
     onOpenCategory: (String) -> Unit,
-    onOpenExtract: () -> Unit,
-    onOpenHistory: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenSetting: () -> Unit,
     onOpenAudioInfo: (TikTokData) -> Unit,
@@ -90,15 +87,17 @@ fun MainScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (!isGranted && activity != null) {
-
-            // Todo
-            val shouldShow = ActivityCompat.shouldShowRequestPermissionRationale(
-                activity, Manifest.permission.POST_NOTIFICATIONS
-            )
-
-            if (shouldShow && cardShownCount < 2) {
-                showPermissionDialog = true
+        if (!isGranted) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                activity?.let { currentActivity ->
+                    val shouldShow = ActivityCompat.shouldShowRequestPermissionRationale(
+                        currentActivity,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    )
+                    if (shouldShow && cardShownCount < 2) {
+                        showPermissionDialog = true
+                    }
+                }
             }
         }
     }

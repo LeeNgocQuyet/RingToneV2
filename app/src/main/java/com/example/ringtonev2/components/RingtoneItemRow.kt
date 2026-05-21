@@ -2,7 +2,6 @@ package com.example.ringtonev2.components
 
 import com.example.ringtonev2.ui.theme.*
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
