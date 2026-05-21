@@ -3,7 +3,7 @@ package com.example.ringtonev2.ui.download
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ringtonev2.R
-import com.example.ringtonev2.data.repository.RetrofitInstance
+import com.example.ringtonev2.data.remote.api.ApiService
 import com.example.ringtonev2.domain.Ringtone
 import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DownloadScreenViewModel @Inject constructor(
-    private val repository: RingtoneRepository
+    private val repository: RingtoneRepository,
+    private val api: ApiService
 ) : ViewModel() {
     private val _audioState = MutableStateFlow<AudioState>(AudioState.Idle)
     val audioState: StateFlow<AudioState> = _audioState
@@ -58,7 +59,7 @@ class DownloadScreenViewModel @Inject constructor(
         _audioState.value = AudioState.Loading
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getAudio(link)
+                val response = api.getAudio(link)
                 val infoAudio = response?.data?.data
                 if (infoAudio != null) {
                     _audioState.value = AudioState.Success(infoAudio)
