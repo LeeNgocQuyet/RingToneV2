@@ -76,8 +76,13 @@ fun RingtoneAudioPreviewScreen(
     LaunchedEffect(ringtoneId) {
         viewModel.load(ringtoneId)
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+    ) {
         when (val state = uiState) {
+            is RingtoneAudioPreviewState.Idle,
             is RingtoneAudioPreviewState.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = BackgroundBrand)
@@ -103,8 +108,6 @@ fun RingtoneAudioPreviewScreen(
                     Text(text = displayMessage, color = Color.Red)
                 }
             }
-
-            else -> Unit
         }
     }
     val successState = uiState as? RingtoneAudioPreviewState.Success
