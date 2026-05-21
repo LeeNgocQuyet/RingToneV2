@@ -22,14 +22,6 @@ import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
-// TODO Tách Ra Class riêng
-
-sealed interface AudioDownloadUiState {
-    data object Idle : AudioDownloadUiState
-    data class Downloading(val progress: Float) : AudioDownloadUiState
-    data class Success(val savedPath: String) : AudioDownloadUiState
-    data object Error : AudioDownloadUiState
-}
 
 @HiltViewModel
 class AudioDownloadViewModel @Inject constructor(

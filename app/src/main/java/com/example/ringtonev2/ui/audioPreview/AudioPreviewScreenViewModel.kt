@@ -23,22 +23,9 @@ import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
 
-//TODO Tách ra làm Class riêng
-data class AudioPreviewUiState(
-    val title: String = "",
-    val audioPath: String = "",
-    val duration: Long = 0L,
-    val currentPosition: Long = 0L,
-    val isPlaying: Boolean = false,
-    val isLoading: Boolean = false
-)
 //Todo Tách ra làm Class riêng
 
-enum class RingtoneType(val value: Int) {
-    RINGTONE(RingtoneManager.TYPE_RINGTONE),
-    NOTIFICATION(RingtoneManager.TYPE_NOTIFICATION),
-    ALARM(RingtoneManager.TYPE_ALARM)
-}
+
 
 @HiltViewModel
 class AudioPreviewScreenViewModel @Inject constructor(

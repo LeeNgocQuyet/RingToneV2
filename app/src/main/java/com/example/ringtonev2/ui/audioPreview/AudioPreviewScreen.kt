@@ -324,7 +324,7 @@ fun DownloadAudioPreviewScreen(
                         exoPlayer.seekTo(newPosition)
                     }) {
                         Icon(
-                            painter = painterResource(R.drawable.go_backward_10sec),
+                            painter = painterResource(R.drawable.ic_go_backward_10sec),
                             contentDescription = null,
                             tint = Color.White
                         )
@@ -359,9 +359,8 @@ fun DownloadAudioPreviewScreen(
                                 .coerceAtMost(duration)
                         exoPlayer.seekTo(newPosition)
                     }) {
-                        // Todo ICon đặt sai tên
                         Icon(
-                            painter = painterResource(R.drawable.go_forward_10sec),
+                            painter = painterResource(R.drawable.ic_go_forward_10sec),
                             contentDescription = null,
                             tint = Color.White
                         )
