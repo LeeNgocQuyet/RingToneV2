@@ -41,8 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 import com.example.ringtonev2.domain.Ringtone
-import com.example.ringtonev2.ui.audioPreview.formatDurationMilisecond
 import com.example.ringtonev2.ui.theme.AppTypography
+import com.example.ringtonev2.util.formatDurationMillisecond
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +76,7 @@ fun RingtoneItemRow(
                 contentAlignment = Alignment.Center
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.bg_removal),
+                    painter = painterResource(id = R.drawable.bg_ringtone),
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -119,7 +119,7 @@ fun RingtoneItemRow(
                     )
                 )
                 Text(
-                    text = formatDurationMilisecond(ringtone.duration),
+                    text = ringtone.duration.formatDurationMillisecond(),
                     style = AppTypography.bodySmall.copy(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.W500,
@@ -131,8 +131,6 @@ fun RingtoneItemRow(
             // Set button
             Button(
                 onClick = {
-                    Log.d("RingtoneItemRow", "BUTTON CLICK ${ringtone.id}")
-
                     onSetClick()
                 },
                 modifier = Modifier.height(32.dp),

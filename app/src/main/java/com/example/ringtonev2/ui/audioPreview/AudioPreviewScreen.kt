@@ -2,11 +2,8 @@ package com.example.ringtonev2.ui.audioPreview
 
 import com.example.ringtonev2.ui.theme.*
 
-import android.content.Context
-import android.content.Intent
 import java.io.File
 import android.net.Uri
-import android.provider.Settings
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -62,6 +59,9 @@ import com.example.ringtonev2.components.AssignUsageDialog
 import com.example.ringtonev2.components.BackNavigationIconButton
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
+import com.example.ringtonev2.util.canWriteSettings
+import com.example.ringtonev2.util.formatDurationSecond
+import com.example.ringtonev2.util.requestWriteSettingsPermission
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -222,9 +222,8 @@ fun DownloadAudioPreviewScreen(
                         .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    // Todo Ảnh to quá
                     Image(
-                        painter = painterResource(R.drawable.bg_removal),
+                        painter = painterResource(R.drawable.bg_ringtone),
                         contentDescription = null,
                         modifier = Modifier.size(280.dp)
                     )
@@ -289,7 +288,7 @@ fun DownloadAudioPreviewScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        formatDurationSecond(uiState.currentPosition),
+                        uiState.currentPosition.formatDurationSecond(),
                         style = AppTypography.bodySmall.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
@@ -298,7 +297,7 @@ fun DownloadAudioPreviewScreen(
                         color = ContentSubtlest
                     )
                     Text(
-                        formatDurationSecond(duration),
+                        duration.formatDurationSecond(),
                         style = AppTypography.bodySmall.copy(
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
@@ -393,30 +392,4 @@ fun DownloadAudioPreviewScreen(
             }
         }
     }
-}
-
-// TODO Tạo Ra một hàm extend String để dùng Chung cái này (Tạo ra Floder Util)
-
-fun formatDurationSecond(seconds: Long?): String {
-    if (seconds == null || seconds <= 0L) return "00:00"
-
-    val minutes = seconds / 60
-    val secs = seconds % 60
-
-    return "%02d:%02d".format(minutes, secs)
-}
-
-// TODO Viết thành một hàm chung
-
-fun canWriteSettings(context: Context): Boolean {
-    return Settings.System.canWrite(context)
-}
-
-// TODO Viết thành một hàm chung
-fun requestWriteSettingsPermission(context: Context) {
-    val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-        data = "package:${context.packageName}".toUri()
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    }
-    context.startActivity(intent)
 }

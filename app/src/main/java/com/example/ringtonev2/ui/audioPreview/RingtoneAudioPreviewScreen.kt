@@ -59,6 +59,9 @@ import com.example.ringtonev2.components.DeleteRingtoneDialog
 import com.example.ringtonev2.components.SetRingtoneSuccessDialog
 import com.example.ringtonev2.ui.theme.AppTypography
 import androidx.core.net.toUri
+import com.example.ringtonev2.util.canWriteSettings
+import com.example.ringtonev2.util.formatDurationMillisecond
+import com.example.ringtonev2.util.requestWriteSettingsPermission
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,9 +124,8 @@ fun RingtoneAudioPreviewScreen(
 
                 Spacer(Modifier.height(8.dp))
 
-                //  Todo Dịch text đi
                 Text(
-                    text = "Downloading ${data.downloadProgress}%...",
+                    text = stringResource(R.string.downloading) + "${data.downloadProgress}%...",
                     style = AppTypography.bodyMedium.copy(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.W500
@@ -283,7 +285,7 @@ fun AudioPreviewContent(
 
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Image(
-                    painter = painterResource(R.drawable.bg_removal),
+                    painter = painterResource(R.drawable.bg_ringtone),
                     contentDescription = null,
                     modifier = Modifier.size(280.dp)
                 )
@@ -334,12 +336,12 @@ fun AudioPreviewContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    formatDurationMilisecond(data.currentPosition),
+                    data.currentPosition.formatDurationMillisecond(),
                     color = ContentSubtlest,
                     style = AppTypography.bodySmall
                 )
                 Text(
-                    formatDurationMilisecond(duration),
+                    duration.formatDurationMillisecond(),
                     color = ContentSubtlest,
                     style = AppTypography.bodySmall
                 )
@@ -401,9 +403,9 @@ fun AudioPreviewContent(
             Button(
                 onClick = {
                     if (data.isDownloaded) {
-                        showAssignDialog = true // Đã tải -> Hiện Dialog cài đặt
+                        showAssignDialog = true
                     } else {
-                        viewModel.downloadRingtone(context) // Chưa tải -> Bắt đầu tải
+                        viewModel.downloadRingtone(context)
                     }
                 },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
@@ -414,7 +416,7 @@ fun AudioPreviewContent(
                 )
             ) {
                 Text(
-                    text = if (data.isDownloaded) stringResource(R.string.set_ring_tone) else "Download",
+                    text = if (data.isDownloaded) stringResource(R.string.set_ring_tone) else stringResource(R.string.download_screen),
                     color = Color.White,
                     fontWeight = FontWeight.Bold
                 )
@@ -423,15 +425,3 @@ fun AudioPreviewContent(
         }
     }
 }
-
-//  Todo Sửa lại nhé
-fun formatDurationMilisecond(miliseconds: Long?): String {
-    if (miliseconds == null || miliseconds <= 0L) return "00:00"
-
-    val totalSeconds = miliseconds / 1000
-    val minutes = totalSeconds / 60
-    val secs = totalSeconds % 60
-
-    return "%02d:%02d".format(minutes, secs)
-}
-
