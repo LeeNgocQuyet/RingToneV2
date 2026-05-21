@@ -28,7 +28,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -74,10 +73,10 @@ fun SearchScreen(
     val favoriteIds by viewModel.favoriteIds.collectAsState()
     val pagingItems = viewModel.ringtones.collectAsLazyPagingItems()
     val suggestionItems = viewModel.suggestions.collectAsLazyPagingItems()
-    val noResult = state.query.isNotBlank() &&
+    val noResult = state.submittedQuery.isNotBlank() &&
             pagingItems.loadState.refresh is LoadState.NotLoading &&
             pagingItems.itemCount == 0
-    val shouldShowSuggestions = state.query.isBlank() || noResult
+    val shouldShowSuggestions = state.submittedQuery.isBlank() || noResult
     val visibleItems = if (shouldShowSuggestions) suggestionItems else pagingItems
 
     val context = LocalContext.current
@@ -235,12 +234,6 @@ fun SearchScreen(
                             viewModel.toggleFavorite(ringtone)
                         },
                         isFavorite = isFavorite
-                    )
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        thickness = 0.5.dp,
-                        color = BorderBold
                     )
                 }
 

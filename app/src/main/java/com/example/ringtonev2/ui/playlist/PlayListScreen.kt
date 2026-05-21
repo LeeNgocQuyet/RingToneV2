@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -119,12 +118,6 @@ fun PlaylistScreen(
                                     },
                                     isFavorite = ringtoneId in favoriteIds
                                 )
-
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(vertical = 4.dp),
-                                    thickness = 0.5.dp,
-                                    color = BorderSubtlest
-                                )
                             }
                         }
 
@@ -149,12 +142,6 @@ fun PlaylistScreen(
                                         viewModel.toggleFavorite(ringtone)
                                     },
                                     isFavorite = ringtoneId in favoriteIds
-                                )
-
-                                HorizontalDivider(
-                                    modifier = Modifier.padding(vertical = 4.dp),
-                                    thickness = 0.5.dp,
-                                    color = BorderSubtlest
                                 )
                             }
                         }

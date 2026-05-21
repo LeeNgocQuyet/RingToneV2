@@ -15,12 +15,9 @@ import com.example.ringtonev2.domain.RingtoneRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -41,8 +38,8 @@ class SearchScreenViewModel @Inject constructor(
     val currentPlayingId = _currentPlayingId.asStateFlow()
     private val _isPlaying = MutableStateFlow(false)
     val isPlaying = _isPlaying.asStateFlow()
-
-    private val searchQuery = MutableStateFlow("")
+    private val _activeSearchQuery = MutableStateFlow("")
+    private val noResultQueryPrefixes = mutableSetOf<String>()
 
     val suggestions = Pager(
         config = PagingConfig(
@@ -52,16 +49,14 @@ class SearchScreenViewModel @Inject constructor(
         pagingSourceFactory = {
             SearchRingtonePagingSource(
                 api = api,
-                query = null
+                query = null,
+                allowEmptyQuery = true
             )
         }
     ).flow.cachedIn(viewModelScope)
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val ringtones = searchQuery
-        .debounce(300)
-        //Khi List được thay đổi thì mới Update
-        .distinctUntilChanged()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val ringtones = _activeSearchQuery
         .flatMapLatest { query ->
             Pager(
                 config = PagingConfig(
@@ -71,7 +66,10 @@ class SearchScreenViewModel @Inject constructor(
                 pagingSourceFactory = {
                     SearchRingtonePagingSource(
                         api = api,
-                        query = query.takeIf { it.isNotBlank() }
+                        query = query,
+                        allowEmptyQuery = false,
+                        shouldSkipQuery = ::hasNoResultPrefix,
+                        onNoResult = ::rememberNoResultQuery
                     )
                 }
             ).flow
@@ -97,12 +95,14 @@ class SearchScreenViewModel @Inject constructor(
 
     fun onQueryChange(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
-        searchQuery.value = query.trim()
     }
 
     fun onClear(){
-        _uiState.value = _uiState.value.copy(query = "")
-        searchQuery.value = ""
+        _uiState.value = _uiState.value.copy(
+            query = "",
+            submittedQuery = ""
+        )
+        _activeSearchQuery.value = ""
     }
 
     fun removeHistoryItem(value: String) {
@@ -115,6 +115,7 @@ class SearchScreenViewModel @Inject constructor(
 
     fun useHistoryItem(value: String) {
         onQueryChange(value)
+        submitSearch()
     }
 
     fun toggleFavorite(ringtone: Ringtone) {
@@ -124,17 +125,50 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     fun submitSearch() {
-        val query = _uiState.value.query.trim()
-        if (query.isBlank()) return
+        val currentQuery = _uiState.value.query.trim()
+        if (currentQuery.isNotBlank()) {
+            _activeSearchQuery.value = currentQuery
+            _uiState.value = _uiState.value.copy(submittedQuery = currentQuery)
 
-        val updatedHistory = buildList {
-            add(query)
-            addAll(_uiState.value.history.filterNot { it.equals(query, ignoreCase = true) })
-        }.take(10)
+            val updatedHistory = buildList {
+                add(currentQuery)
+                addAll(_uiState.value.history.filterNot {
+                    it.equals(
+                        currentQuery,
+                        ignoreCase = true
+                    )
+                })
+            }.take(12)
 
-        _uiState.value = _uiState.value.copy(history = updatedHistory)
-        viewModelScope.launch {
-            dataStoreManager.setSearchHistory(updatedHistory)
+            _uiState.value = _uiState.value.copy(history = updatedHistory)
+            viewModelScope.launch {
+                dataStoreManager.setSearchHistory(updatedHistory)
+            }
+        }
+    }
+
+    private fun hasNoResultPrefix(query: String): Boolean {
+        val normalizedQuery = query.normalizeSearchQuery()
+        return synchronized(noResultQueryPrefixes) {
+            noResultQueryPrefixes.any { prefix ->
+                normalizedQuery.startsWith(prefix)
+            }
+        }
+    }
+
+    private fun rememberNoResultQuery(query: String) {
+        val normalizedQuery = query.normalizeSearchQuery()
+        if (normalizedQuery.isBlank()) {
+            return
+        }
+
+        synchronized(noResultQueryPrefixes) {
+            if (noResultQueryPrefixes.any { normalizedQuery.startsWith(it) }) {
+                return
+            }
+
+            noResultQueryPrefixes.removeAll { it.startsWith(normalizedQuery) }
+            noResultQueryPrefixes.add(normalizedQuery)
         }
     }
 
@@ -153,7 +187,10 @@ class SearchScreenViewModel @Inject constructor(
 
 private class SearchRingtonePagingSource(
     private val api: ApiService,
-    private val query: String?
+    private val query: String?,
+    private val allowEmptyQuery: Boolean,
+    private val shouldSkipQuery: (String) -> Boolean = { false },
+    private val onNoResult: (String) -> Unit = {}
 ) : PagingSource<Int, Ringtone>() {
 
     override fun getRefreshKey(state: PagingState<Int, Ringtone>): Int? {
@@ -164,12 +201,30 @@ private class SearchRingtonePagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Ringtone> {
+        val page = params.key ?: 1
+        val searchQuery = query?.trim().orEmpty()
+
         return try {
-            val page = params.key ?: 1
+            if (!allowEmptyQuery && searchQuery.isBlank()) {
+                return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
+
+            if (searchQuery.isNotBlank() && shouldSkipQuery(searchQuery)) {
+                return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
+
             val response = api.getRingtones(
                 page = page,
                 limit = params.loadSize,
-                search = query
+                search = searchQuery.takeIf { it.isNotBlank() }
             )
 
             if (!response.status) {
@@ -177,13 +232,35 @@ private class SearchRingtonePagingSource(
             }
 
             val data = response.data
+            if (page == 1 && searchQuery.isNotBlank() && data.isEmpty()) {
+                onNoResult(searchQuery)
+            }
+
             LoadResult.Page(
                 data = data,
                 prevKey = if (page == 1) null else page - 1,
                 nextKey = if (data.isEmpty()) null else page + 1
             )
         } catch (e: Exception) {
+            if (page == 1 && searchQuery.isNotBlank() && e.isNullSearchResponse()) {
+                onNoResult(searchQuery)
+                return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
+
             LoadResult.Error(e)
         }
     }
+}
+
+private fun String.normalizeSearchQuery(): String {
+    return trim().lowercase()
+}
+
+private fun Throwable.isNullSearchResponse(): Boolean {
+    return this is NullPointerException &&
+            message?.contains("null", ignoreCase = true) == true
 }

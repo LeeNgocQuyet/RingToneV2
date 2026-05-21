@@ -5,6 +5,7 @@ import com.example.ringtonev2.ui.theme.*
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,15 +23,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,6 +59,21 @@ fun RingtoneItemRow(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .background(
+                if (isPlaying)
+                Brush.horizontalGradient(
+                    colors = listOf(
+                        ContentBrand.copy(alpha = 0.24f),
+                        Black
+                    )
+                )
+                else Brush.horizontalGradient(
+                    colors = listOf(
+                        Black,
+                        Black
+                    )
+                )
+            )
             .offset { IntOffset(offsetX.value.toInt(), 0) }
     ) {
 
@@ -67,6 +84,7 @@ fun RingtoneItemRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Thumbnail
+            Spacer(modifier = Modifier.width(8.dp))
             Box(
                 modifier = Modifier
                     .size(56.dp)
@@ -114,7 +132,8 @@ fun RingtoneItemRow(
                     style = AppTypography.labelLarge.copy(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
-                        color = ContentDefault
+                        color = if (!isPlaying) ContentDefault
+                        else ContentBrand
                     )
                 )
                 Text(
@@ -149,17 +168,13 @@ fun RingtoneItemRow(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            IconButton(
-                onClick = onFavorite,
-                modifier = Modifier.size(30.dp).background(
-                    color = Color.White.copy(alpha = 0.12f),
-                    shape = CircleShape
-                ),
-
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Transparent
-
-                )
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.12f))
+                    .clickable { onFavorite() },
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
                     modifier = Modifier.size(20.dp),
@@ -169,9 +184,14 @@ fun RingtoneItemRow(
                     ),
                     contentDescription = null,
                     tint = if (isFavorite) Color.Red else Color.White
-
                 )
             }
         }
+
+        HorizontalDivider(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            thickness = 1.dp,
+            color = BorderBold.copy(alpha = 0.7f)
+        )
     }
 }

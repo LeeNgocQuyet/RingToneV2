@@ -187,12 +187,6 @@ fun HomeScreen(
                             },
                             isFavorite = isFavorite
                         )
-
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            thickness = 0.5.dp,
-                            color = BorderSubtlest
-                        )
                     }
                     if (pagingItems.loadState.append is LoadState.Loading) {
                         item {
