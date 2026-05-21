@@ -8,12 +8,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.ringtonev2.R
 
-// Định nghĩa FontFamily dựa trên font thực tế bạn đã import
 val Urbanist = FontFamily(
-    Font(R.font.urbanist_semibold, FontWeight.Normal),
-    Font(R.font.urbanist_semibold, FontWeight.Medium),
+    Font(R.font.urbanist_thin, FontWeight.Thin),
+    Font(R.font.urbanist_extra_light, FontWeight.ExtraLight),
+    Font(R.font.urbanist_light, FontWeight.Light),
+    Font(R.font.urbanist_regular, FontWeight.Normal),
+    Font(R.font.urbanist_medium, FontWeight.Medium),
     Font(R.font.urbanist_semibold, FontWeight.SemiBold),
-    Font(R.font.urbanist_semibold, FontWeight.Bold)
+    Font(R.font.urbanist_bold, FontWeight.Bold),
+    Font(R.font.urbanist_extra_bold, FontWeight.ExtraBold),
+    Font(R.font.urbanist_black, FontWeight.Black)
 )
 
 val AppTypography = Typography(
